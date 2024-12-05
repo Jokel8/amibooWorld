@@ -8,6 +8,7 @@ public class Server {
     public Server() throws IOException {
         int countConnections = 0;  // To count the number of connections
         ServerSocket server = new ServerSocket(PORT);  // Creating a server socket on the specified port
+        ;
         System.out.println("Server listening on port " + PORT);  // Server is now active
 
         while(true) {
@@ -63,12 +64,12 @@ public class Server {
                             if (!isImage) {
                                 // For non-image files (like HTML or text files)
                                 FileReader fr = new FileReader(firstLine);
-                                BufferedReader brfr = new BufferedReader(fr);
+                                BufferedReader buffer = new BufferedReader(fr);
                                 String line;
-                                while ((line = brfr.readLine()) != null) {
+                                while ((line = buffer.readLine()) != null) {
                                     out.println(line);  // Print each line of the file
                                 }
-                                brfr.close();
+                                buffer.close();
                             } else {
                                 // For image files (like .jpg or .png)
                                 FileInputStream fis = new FileInputStream(firstLine);
