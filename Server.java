@@ -19,80 +19,77 @@ public class Server {
 
             // If the connection count is within the allowed limit
             if (countConnections <= MAX) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            // Input and output streams for reading from and writing to the client
-                            BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                            PrintWriter out = new PrintWriter(client.getOutputStream(), true);
+                new Thread(() -> {
+                    try {
+                        // Input and output streams for reading from and writing to the client
+                        BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                        PrintWriter out = new PrintWriter(client.getOutputStream(), true);
 
-                            String msg;
-                            String firstLine = "";  // To store the requested file path
-                            boolean isImage = false; // Flag to check if the requested file is an image
+                        String msg;
+                        String firstLine = "";  // To store the requested file path
+                        boolean isImage = false; // Flag to check if the requested file is an image
 
-                            // Read the incoming HTTP request line by line
-                            while ((msg = in.readLine()) != null) {
-                                if (firstLine.isEmpty()) {
-                                    // Extract the requested file path (like /index.html)
-                                    firstLine = msg;
-                                    firstLine = firstLine.substring(5, firstLine.length() - 9);  // Removing 'GET' and 'HTTP/1.1'
-                                    System.out.println("Requested file: " + firstLine);
+                        // Read the incoming HTTP request line by line
+                        while ((msg = in.readLine()) != null) {
+                            if (firstLine.isEmpty()) {
+                                // Extract the requested file path (like /index.html)
+                                firstLine = msg;
+                                firstLine = firstLine.substring(5, firstLine.length() - 9);  // Removing 'GET' and 'HTTP/1.1'
+                                System.out.println("Requested file: " + firstLine);
 
-                                    // Check if the requested file is an image
-                                    if (firstLine.contains(".jpg") || firstLine.contains(".png")) {
-                                        isImage = true;
-                                    }
-                                }
-                                System.out.println(msg);  // Print the whole HTTP request (for debugging)
-                                if (msg.isEmpty()) {
-                                    break;  // End of request headers (after the empty line)
+                                // Check if the requested file is an image
+                                if (firstLine.contains(".jpg") || firstLine.contains(".png")) {
+                                    isImage = true;
                                 }
                             }
-
-                            // Send HTTP response headers to the client
-                            out.println("HTTP/1.1 200 OK");
-                            out.println("Content-Type: text/html");
-                            out.println();  // Blank line separates headers from body
-
-                            // Determine the requested file path
-                            File f = new File(firstLine);
-                            if (!f.exists()) {
-                                // If the file doesn't exist, send a 404 error response
-                                out.println("<h1>404 Not Found</h1>");
-                            } else {
-                                // If the file exists, send its contents to the client
-                                if (!isImage) {
-                                    // For non-image files (like HTML or text files)
-                                    FileReader fr = new FileReader(firstLine);
-                                    BufferedReader brfr = new BufferedReader(fr);
-                                    String line;
-                                    while ((line = brfr.readLine()) != null) {
-                                        out.println(line);  // Print each line of the file
-                                    }
-                                    brfr.close();
-                                } else {
-                                    // For image files (like .jpg or .png)
-                                    FileInputStream fis = new FileInputStream(firstLine);
-                                    byte[] buffer = new byte[1024];
-                                    int bytesRead;
-
-                                    while ((bytesRead = fis.read(buffer)) != -1) {
-                                        client.getOutputStream().write(buffer, 0, bytesRead);  // Send file in chunks
-                                    }
-                                    fis.close();
-                                }
+                            System.out.println(msg);  // Print the whole HTTP request (for debugging)
+                            if (msg.isEmpty()) {
+                                break;  // End of request headers (after the empty line)
                             }
-
-                            // Close streams and client connection
-                            out.flush();
-                            in.close();
-                            out.close();
-                            client.close();
-                            System.out.println("Connection closed with client.");
-                        } catch (IOException e) {
-                            e.printStackTrace();
                         }
+
+                        // Send HTTP response headers to the client
+                        out.println("HTTP/1.1 200 OK");
+                        out.println("Content-Type: text/html");
+                        out.println();  // Blank line separates headers from body
+
+                        // Determine the requested file path
+                        File f = new File(firstLine);
+                        if (!f.exists()) {
+                            // If the file doesn't exist, send a 404 error response
+                            out.println("<h1>404 Not Found</h1>");
+                        } else {
+                            // If the file exists, send its contents to the client
+                            if (!isImage) {
+                                // For non-image files (like HTML or text files)
+                                FileReader fr = new FileReader(firstLine);
+                                BufferedReader brfr = new BufferedReader(fr);
+                                String line;
+                                while ((line = brfr.readLine()) != null) {
+                                    out.println(line);  // Print each line of the file
+                                }
+                                brfr.close();
+                            } else {
+                                // For image files (like .jpg or .png)
+                                FileInputStream fis = new FileInputStream(firstLine);
+                                byte[] buffer = new byte[1024];
+                                int bytesRead;
+
+                                while ((bytesRead = fis.read(buffer)) != -1) {
+                                    client.getOutputStream().write(buffer, 0, bytesRead);  // Send file in chunks
+                                }
+                                fis.close();
+                            }
+                        }
+
+                        // Close streams and client connection
+                        out.flush();
+                        in.close();
+                        out.close();
+                        client.close();
+                        System.out.println("Connection closed with client.");
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }).start();  // Handle the client request in a separate thread
             } else {
