@@ -54,7 +54,7 @@
 
     <script>
     async function renderMap() {
-        const response = await fetch('getMap.php');
+        const response = await fetch('../CMS/getMap.php');
         const mapData = await response.json();
         const mapElement = document.getElementById('map');
         
