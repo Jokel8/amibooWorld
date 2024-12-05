@@ -8,7 +8,7 @@ public class Server {
     public Server() throws IOException {
         int countConnections = 0;  // To count the number of connections
         ServerSocket server = new ServerSocket(PORT);  // Creating a server socket on the specified port
-        ;
+
         System.out.println("Server listening on port " + PORT);  // Server is now active
 
         while(true) {
