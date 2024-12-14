@@ -1,3 +1,12 @@
 #buttonc, #buttona, #buttonb{
     background-color: blue;
 }
+
+body{
+    background: rgb(51,51,51);
+    background: linear-gradient(81deg, rgb(194, 194, 194) 0%, rgb(141, 141, 141) 16%, rgb(148, 148, 148) 67%, rgb(223, 223, 223) 100%); 
+}
+
+.container{
+    background-color: #2727277c;
+}

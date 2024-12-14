@@ -5,13 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link id="themeStylesheet" rel="stylesheet" href="css/brightTheme.css">
 </head>
 
 <body>
-    <div id="map">Karte Lädt...</div>
-    <div id="actionlist">Aktionen Lädt...</div>
+    <div class="content">
+        <button id="themeToggleButton">Dark Mode aktivieren</button>
+        <div id="map" class="container">Karte Lädt...</div>
+        <div id="actionlist" class="container">Aktionen Lädt...</div>
+        <div id="joystick" class="container">Joystick Lädt...</div>
+        <div id="instructor" class="container">Instructor Lädt...</div>
+    </div>
+
     <script>
-         async function loadHTML(url, targetElementId) {
+        async function loadHTML(url, targetElementId) {
             try {
                 // Lade die Datei mit fetch
                 const response = await fetch(url);
@@ -28,14 +36,33 @@
                 document.getElementById(targetElementId).innerHTML = htmlContent;
             } catch (error) {
                 console.error(error);
-                document.getElementById(targetElementId).innerHTML = 
+                document.getElementById(targetElementId).innerHTML =
                     `<p style="color:red;">Fehler beim Laden des Inhalts.</p>`;
             }
         }
 
         // Rufe die Funktion auf, um "map.html" zu laden
         //loadHTML('map.html', 'map');
-        //loadHTML('Actionlist.html', 'actionlist');
+        loadHTML('Actionlist.html', 'actionlist');
+
+        const darkTheme = 'css/darkTheme.css';
+        const brightTheme = 'css/brightTheme.css';
+
+        const themeStylesheet = document.getElementById('themeStylesheet');
+        const themeToggleButton = document.getElementById('themeToggleButton');
+
+        function toggleTheme() {
+            if (themeStylesheet.getAttribute('href') === brightTheme) {
+                themeStylesheet.setAttribute('href', darkTheme);
+                themeToggleButton.textContent = 'Bright Mode aktivieren';
+            } else {
+                themeStylesheet.setAttribute('href', brightTheme);
+                themeToggleButton.textContent = 'Dark Mode aktivieren';
+            }
+        }
+
+        // Event Listener für den Button
+        themeToggleButton.addEventListener('click', toggleTheme);
     </script>
 
     <script>
