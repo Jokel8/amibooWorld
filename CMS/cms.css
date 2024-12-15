@@ -1,0 +1,129 @@
+body{
+    background-color: #1e2022;
+    font-family: Arial, sans-serif;
+}
+
+.content{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 30px;
+}
+
+.container{
+    background-color: #cccccc;
+    padding: 30px;
+    border-radius: 30px;
+}
+
+hr{
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
+    margin-left: -30px !important;
+    margin-right: -30px !important;
+    border-width: 2px;
+    border-color: #1e2022;
+}
+
+.header{
+    display: block;
+    text-align: center;
+    font-size: 2vw;
+}
+
+.nav-container{
+    margin-top: 10px;
+    width: 50vw !important;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 10px;
+}
+
+.nav-bar{
+    width: 100%;
+    display: flex;
+}
+
+.nav-item{
+    width: 100%;
+    text-align: center;
+    margin: 5px;
+    padding: 5px;
+    border-radius: 10px;
+    transition: 0.2s;
+    background-color: rgba(128, 128, 128, 0.496);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+th,
+td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+
+button {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #3b82f6;
+    color: white;
+    border-width: 0px;
+    border-radius: 5px;
+}
+
+input {
+    padding: 10px;
+    cursor: pointer;
+    border-width: 0px;
+    border-radius: 5px;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border: 2px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+.close-btn {
+    background-color: #ff4c4c;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    float: right;
+}
+
+.grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+}
