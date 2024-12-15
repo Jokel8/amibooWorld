@@ -127,3 +127,12 @@ input {
     grid-template-columns: 1fr 1fr 1fr;
     gap: 10px;
 }
+
+.character{
+    width: fit-content;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 10px;
+    text-align: center;
+    padding: 5px;
+}

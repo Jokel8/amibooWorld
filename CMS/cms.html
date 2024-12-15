@@ -11,13 +11,13 @@
     <div class="nav-container container">
         <div class="header">Content Management System (CMS)</div>
         <div class="nav-bar">
-            <div class="nav-item" onclick="window.location.href='cms.php'">
+            <div class="nav-item" onclick="window.location.href='cms.html'">
                 CMS
             </div>
             <div class="nav-item active" onclick="window.location.href='ums.php'">
                 UMS
             </div>
-            <div class="nav-item" onclick="window.location.href='viewBewerbungen.php'">
+            <div class="nav-item" onclick="window.location.href='../GUI/'">
                 Game
             </div>
         </div>
@@ -76,7 +76,7 @@
             <h2 class="text-xl mb-2">Karten Generieren</h2>
             <form id="mapGeneratorForm" method="POST">
                 <input type="hidden" name="action" value="generate_map">
-                <div class="grid>
+                <div class="grid">
                     <input type="number" name="map_width" placeholder="Kartenbreite" value="10">
                     <input type="number" name="map_height" placeholder="Kartenhöhe" value="10">
                     <input type="number" name="max_resources" placeholder="Max Rohstoffe" value="100">
@@ -92,42 +92,16 @@
             <button type="button" id="deleteMapBtn" class="bg-red-500 text-white p-2 rounded col-span-2">
                 Karte löschen
             </button>
-
-            <script>
-                // Fügen Sie dieser Funktion hinzu
-                async function deleteMap() {
-                    if (!confirm('Möchten Sie die gesamte Karte wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
-                        return;
-                    }
-
-                    try {
-                        const response = await fetch('deleteMap.php', {
-                            method: 'POST'
-                        });
-                        const result = await response.json();
-
-                        if (result.success) {
-                            alert('Karte erfolgreich gelöscht');
-                            // Optional: Seite neu laden oder Karte im Frontend aktualisieren
-                            location.reload();
-                        } else {
-                            alert('Fehler beim Löschen: ' + result.message);
-                        }
-                    } catch (error) {
-                        console.error('Fehler:', error);
-                        alert('Ein unerwarteter Fehler ist aufgetreten');
-                    }
-                }
-
-                // Event-Listener hinzufügen
-                document.getElementById('deleteMapBtn').addEventListener('click', deleteMap);
-            </script>
             <hr>
+
+            <div id="map" class="container">Karte Lädt...</div>
         </div>
 
         <div class="container">
             <h1 class="text-2xl mb-4">Charaktere-Verwaltung</h1>
             <h2 class="text-xl mb-2">Charaktere hinzufügen</h2>
+            <hr>
+            <div id="characterList" class="container">Charaker-Liste Lädt...</div>
         </div>
 
         <script>
@@ -199,6 +173,80 @@
                     }
                 });
             });
+
+            async function loadHTML(url, targetElementId) {
+                try {
+                    // Lade die Datei mit fetch
+                    const response = await fetch(url);
+
+                    // Prüfe, ob die Anfrage erfolgreich war
+                    if (!response.ok) {
+                        throw new Error(`Fehler beim Laden der Datei: ${response.statusText}`);
+                    }
+
+                    // Lese den Textinhalt der HTML-Datei
+                    const htmlContent = await response.text();
+
+                    // Wähle das Ziel-Element
+                    const targetElement = document.getElementById(targetElementId);
+
+                    // Temporäre DOM-Elemente zum Verarbeiten der Inhalte erstellen
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = htmlContent;
+
+                    // Füge alle Inhalte außer Skripte ein
+                    targetElement.innerHTML = tempDiv.innerHTML;
+
+                    // Extrahiere und führe Skripte separat aus
+                    const scripts = tempDiv.querySelectorAll('script');
+                    scripts.forEach((script) => {
+                        const newScript = document.createElement('script');
+                        if (script.src) {
+                            // Falls das Skript eine src-URL hat
+                            newScript.src = script.src;
+                            newScript.async = false; // Synchron ausführen
+                        } else {
+                            // Falls das Skript Inline-Code enthält
+                            newScript.textContent = script.textContent;
+                        }
+                        document.body.appendChild(newScript); // Skript in das Dokument einfügen und ausführen
+                    });
+                } catch (error) {
+                    console.error(error);
+                    document.getElementById(targetElementId).innerHTML =
+                        `<p style="color:red;">Fehler beim Laden des Inhalts.</p>`;
+                }
+            }
+
+            loadHTML('../GUI/map.html', 'map');
+            loadHTML('../GUI/characters.html', 'characterList');
+
+            async function deleteMap() {
+                if (!confirm('Möchten Sie die gesamte Karte wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch('deleteMap.php', {
+                        method: 'POST'
+                    });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert('Karte erfolgreich gelöscht');
+                        // Optional: Seite neu laden oder Karte im Frontend aktualisieren
+                        location.reload();
+                    } else {
+                        alert('Fehler beim Löschen: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Fehler:', error);
+                    alert('Ein unerwarteter Fehler ist aufgetreten');
+                }
+            }
+
+            // Event-Listener hinzufügen
+            document.getElementById('deleteMapBtn').addEventListener('click', deleteMap);
         </script>
     </div>
 </body>

@@ -59,13 +59,13 @@
     <div class="nav-container container">
         <div class="header">User Management System (UMS)</div>
         <div class="nav-bar">
-            <div class="nav-item" onclick="window.location.href='cms.php'">
+            <div class="nav-item" onclick="window.location.href='cms.html'">
                 CMS
             </div>
             <div class="nav-item active" onclick="window.location.href='ums.php'">
                 UMS
             </div>
-            <div class="nav-item" onclick="window.location.href='viewBewerbungen.php'">
+            <div class="nav-item" onclick="window.location.href='../GUI/.php'">
                 Game
             </div>
         </div>
