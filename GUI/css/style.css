@@ -1,13 +1,7 @@
-body{
-    background-color: green;
-}
 #gesamtaction{
     float: right;
 }
 #actioncontainer{
-    position: absolute;
-    right: 0;
-    width: 25%;
     height: 100.15%;
     background-color: rgba(0, 0, 0, 0.6);
     margin-top: -0.5%;

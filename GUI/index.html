@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link id="themeStylesheet" rel="stylesheet" href="css/brightTheme.css">
+</head>
+
+<body>
+    <div class="content">
+        <button id="themeToggleButton">Dark Mode aktivieren</button>
+        <div id="map" class="container">Karte Lädt...</div>
+        <div id="actionlist" class="container">Aktionen Lädt...</div>
+        <div id="joystick" class="container">Joystick Lädt...</div>
+        <div id="instructor" class="container">Instructor Lädt...</div>
+    </div>
+
+    <script>
+        async function loadHTML(url, targetElementId) {
+            try {
+                // Lade die Datei mit fetch
+                const response = await fetch(url);
+
+                // Prüfe, ob die Anfrage erfolgreich war
+                if (!response.ok) {
+                    throw new Error(`Fehler beim Laden der Karte: ${response.statusText}`);
+                }
+
+                // Lese den Textinhalt der HTML-Datei
+                const htmlContent = await response.text();
+
+                // Füge den HTML-Inhalt in das DOM ein
+                document.getElementById(targetElementId).innerHTML = htmlContent;
+            } catch (error) {
+                console.error(error);
+                document.getElementById(targetElementId).innerHTML =
+                    `<p style="color:red;">Fehler beim Laden des Inhalts.</p>`;
+            }
+        }
+
+        // Rufe die Funktion auf, um "map.html" zu laden
+        //loadHTML('map.html', 'map');
+        loadHTML('Actionlist.html', 'actionlist');
+
+        const darkTheme = 'css/darkTheme.css';
+        const brightTheme = 'css/brightTheme.css';
+
+        const themeStylesheet = document.getElementById('themeStylesheet');
+        const themeToggleButton = document.getElementById('themeToggleButton');
+
+        function toggleTheme() {
+            if (themeStylesheet.getAttribute('href') === brightTheme) {
+                themeStylesheet.setAttribute('href', darkTheme);
+                themeToggleButton.textContent = 'Bright Mode aktivieren';
+            } else {
+                themeStylesheet.setAttribute('href', brightTheme);
+                themeToggleButton.textContent = 'Dark Mode aktivieren';
+            }
+        }
+
+        // Event Listener für den Button
+        themeToggleButton.addEventListener('click', toggleTheme);
+    </script>
+
+    <script>
+        // Funktion zum Abrufen des Werts eines URL-Parameters
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Überprüfen, ob "token" gesetzt ist
+        const token = getQueryParam('token');
+
+        if (!token) {
+            // Weiterleiten, falls "token" nicht gesetzt ist
+            window.location.href = 'login.html';
+            document.body.innerHTML = '<h1>Zugriff verweigert: Melde dich zuerst an!</h1><a href="login.html">Zur Anmeldung</a>';
+        }
+    </script>
+</body>
+
+</html>
