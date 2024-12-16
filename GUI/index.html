@@ -26,14 +26,36 @@
 
                 // Prüfe, ob die Anfrage erfolgreich war
                 if (!response.ok) {
-                    throw new Error(`Fehler beim Laden der Karte: ${response.statusText}`);
+                    throw new Error(`Fehler beim Laden der Datei: ${response.statusText}`);
                 }
 
                 // Lese den Textinhalt der HTML-Datei
                 const htmlContent = await response.text();
 
-                // Füge den HTML-Inhalt in das DOM ein
-                document.getElementById(targetElementId).innerHTML = htmlContent;
+                // Wähle das Ziel-Element
+                const targetElement = document.getElementById(targetElementId);
+
+                // Temporäre DOM-Elemente zum Verarbeiten der Inhalte erstellen
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = htmlContent;
+
+                // Füge alle Inhalte außer Skripte ein
+                targetElement.innerHTML = tempDiv.innerHTML;
+
+                // Extrahiere und führe Skripte separat aus
+                const scripts = tempDiv.querySelectorAll('script');
+                scripts.forEach((script) => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        // Falls das Skript eine src-URL hat
+                        newScript.src = script.src;
+                        newScript.async = false; // Synchron ausführen
+                    } else {
+                        // Falls das Skript Inline-Code enthält
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript); // Skript in das Dokument einfügen und ausführen
+                });
             } catch (error) {
                 console.error(error);
                 document.getElementById(targetElementId).innerHTML =
@@ -41,8 +63,9 @@
             }
         }
 
+
         // Rufe die Funktion auf, um "map.html" zu laden
-        //loadHTML('map.html', 'map');
+        loadHTML('map.html', 'map');
         loadHTML('Actionlist.html', 'actionlist');
 
         const darkTheme = 'css/darkTheme.css';

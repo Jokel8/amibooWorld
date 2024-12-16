@@ -1,0 +1,44 @@
+<div id="characterArray"></div>
+<script>
+    let id = 1;
+    const container = document.getElementById("characterArray");
+
+    async function fetchCharacter(id) {
+        try {
+            const titleResponse = await fetch(`../CMS/getCharacter.php?id=${id}&action=title`);
+            if (!titleResponse.ok) return false;
+
+            const titleData = await titleResponse.json();
+            const characterName = titleData.title;
+
+            const characterDiv = document.createElement('div');
+            characterDiv.className = 'character';
+
+            const img = document.createElement('img');
+            img.src = `../CMS/getCharacter.php?id=${id}`;
+            img.alt = `Charakter ${id}`;
+
+            const h2 = document.createElement('h2');
+            h2.textContent = characterName;
+
+            characterDiv.appendChild(img);
+            characterDiv.appendChild(h2);
+            container.appendChild(characterDiv);
+
+            return true;
+        } catch (error) {
+            console.error('Fehler beim Laden des Charakters:', error);
+            return false;
+        }
+    }
+
+    async function loadCharacters() {
+        while (true) {
+            const success = await fetchCharacter(id);
+            if (!success) break;
+            id++;
+        }
+    }
+
+    loadCharacters();
+</script>
