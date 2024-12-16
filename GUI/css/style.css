@@ -1,86 +1,50 @@
-body{
-    margin: 0;
-}
-
 #gesamtaction{
     float: right;
 }
 #actioncontainer{
-    position: absolute;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    background-color: blue;
+    height: 100.15%;
+    background-color: rgba(0, 0, 0, 0.6);
+    margin-top: -0.5%;
+    border-top-left-radius: 35px;
+    border-bottom-left-radius: 35px;
 }
 
 #buttoncontainer{
     width: 100%;
-    background-color: white;
-}
-
-#buttona{
-    width: 30%;
-    margin-left: 3%;
-    border-bottom: none;
-    background-color: red;
-}
-
-#buttonb{
-    width: 30%;
-    margin-left: 1%;
-    border-bottom: none;
-    background-color: blue;
-}
-
-#buttonc{
-    width: 30%;
-    margin-left: 1%;
-    margin-right: 2%;
-    border-bottom: none;
-    background-color: green;
-}
-
-.content{
-    width: 100vw;
-    height: 100vh;
+    height: 8%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
 }
 
-.container{
-    backdrop-filter: blur(4px);
-    padding: 20px;
-    margin: 20px;
-    border-radius: 20px;
+.button{
+    width: 100%;
+    border-top-left-radius: 35px;
+    border-top-right-radius: 35px;
 }
 
+<<<<<<< HEAD
 #map{
     height: 100%;
     width: 100%;
+=======
+#functioncontainer1 h3{
+    text-align: center;
+    font-size: 3vw; 
+    margin-top: 5%; 
+    color: white;;  
+>>>>>>> cde2cf4ea06e6082ee36c69ebe14d13a46df48b7
 }
 
-#actionlist{
-    width: 400px;
-    height: calc(100% - 80px);
-    position: fixed;
-    right: 0px;
-    top: 0px;
+.tableb{
+    margin-left: 10%;
+    margin-right: 10%;
+    width: 80%;
 }
 
-#joystick{
-    width: 300px;
-    height: 300px;
-    position: fixed;
-    left: 0px;
-    bottom: 0px;
-}
-
-#instructor{
-    width: 500px;
-    height: 50px;
-    position: fixed;
-    left: 0px;
-    top: 0px;
+.buttonfunctioncontainer1buttons{
+    width: 100%;
+    margin-top: 10%;
+    padding-top: 5%;
+    padding-bottom: 5%;
+    height: 5%;
+    border-radius: 15px;
 }
