@@ -11,11 +11,11 @@
 
 <body>
     <div class="content">
-        <button id="themeToggleButton">Dark Mode aktivieren</button>
+        
         <div id="map" class="container">Karte Lädt...</div>
-        <div id="actionlist" class="container">Aktionen Lädt...</div>
+        <div id="actionlist" class="container"><button id="themeToggleButton">Dark Mode aktivieren</button>Aktionen Lädt...</div>
         <div id="joystick" class="container">Joystick Lädt...</div>
-        <div id="instructor" class="container">Instructor Lädt...</div>
+        <div id="instructor" class="container">Amiboo World</div>
     </div>
 
     <script>
@@ -100,8 +100,8 @@
 
         if (!token) {
             // Weiterleiten, falls "token" nicht gesetzt ist
-            window.location.href = 'login.html';
-            document.body.innerHTML = '<h1>Zugriff verweigert: Melde dich zuerst an!</h1><a href="login.html">Zur Anmeldung</a>';
+            //window.location.href = 'login.html';
+            //document.body.innerHTML = '<h1>Zugriff verweigert: Melde dich zuerst an!</h1><a href="login.html">Zur Anmeldung</a>';
         }
     </script>
 </body>
