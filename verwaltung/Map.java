@@ -19,7 +19,7 @@ public class Map {
             String driver = "com.mysql.cj.jdbc.Driver";
             String url = "jdbc:mysql://v073086.kasserver.com:3306/d0421573";
 
-            Connection conn = DriverManager.getConnection(url,user,password);
+            //Connection conn = DriverManager.getConnection(url,user,password);
 
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
