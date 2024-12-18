@@ -21,17 +21,15 @@
     border-top-right-radius: 35px;
 }
 
-<<<<<<< HEAD
 #map{
     height: 100%;
     width: 100%;
-=======
+}
 #functioncontainer1 h3{
     text-align: center;
     font-size: 3vw; 
     margin-top: 5%; 
     color: white;;  
->>>>>>> cde2cf4ea06e6082ee36c69ebe14d13a46df48b7
 }
 
 .tableb{
