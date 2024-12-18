@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Scanner;
 
 public class ImagetoMap {
 
@@ -75,5 +76,14 @@ public class ImagetoMap {
                 PreparedStatement statement = Conn.prepareStatement(insertSQL);
             }
         }
+    }
+
+    public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
+        System.out.println("Bitte gib den Dateipfad der Datei an die du hochladen möchtest");
+        Scanner scanner = new Scanner(System.in);
+        String eingabe = scanner.nextLine();
+
+        getImage(eingabe);
+        loadImage();
     }
 }
