@@ -59,6 +59,15 @@ body{
 #map{
     height: 100%;
     width: 100%;
+<<<<<<< HEAD
+=======
+}
+#functioncontainer1 h3{
+    text-align: center;
+    font-size: 3vw; 
+    margin-top: 5%; 
+    color: white;;  
+>>>>>>> ef375e4361b03b5ef09b6b256094b4d11d0118d7
 }
 
 #actionlist{
