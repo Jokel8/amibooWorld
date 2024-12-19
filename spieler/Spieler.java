@@ -29,7 +29,6 @@ public class Spieler {
     }
     public void start() {
         String line = "";
-        while (line != null) {
             try {
                 line = this.in.readLine();
                 System.out.println(line);
@@ -42,7 +41,6 @@ public class Spieler {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }
     }
     private String getAnfrage(String anfrage) {
         char[] chars = anfrage.toCharArray();
@@ -89,6 +87,7 @@ public class Spieler {
                         "</body>\n" +
                         "</html>";
                 out.println(antwort);
+                this.close();
             }
         }
     }
