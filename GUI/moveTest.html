@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WASD Tasteneingaben</title>
+</head>
+<body>
+    <h1>Drücke W, A, S oder D</h1>
+    <script>
+        // Event-Listener für Tasteneingaben hinzufügen
+        document.addEventListener("keydown", function(event) {
+            // Tasteneingabe prüfen und ausgeben
+            if (event.key === "w" || event.key === "W") {
+                console.log("W gedrückt");
+            } else if (event.key === "a" || event.key === "A") {
+                console.log("A gedrückt");
+            } else if (event.key === "s" || event.key === "S") {
+                console.log("S gedrückt");
+            } else if (event.key === "d" || event.key === "D") {
+                console.log("D gedrückt");
+            }
+        });
+    </script>
+</body>
+</html>
