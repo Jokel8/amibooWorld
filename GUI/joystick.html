@@ -1,92 +1,44 @@
-</html><!DOCTYPE html>
+</html>
+<!DOCTYPE html>
 <html lang="de">
- 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quadratische Box</title>
-    <style>
-        .square-box {
-            width: 200px;
-            /* Breite der Box */
-            height: 200px;
-            /* Höhe der Box (gleich der Breite) */
-            background-color: oppasity;
-            /* Farbe der Box */
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            gap: 0;
-            /* Kein Abstand zwischen den inneren Boxen */
-            border: 2px solid oppasity;
-            border-radius: 10px;
-            /* Abgerundete Ecken */
-        }
- 
-        .inner-box {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-family: Arial, sans-serif;
-        }
- 
-        .inner-box img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            /* Bild anpassen, ohne Verzerrung */
-        }
- 
-        .inner-box.transparent {
-            background-color: transparent;
-        }
- 
-        .inner-box.solid {
-            background-color: #ffe449;
-            color: white;
-        }
- 
-        #top{
-            transform: rotate(90deg)
-        }
- 
-        #links{
-            transform: rotate(90deg)
-        }
- 
-        #bottom{
-            transform: rotate(270deg)
-        }
- 
-        #right{
-            transform: rotate(180deg)
-        }
-    </style>
 </head>
- 
+
 <body>
     <div class="square-box">
         <div class="inner-box transparent"></div>
-        <div class="inner-box solid">
-            <svg id="top" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/></svg>
-        </div>
+        <button id="top" class="inner-box solid">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                fill="#5f6368">
+                <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
+            </svg>
+        </button>
         <div class="inner-box transparent"></div>
-        <div class="inner-box solid">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/></svg>
-        </div>
-        <div class="inner-box solid"></div>
-        <div class="inner-box solid">
-            <svg id="right" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/></svg>
-        </div>
+        <button id="left" class="inner-box solid">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368">
+                <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
+            </svg>
+        </button>
+        <div id="middle" class="inner-box solid"></div>
+        <button id="right" class="inner-box solid">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                fill="#5f6368">
+                <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
+            </svg>
+        </button>
         <div class="inner-box transparent"></div>
-        <div class="inner-box solid">
-            <svg id="bottom"xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/></svg>
-    </div>
+        <button id="bottom" class="inner-box solid">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                fill="#5f6368">
+                <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
+            </svg>
+        </button>
         <div class="inner-box transparent"></div>
     </div>
 </body>
- 
+
 </html>

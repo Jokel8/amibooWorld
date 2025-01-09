@@ -1,89 +1,71 @@
 body{
+    height: 100vh;
+    width: 100vw;
+    margin: 0%;
+    overflow: hidden;
     margin: 0;
 }
 
 #gesamtaction{
     float: right;
 }
-#actioncontainer{
-    position: absolute;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    background-color: blue;
-}
 
 #buttoncontainer{
     width: 100%;
-    background-color: white;
-}
-
-#buttona{
-    width: 30%;
-    margin-left: 3%;
-    border-bottom: none;
-    background-color: red;
-}
-
-#buttonb{
-    width: 30%;
-    margin-left: 1%;
-    border-bottom: none;
-    background-color: blue;
-}
-
-#buttonc{
-    width: 30%;
-    margin-left: 1%;
-    margin-right: 2%;
-    border-bottom: none;
-    background-color: green;
-}
-
-.content{
-    width: 100vw;
-    height: 100vh;
+    height: 8%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
 }
 
-.container{
-    backdrop-filter: blur(4px);
-    padding: 20px;
-    margin: 20px;
-    border-radius: 20px;
-}
-
-#map{
-    height: 100%;
+.button{
     width: 100%;
-<<<<<<< HEAD
-=======
+    border-top-left-radius: 35px;
+    border-top-right-radius: 35px;
 }
+
 #functioncontainer1 h3{
     text-align: center;
     font-size: 3vw; 
     margin-top: 5%; 
     color: white;;  
->>>>>>> ef375e4361b03b5ef09b6b256094b4d11d0118d7
+}
+
+.tableb{
+    margin-left: 10%;
+    margin-right: 10%;
+    width: 80%;
+}
+
+.buttonfunctioncontainer1buttons{
+    width: 100%;
+    margin-top: 10%;
+    padding-top: 5%;
+    padding-bottom: 5%;
+    height: 5%;
+    border-radius: 15px;
+}
+
+.container{
+    border-radius: 10px;
+}
+
+#map{
+    height: 100vh;
+    width: 100vw;
 }
 
 #actionlist{
     width: 400px;
-    height: calc(100% - 80px);
+    height: 100%;
     position: fixed;
     right: 0px;
     top: 0px;
 }
 
 #joystick{
-    width: 300px;
-    height: 300px;
     position: fixed;
     left: 0px;
     bottom: 0px;
+    background: none;
 }
 
 #instructor{
@@ -92,4 +74,77 @@ body{
     position: fixed;
     left: 0px;
     top: 0px;
+}
+
+.square-box {
+    width: 200px;
+    /* Breite der Box */
+    height: 200px;
+    /* Höhe der Box (gleich der Breite) */
+    background-color: oppasity;
+    /* Farbe der Box */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0;
+    /* Kein Abstand zwischen den inneren Boxen */
+    border: 2px solid oppasity;
+    border-radius: 10px;
+    /* Abgerundete Ecken */
+}
+
+.inner-box {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+}
+
+.inner-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    /* Bild anpassen, ohne Verzerrung */
+}
+
+.inner-box.transparent {
+    background-color: transparent;
+}
+
+.inner-box.solid {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    background-color: #929292;
+    border: none;
+    color: white;
+}
+
+.inner-box.solid:hover {
+    transition: 0.2s;
+    background-color: #b6b6b6;
+    color: white;
+}
+
+#top {
+    transform: rotate(90deg)
+}
+
+#links {
+    transform: rotate(90deg)
+}
+
+#middle{
+    border-radius: 0px;
+    background-color: #929292;
+}
+
+#bottom {
+    transform: rotate(270deg)
+}
+
+#right {
+    transform: rotate(180deg)
 }
