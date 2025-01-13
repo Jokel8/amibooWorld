@@ -56,22 +56,8 @@
 </head>
 
 <body>
-    <div class="nav-container container">
-        <div class="header">User Management System (UMS)</div>
-        <div class="nav-bar">
-            <div class="nav-item" onclick="window.location.href='cms.html'">
-                CMS
-            </div>
-            <div class="nav-item active" onclick="window.location.href='ums.php'">
-                UMS
-            </div>
-            <div class="nav-item" onclick="window.location.href='../GUI/.php'">
-                Game
-            </div>
-        </div>
-    </div>
 
-    <div class="content">
+    <div class="scrollContainer">
         <div class="container">
             <h1 class="text-2xl mb-4">Nutzer-Verwaltung</h1>
             <table>

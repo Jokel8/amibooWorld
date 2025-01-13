@@ -8,49 +8,10 @@
 </head>
 
 <body>
-    <div class="nav-container container">
-        <div class="header">Content Management System (CMS)</div>
-        <div class="nav-bar">
-            <div class="nav-item" onclick="window.location.href='cms.html'">
-                CMS
-            </div>
-            <div class="nav-item active" onclick="window.location.href='ums.php'">
-                UMS
-            </div>
-            <div class="nav-item" onclick="window.location.href='../GUI/'">
-                Game
-            </div>
-        </div>
-    </div>
-    <div class="content">
+    <div class="scrollContainer">
         <div class="container">
             <h1>Feldtyp-Verwaltung</h1>
             <div>
-                <h2>Feldtypen hinzufügen</h2>
-                <form id="fieldTypeForm" method="POST" class="mb-4">
-                    <input type="hidden" name="action" value="add_type">
-                    <div class="grid">
-                        <input type="text" name="type_name" placeholder="Feldtyp Name">
-                        <input type="text" name="type_img" placeholder="Bild">
-                        <input type="text" name="type_img_tpye" placeholder="Bild Art">
-                        <label>
-                            <input type="checkbox" name="type_is_walkable"> Begehbar
-                        </label>
-                        <label>
-                            <input type="checkbox" name="type_is_swimmable"> Schwimmbar
-                        </label>
-                        <label>
-                            <input type="checkbox" name="type_is_flyable"> Fliegbar
-                        </label>
-                        <input type="number" step="0.01" name="probability" placeholder="Wahrscheinlichkeit">
-                        <button type="submit">
-                            Feldtyp hinzufügen
-                        </button>
-                    </div>
-                </form>
-
-                <hr>
-
                 <table class="w-full border">
                     <thead>
                         <tr class="bg-gray-200">
@@ -71,11 +32,13 @@
             </div>
         </div>
 
+        <div class="container">
+            <h1 class="text-2xl mb-4">Item-Verwaltung</h1>
+            <div id="itemList" class="container">Item-Liste Lädt...</div>
+        </div>
 
         <div class="container">
             <h1 class="text-2xl mb-4">Charaktere-Verwaltung</h1>
-            <h2 class="text-xl mb-2">Charaktere hinzufügen</h2>
-            <hr>
             <div id="characterList" class="container">Charaker-Liste Lädt...</div>
         </div>
 
@@ -193,7 +156,6 @@
                 }
             }
 
-            loadHTML('../GUI/map.html', 'map');
             loadHTML('../GUI/characters.html', 'characterList');
 
             async function deleteMap() {
