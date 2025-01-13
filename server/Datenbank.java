@@ -44,37 +44,29 @@ public class Datenbank {
         }
     }
 
-    private int[][] dbGetTile(int[][] tiles) throws SQLException {
+    private String dbGetTileAndMakeItIntoJson(int[][] tiles) throws SQLException {
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://v073086.kasserver.com/d0421573", "d0421573", "pZuw7TVdwLCqWUjMUD8o")) {
             // SQL-Abfrage, die den field_type basierend auf den Koordinaten sucht
-            String query = "SELECT field_type FROM fields WHERE x = ? AND y = ?";
 
-            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            StringBuilder query = new StringBuilder();
+            for (int i = 0; i < tiles.length; i++) {
+
                 // Schleife durch das zweidimensionale Array der Koordinaten
-                for (int i = 0; i < tiles.length; i++) {
-                    int x = tiles[i][0];
-                    int y = tiles[i][1];
+                int x = tiles[i][0];
+                int y = tiles[i][1];
 
-                    // Setze die Werte für x und y in der Abfrage
-                    pstmt.setInt(1, x);
-                    pstmt.setInt(2, y);
-
-                    // Führe die Abfrage aus
-                    try (ResultSet rs = pstmt.executeQuery()) {
-                        // Wenn ein Datensatz gefunden wurde, hole den field_type
-                        if (rs.next()) {
-                            String fieldType = rs.getString("field_type");
-                            System.out.println("Koordinate (" + x + ", " + y + ") hat field_type: " + fieldType);
-                        } else {
-                            System.out.println("Keine Daten für Koordinate (" + x + ", " + y + ") gefunden.");
-                        }
-                    }
-                }
+                query.append("select field_type from map where field_x = " + x + "and field_y = " + y+";\n");
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+
+            PreparedStatement pstmt = conn.prepareStatement(query.toString());
+
+            // Führe die Abfrage aus
+            ResultSet rs = pstmt.executeQuery();
+
+            rs.toString();
+
+            return null;
 
     }
 
