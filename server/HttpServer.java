@@ -6,7 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class HttpServer {
+public class HttpServer extends Datenbank {
     private ServerSocket socket;
     private int port;
     private ArrayList<Spieler> spieler;
