@@ -71,6 +71,31 @@
             </div>
         </div>
 
+        <div class="container">
+            <h1 class="text-2xl mb-4">Karten-Verwaltung</h1>
+            <h2 class="text-xl mb-2">Karten Generieren</h2>
+            <form id="mapGeneratorForm" method="POST">
+                <input type="hidden" name="action" value="generate_map">
+                <div class="grid">
+                    <input type="number" name="map_width" placeholder="Kartenbreite" value="10">
+                    <input type="number" name="map_height" placeholder="Kartenhöhe" value="10">
+                    <input type="number" name="max_resources" placeholder="Max Rohstoffe" value="100">
+                    <button type="submit">
+                        Karte generieren
+                    </button>
+                </div>
+            </form>
+
+            <hr>
+
+            <h2 class="text-xl mb-2">Karten Löschen</h2>
+            <button type="button" id="deleteMapBtn" class="bg-red-500 text-white p-2 rounded col-span-2">
+                Karte löschen
+            </button>
+            <hr>
+
+            <div id="map" class="container">Karte Lädt...</div>
+        </div>
 
         <div class="container">
             <h1 class="text-2xl mb-4">Charaktere-Verwaltung</h1>
