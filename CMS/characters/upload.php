@@ -6,7 +6,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("Verbindung fehlgeschlagen: " . $conn->connect_error);
     }
 
-    $name = $_POST['character_name'];
     $image = $_FILES['image'];
 
     if ($image['error'] === UPLOAD_ERR_OK) {
@@ -15,8 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $image_type = $image['type'];
 
         echo $image_type;
-        $stmt = $conn->prepare("INSERT INTO characters (character_name, character_img, img_type) VALUES (?, ?, ?)");
-        $stmt->bind_param("ssi", $name, $image_blob, $image_type);
+        $stmt = $conn->prepare("INSERT INTO characters (character_name, character_img, character_img_type) VALUES (?, ?, ?)");
+        $stmt->bind_param("ssi", $_POST['character_name'], $image_blob, $image_type);
         $result = $stmt->execute();
 
         if ($result) {

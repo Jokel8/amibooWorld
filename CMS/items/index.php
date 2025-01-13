@@ -7,29 +7,29 @@
 </head>
 <body>
     <form action="upload.php" method="POST" enctype="multipart/form-data">
-        <label for="character_name">Item benennen:</label>
-        <input type="text" name="character_name" id="name" required>
+        <label for="item_name">Item benennen:</label>
+        <input type="text" name="item_name" id="name" required>
         <br><br>
         <label for="image">Bild hochladen:</label>
         <input type="file" name="image" id="image" accept="image/*" required>
         <br><br>
-        <label for="image">Wert (in Euro):</label>
-        <input type="file" name="image" id="image" accept="image/*" required>
+        <label for="item_value">Wert (in Euro):</label>
+        <input type="number" name="item_value" value="0" required>
         <br><br>
-        <label for="image">Schadenmultiplizierer (0 bis 100):</label>
-        <input type="file" name="image" id="image" accept="image/*" required>
+        <label for="item_damage_mult">Schadenmultiplizierer (0 bis 100):</label>
+        <input type="number" name="item_damage_mult" value="0" required>
         <br><br>
-        <label for="image">Gesundheitswert (in HP):</label>
-        <input type="file" name="image" id="image" accept="image/*" required>
+        <label for="item_health_eat">Gesundheitswert (in HP):</label>
+        <input type="number" name="item_health_eat" value="0" required>
         <br><br>
-        <label for="image">Gewicht (in Gramm):</label>
-        <input type="file" name="image" id="image" accept="image/*" required>
+        <label for="item_weight">Gewicht (in Gramm):</label>
+        <input type="number" name="item_weight" value="0" required>
         <br><br>
-        <var><label for="image">Halbarkeit (in Nutzungen):</label>
-        <input type="file" name="image" id="image" accept="image/*" required>
+        <var><label for="item_durability">Halbarkeit (in Nutzungen):</label>
+        <input type="number" name="item_durability" value="0" required>
         <br><br>
         <label for="image">Fun Factor (1 bis 100):</label>
-        <input type="file" name="image" id="image" accept="image/*" required>
+        <input type="item_fun_factor" name="item_fun_factor" value="0" required>
         <br><br></var>
         <button type="submit">Hochladen</button>
     </form>

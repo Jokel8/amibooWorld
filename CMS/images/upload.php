@@ -6,7 +6,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("Verbindung fehlgeschlagen: " . $conn->connect_error);
     }
 
-    $type_id = intval($_POST['type_id']);
     $image = $_FILES['image'];
 
     if ($image['error'] === UPLOAD_ERR_OK) {
@@ -16,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         echo $image_type, $type_id;
         $stmt = $conn->prepare("UPDATE field_type SET type_img = ?, type_img_type = ? WHERE type_id = ?");
-        $stmt->bind_param("ssi", $image_blob, $image_type, $type_id);
+        $stmt->bind_param("ssi", $image_blob, $image_type, intval($_POST['type_id']));
 
         if ($stmt->execute()) {
             echo "Bild erfolgreich aktualisiert!";
