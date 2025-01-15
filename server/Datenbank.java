@@ -1,9 +1,11 @@
 package server;
 
+import java.sql.*;
+
 public class Datenbank {
-    Connection con = null;
-    PreparedStatement pst = null;
-    ResultSet rs = null;
+    Connection con;
+    PreparedStatement pst;
+    ResultSet rs;
 
     private String driver;
     private String url;
@@ -13,13 +15,9 @@ public class Datenbank {
         this.driver = "com.mysql.cj.jdbc.Driver";
         this.url = "jdbc:mysql://localhost:3306/d0421573";
     }
-    private String[][] getMap(int x, int y, int radius) {
-        int[][] tiles = welcheTileSollIchHolen(x, y, radius);
-        return null;
 
-    }
-    private int[][] welcheTileSollIchHolen(int x, int y, int radius) {
-        int[][] tiles = new int[radius+radius*radius+radius][2];
+    public int[][] welcheTileSollIchHolen(int x, int y, int radius) {
+        int[][] tiles = new int[(radius+radius+1)*(radius+radius+1)][2];
         int i = 0;
         for (int x_player = x - radius; x_player <= x + radius; x_player++ ) {
             for (int y_player = y - radius; y_player <= y + radius; y_player++ ) {
@@ -34,18 +32,13 @@ public class Datenbank {
      * Prozedur, um das Programm mit der Datenbank zu verknüpfen.
      *
      */
-    private void dbConnect (){
-        try {
+    public void dbConnect () throws ClassNotFoundException, SQLException {
             Class.forName(driver);
 
-            Connection con = DriverManager.getConnection("jdbc:mysql://v073086.kasserver.com/d0421573","d0421573", "pZuw7TVdwLCqWUjMUD8o");
-        } catch (SQLException | ClassNotFoundException e) {
-
-        }
+            this.con = DriverManager.getConnection("jdbc:mysql://v073086.kasserver.com/d0421573","d0421573", "pZuw7TVdwLCqWUjMUD8o");
     }
 
-    private String dbGetTileAndMakeItIntoJson(int[][] tiles) throws SQLException {
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://v073086.kasserver.com/d0421573", "d0421573", "pZuw7TVdwLCqWUjMUD8o")) {
+    public String dbGetTileAndMakeItIntoJson(int[][] tiles) throws SQLException {
             // SQL-Abfrage, die den field_type basierend auf den Koordinaten sucht
 
 
@@ -59,15 +52,14 @@ public class Datenbank {
                 query.append("select field_type from map where field_x = " + x + "and field_y = " + y+";\n");
             }
 
-            PreparedStatement pstmt = conn.prepareStatement(query.toString());
+            PreparedStatement pstmt = this.con.prepareStatement(query.toString());
 
             // Führe die Abfrage aus
             ResultSet rs = pstmt.executeQuery();
 
-            rs.toString();
+            System.out.println(rs.toString());
 
             return null;
 
     }
-
 }
