@@ -1,4 +1,3 @@
-import com.mysql.cj.xdevapi.JsonArray;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import server.Datenbank;
@@ -19,16 +18,18 @@ public class Test {
 //        properties.put("is_simmable", false);
 //        JSONObject properties_obj = new JSONObject();
 //        properties_obj.put("properties", properties);
-//        JSONObject map = new JSONObject();
-//        map.put("x", 0);
-//        map.put("y", 0);
-//        map.put("properties", properties_obj);
+//        JSONArray map = new JSONArray();
+//        JSONObject tile = new JSONObject();
+//        tile.put("x", 0);
+//        tile.put("y", 0);
+//        tile.put("properties", properties_obj);
+//        map.put(tile);
 //        JSONObject json = new JSONObject();
 //        json.put("map", map);
 //        System.out.println(json);
 
         Datenbank datenbank = new Datenbank();
         datenbank.dbConnect();
-        datenbank.dbGetTileAndMakeItIntoJson(datenbank.welcheTileSollIchHolen(5,5,2));
+        System.out.println(datenbank.dbGetTileAndMakeItIntoJson(datenbank.welcheTileSollIchHolen(1,1,1)));
     }
 }
