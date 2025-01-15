@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sichere Anmeldung</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .container {
+            width: 400px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            overflow: hidden;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: row;
+            transition: transform 0.5s ease;
+        }
+
+        .form-container.slide-left {
+            width: 200%;
+            transform: translateX(-50%);
+            gap: 50px;
+            padding-right: 30px;
+        }
+
+        .login-form,
+        .register-form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .switch-btn {
+            background: none;
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        #loader {
+            display: none;
+            width: 100%;
+            justify-content: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="login-form">
+                <h2>Anmelden</h2>
+                <input type="text" id="login-name" placeholder="E-Mail" required>
+                <input type="password" id="login-password" placeholder="Passwort" required>
+                <button onclick="login()">Anmelden</button>
+                <button class="switch-btn" onclick="showRegister()">Noch kein Konto? Registrieren</button>
+            </div>
+
+            <div class="register-form">
+                <h2>Registrieren</h2>
+                <input type="text" id="register-name" placeholder="Name" required>
+                <input type="password" id="register-password" placeholder="Passwort" required>
+                <input type="password" id="register-confirm-password" placeholder="Passwort bestätigen" required>
+                <button onclick="register()">Registrieren</button>
+                <button class="switch-btn" onclick="showLogin()">Zurück zum Login</button>
+            </div>
+        </div>
+
+        <div id="loader">
+            <svg width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="25" cy="25" r="20" fill="none" stroke="#764ba2" stroke-width="5">
+                    <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s"
+                        repeatCount="indefinite" />
+                </circle>
+            </svg>
+        </div>
+    </div>
+
+    <script>
+        const formContainer = document.querySelector('.form-container');
+        const loginForm = document.querySelector('.login-form');
+        const registerForm = document.querySelector('.register-form');
+        const loader = document.getElementById('loader');
+
+        showLogin();
+
+        function showRegister() {
+            formContainer.classList.add('slide-left');
+            registerForm.style.display = 'flex';
+        }
+
+        function showLogin() {
+            formContainer.classList.remove('slide-left');
+            registerForm.style.display = 'none';
+        }
+
+        function showLoader() {
+            loader.style.display = 'flex';
+        }
+
+        function hideLoader() {
+            loader.style.display = 'none';
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+
+            // Erstelle SHA-256-Hash
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+
+            // Umwandeln des Hashes in eine hexadezimale Zeichenkette
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        async function login() {
+            const name = document.getElementById('login-name').value;
+            var password = document.getElementById('login-password').value;
+            password = await hashPassword(password);
+
+            showLoader();
+
+            fetch('login.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    password: password
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    hideLoader();
+                    if (data.success) {
+                        window.location.href = 'index.html?token=' + data.token;
+                    } else {
+                        alert('Login fehlgeschlagen. ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    hideLoader();
+                    console.error('Fehler:', error);
+                    alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.');
+                });
+        }
+
+        async function register() {
+            const name = document.getElementById('register-name').value;
+            var password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwörter stimmen nicht überein.');
+                return;
+            }
+
+            password = await hashPassword(password);
+
+            showLoader();
+
+            fetch('login.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'register',
+                    name: name,
+                    password: password
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    hideLoader();
+                    if (data.success) {
+                        alert('Registrierung erfolgreich! Sie können sich jetzt anmelden.');
+                        showLogin();
+                    } else {
+                        alert('Registrierung fehlgeschlagen: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    hideLoader();
+                    console.error('Fehler:', error);
+                    alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.');
+                });
+        }
+    </script>
+</body>
+
+</html>

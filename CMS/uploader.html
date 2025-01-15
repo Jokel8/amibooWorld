@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tile Art Upload</title>
+    <link rel="stylesheet" href="cms.css" />
+</head>
+
+<body>
+    <div class="scrollContainer">
+        <div class="container">
+            <h1>Tiles Hinzufügen</h1>
+            <form id="fieldTypeForm" method="POST" class="mb-4">
+                <input type="hidden" name="action" value="add_type">
+                <div class="grid">
+                    <input type="text" name="type_name" placeholder="Feldtyp Name">
+                    <input type="text" name="type_img" placeholder="Bild">
+                    <input type="text" name="type_img_tpye" placeholder="Bild Art">
+                    <label>
+                        <input type="checkbox" name="type_is_walkable"> Begehbar
+                    </label>
+                    <label>
+                        <input type="checkbox" name="type_is_swimmable"> Schwimmbar
+                    </label>
+                    <label>
+                        <input type="checkbox" name="type_is_flyable"> Fliegbar
+                    </label>
+                    <input type="number" step="0.01" name="probability" placeholder="Wahrscheinlichkeit">
+                    <button type="submit">
+                        Feldtyp hinzufügen
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="container">
+            <h1>Tiles Hochladen</h1>
+            <form action="upload.php" method="POST" enctype="multipart/form-data">
+                <label for="type">Tile Art auswählen:</label>
+                <select name="type_id" id="type" required>
+                    <?php
+                    // Verbindung zur Datenbank herstellen
+                    $conn = new mysqli("v073086.kasserver.com", "d0421573", "pZuw7TVdwLCqWUjMUD8o", "d0421573");
+
+                    // Überprüfen, ob die Verbindung funktioniert hat
+                    if ($conn->connect_error) {
+                        die("Verbindung fehlgeschlagen: " . $conn->connect_error);
+                    }
+
+                    // Feldtypen abrufen
+                    $sql = "SELECT type_id, type_name FROM field_type";
+                    $result = $conn->query($sql);
+
+                    if ($result->num_rows > 0) {
+                        // Optionen erstellen
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<option value='" . $row['type_id'] . "'>" . htmlspecialchars($row['type_name']) . "</option>";
+                        }
+                    } else {
+                        echo "<option value=''>Keine Optionen verfügbar</option>";
+                    }
+
+                    $conn->close();
+                    ?>
+                </select>
+                <br><br>
+                <label for="image">Bild hochladen:</label>
+                <input type="file" name="image" id="image" accept="image/*" required>
+                <br><br>
+                <button type="submit">Hochladen</button>
+            </form>
+        </div>
+
+        <div class="container">
+            <h1>Items Hochladen</h1>
+            <form action="upload.php" method="POST" enctype="multipart/form-data">
+                <label for="item_name">Item benennen:</label>
+                <input type="text" name="item_name" id="name" required>
+                <br><br>
+                <label for="image">Bild hochladen:</label>
+                <input type="file" name="image" id="image" accept="image/*" required>
+                <br><br>
+                <label for="item_value">Wert (in Euro):</label>
+                <input type="number" name="item_value" value="0" required>
+                <br><br>
+                <label for="item_damage_mult">Schadenmultiplizierer (0 bis 100):</label>
+                <input type="number" name="item_damage_mult" value="0" required>
+                <br><br>
+                <label for="item_health_eat">Gesundheitswert (in HP):</label>
+                <input type="number" name="item_health_eat" value="0" required>
+                <br><br>
+                <label for="item_weight">Gewicht (in Gramm):</label>
+                <input type="number" name="item_weight" value="0" required>
+                <br><br>
+                <var><label for="item_durability">Halbarkeit (in Nutzungen):</label>
+                    <input type="number" name="item_durability" value="0" required>
+                    <br><br>
+                    <label for="image">Fun Factor (1 bis 100):</label>
+                    <input type="item_fun_factor" name="item_fun_factor" value="0" required>
+                    <br><br></var>
+                <button type="submit">Hochladen</button>
+            </form>
+        </div>
+
+        <div class="container">
+            <h1>Karte Hinzufügen</h1>
+            <h2>Zufallsgenerator</h2>
+            <form id="mapGeneratorForm" method="POST">
+                <input type="hidden" name="action" value="generate_map">
+                <div class="grid">
+                    <input type="number" name="map_width" placeholder="Kartenbreite" value="10">
+                    <input type="number" name="map_height" placeholder="Kartenhöhe" value="10">
+                    <input type="number" name="max_resources" placeholder="Max Rohstoffe" value="100">
+                    <button type="submit">
+                        Karte generieren
+                    </button>
+                </div>
+            </form>
+
+            <hr>
+
+            <h2>Karte Löschen</h2>
+            <button type="button" id="deleteMapBtn" class="bg-red-500 text-white p-2 rounded col-span-2">
+                Karte löschen
+            </button>
+        </div>
+
+        <div class="container">
+            <h1>Character Hochladen</h1>
+            <form action="upload.php" method="POST" enctype="multipart/form-data">
+                <label for="character_name">Character benennen:</label>
+                <input type="text" name="character_name" id="name" required>
+                <br><br>
+                <label for="image">Bild hochladen:</label>
+                <input type="file" name="image" id="image" accept="image/*" required>
+                <br><br>
+                <button type="submit">Hochladen</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

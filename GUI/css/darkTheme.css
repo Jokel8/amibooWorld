@@ -1,0 +1,15 @@
+#buttonc, #buttona, #buttonb{
+    background-color: red;
+<<<<<<< HEAD
+=======
+}
+
+body{
+    background: rgb(51,51,51);
+    background: linear-gradient(81deg, rgba(51,51,51,1) 0%, rgb(29, 29, 29) 16%, rgb(36, 36, 36) 67%, rgb(29, 29, 29) 100%); 
+}
+
+.container{
+    background-color: #dfdfdf3a;
+>>>>>>> cece44c99c89c3285010a5b1b44e2d363d490353
+}

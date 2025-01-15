@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Karten Generator</title>
+    <link rel="stylesheet" href="cms.css" />
+</head>
+
+<body>
+    <div class="scrollContainer">
+        <div class="container">
+            <h1>Feldtyp-Verwaltung</h1>
+            <div>
+                <table class="w-full border">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Bild</th>
+                            <th>Begehbar</th>
+                            <th>Durchschwimmbar</th>
+                            <th>Überfliegbar</th>
+                            <th>Wahrscheinlichkeit</th>
+                            <th>Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fieldTypeList">
+                        <!-- Dynamische Feldtypen werden hier eingefügt -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="container">
+            <h1 class="text-2xl mb-4">Item-Verwaltung</h1>
+            <div id="itemList" class="container">Item-Liste Lädt...</div>
+        </div>
+
+        <div class="container">
+            <h1 class="text-2xl mb-4">Charaktere-Verwaltung</h1>
+            <div id="characterList" class="container">Charaker-Liste Lädt...</div>
+        </div>
+
+        <script>
+            async function loadFieldTypes() {
+                const response = await fetch('getFieldTypes.php');
+                const fieldTypes = await response.json();
+                const list = document.getElementById('fieldTypeList');
+                list.innerHTML = '';
+                fieldTypes.forEach(type => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                <td>${type.type_id}</td>
+                <td>${type.type_name}</td>
+                <td><img src="getTile.php?id=${type.type_id}" alt="Bild nicht verfügbar"></td>
+                <td>${type.type_is_walkable}</td>
+                <td>${type.type_is_swimmable}</td>
+                <td>${type.type_is_flyable}</td>
+                <td>${type.probability}</td>
+                <td>
+                    <button onclick="deleteFieldType(${type.type_id})" 
+                            class="bg-red-500 text-white p-1 rounded">Löschen</button>
+                </td>
+            `;
+                    list.appendChild(row);
+                });
+            }
+
+            async function deleteFieldType(typeId) {
+                const response = await fetch('getFieldTypes.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=delete_type&type_id=${typeId}`
+                });
+                const result = await response.json();
+                if (result.success) {
+                    loadFieldTypes();
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                loadFieldTypes();
+
+                document.getElementById('fieldTypeForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    const response = await fetch('getFieldTypes.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        loadFieldTypes();
+                        e.target.reset();
+                    }
+                });
+
+                document.getElementById('mapGeneratorForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    const response = await fetch('generateMap.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        alert('Karte generiert!');
+                    }
+                });
+            });
+
+            async function loadHTML(url, targetElementId) {
+                try {
+                    // Lade die Datei mit fetch
+                    const response = await fetch(url);
+
+                    // Prüfe, ob die Anfrage erfolgreich war
+                    if (!response.ok) {
+                        throw new Error(`Fehler beim Laden der Datei: ${response.statusText}`);
+                    }
+
+                    // Lese den Textinhalt der HTML-Datei
+                    const htmlContent = await response.text();
+
+                    // Wähle das Ziel-Element
+                    const targetElement = document.getElementById(targetElementId);
+
+                    // Temporäre DOM-Elemente zum Verarbeiten der Inhalte erstellen
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = htmlContent;
+
+                    // Füge alle Inhalte außer Skripte ein
+                    targetElement.innerHTML = tempDiv.innerHTML;
+
+                    // Extrahiere und führe Skripte separat aus
+                    const scripts = tempDiv.querySelectorAll('script');
+                    scripts.forEach((script) => {
+                        const newScript = document.createElement('script');
+                        if (script.src) {
+                            // Falls das Skript eine src-URL hat
+                            newScript.src = script.src;
+                            newScript.async = false; // Synchron ausführen
+                        } else {
+                            // Falls das Skript Inline-Code enthält
+                            newScript.textContent = script.textContent;
+                        }
+                        document.body.appendChild(newScript); // Skript in das Dokument einfügen und ausführen
+                    });
+                } catch (error) {
+                    console.error(error);
+                    document.getElementById(targetElementId).innerHTML =
+                        `<p style="color:red;">Fehler beim Laden des Inhalts.</p>`;
+                }
+            }
+
+            loadHTML('../GUI/characters.html', 'characterList');
+
+            async function deleteMap() {
+                if (!confirm('Möchten Sie die gesamte Karte wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch('deleteMap.php', {
+                        method: 'POST'
+                    });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert('Karte erfolgreich gelöscht');
+                        // Optional: Seite neu laden oder Karte im Frontend aktualisieren
+                        location.reload();
+                    } else {
+                        alert('Fehler beim Löschen: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Fehler:', error);
+                    alert('Ein unerwarteter Fehler ist aufgetreten');
+                }
+            }
+
+            // Event-Listener hinzufügen
+            document.getElementById('deleteMapBtn').addEventListener('click', deleteMap);
+        </script>
+    </div>
+</body>
+
+</html>

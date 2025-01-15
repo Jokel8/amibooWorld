@@ -33,8 +33,7 @@ try {
         default:
             $stmt = $pdo->query("
                 SELECT type_id, 
-                       LEFT(type_name, 256) as type_name, 
-                       LEFT(type_img, 256) as type_img,
+                       type_name,
                        type_is_walkable,
                        type_is_swimmable,
                        type_is_flyable,
