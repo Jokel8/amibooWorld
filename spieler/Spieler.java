@@ -14,7 +14,7 @@ public class Spieler {
         this.socket = socket;
         try {
             in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-            start();
+            this.start();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -36,7 +36,7 @@ public class Spieler {
                 System.out.println(anfrage);
                 anfrageVerarbeiten(anfrage);
                 while (!line.isEmpty()) {
-                    this.in.readLine();
+                    System.out.println(this.in.readLine());
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -56,7 +56,7 @@ public class Spieler {
     }
     private void anfrageVerarbeiten(String anfrage) throws IOException {
         switch (anfrage) {
-            case "/test" -> {
+            case "/map.json" -> {
                 System.out.println("Test erfolgreich!");
                 PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true);
                 String antwort = "HTTP/1.1 200 OK\n" +

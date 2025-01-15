@@ -8,8 +8,8 @@ import java.sql.SQLException;
 public class Test {
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        //HttpServer server = new HttpServer();
-        //server.start();
+        HttpServer server = new HttpServer();
+        server.start();
 
 //        JSONObject properties = new JSONObject();
 //        properties.put("value", 3);
@@ -28,8 +28,8 @@ public class Test {
 //        json.put("map", map);
 //        System.out.println(json);
 
-        Datenbank datenbank = new Datenbank();
-        datenbank.dbConnect();
-        System.out.println(datenbank.dbGetTileAndMakeItIntoJson(datenbank.welcheTileSollIchHolen(1,1,1)));
+//        Datenbank datenbank = new Datenbank();
+//        datenbank.dbConnect();
+//        System.out.println(datenbank.dbGetTileAndMakeItIntoJson(datenbank.welcheTileSollIchHolen(1,1,1)));
     }
 }
