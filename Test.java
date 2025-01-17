@@ -1,8 +1,5 @@
-import org.json.JSONArray;
-import org.json.JSONObject;
-import server.Datenbank;
+
 import server.HttpServer;
-import spieler.Spieler;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -10,8 +7,8 @@ import java.util.Arrays;
 public class Test {
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-//        HttpServer server = new HttpServer();
-//        server.start();
+        HttpServer server = new HttpServer();
+        server.start();
 
 //        System.out.println(Arrays.asList(Spieler.getParameter("http://example.com/page?parameter=value&also=another")));
 
