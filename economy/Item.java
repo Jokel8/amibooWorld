@@ -94,4 +94,6 @@ public abstract class Item {
     public void setCategory(Category category) {
         this.category = category;
     }
+
+    public abstract Weapon createItem(String name, boolean stackable, int value, Rarity rarity, String description, String manufacturer, Category category, int damage);
 }
