@@ -14,8 +14,8 @@ public class PlayerBasedEco {
      */
     public static void main(String[] args) {
         // Create player and merchant inventories
-        Inventory playerInventory = new Inventory(100);  // Player starts with 100 gold
-        Inventory merchantInventory = new Inventory(500); // Merchant starts with 500 gold
+        Inventory player1Inventory = new Inventory(100);  // Player starts with 100 gold
+        Inventory player2Inventory = new Inventory(500); // Merchant starts with 500 gold
 
         // Create a factory instance for Weapon to generate new weapons
         Weapon weaponFactory = new Weapon();
@@ -55,19 +55,19 @@ public class PlayerBasedEco {
         );
 
         // Add created weapons to merchant's inventory
-        merchantInventory.addItem(Holzschwert);
-        merchantInventory.addItem(Kriegsbeil);
-        merchantInventory.addItem(YamadaKatana);
+        player2Inventory.addItem(Holzschwert);
+        player2Inventory.addItem(Kriegsbeil);
+        player2Inventory.addItem(YamadaKatana);
 
         // Display initial inventories before trade
         System.out.println("Before Trade:");
         System.out.println("Player Inventory:");
-        playerInventory.listItems();
+        player1Inventory.listItems();
         System.out.println("Merchant Inventory:");
-        merchantInventory.listItems();
+        player2Inventory.listItems();
 
         // Player attempts to buy the Yamada Katana from the merchant
-        boolean tradeSuccess = playerInventory.tradeGoldForItem(YamadaKatana, 500, merchantInventory);
+        boolean tradeSuccess = player1Inventory.tradeGoldForItem(YamadaKatana, 500, player2Inventory);
         if (tradeSuccess) {
             System.out.println("\nTrade Successful! Player bought Yamada Taketsune's Katana.");
         } else {
@@ -77,8 +77,8 @@ public class PlayerBasedEco {
         // Display inventories after the trade
         System.out.println("\nAfter Trade:");
         System.out.println("Player Inventory:");
-        playerInventory.listItems();
+        player1Inventory.listItems();
         System.out.println("Merchant Inventory:");
-        merchantInventory.listItems();
+        player2Inventory.listItems();
     }
 }
