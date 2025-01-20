@@ -1,4 +1,4 @@
-<div id="characterArray"></div>
+<div id="characterArray" class="grid"></div>
 <script>
     let id = 1;
     const container = document.getElementById("characterArray");
@@ -33,9 +33,16 @@
     }
 
     async function loadCharacters() {
-        while (true) {
-            const success = await fetchCharacter(id);
-            if (!success) break;
+        var count = await fetch('../CMS/getAsset.php');
+        count = await count.json();
+        count = count.total;
+
+        var success = 0;
+
+        console.log(count);
+
+        while (success < count) {
+            success += await fetchCharacter(id);
             id++;
         }
     }
