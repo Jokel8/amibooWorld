@@ -26,7 +26,7 @@ public class HttpServer extends Datenbank {
         }
     }
     public HttpServer() throws SQLException, ClassNotFoundException {
-        this.port  = 8080;
+        this.port  = 80;
         this.datenbank = new Datenbank();
         this.datenbank.dbConnect();
     }
@@ -58,38 +58,14 @@ public class HttpServer extends Datenbank {
         System.out.println(anfrage);
         switch (anfrage) {
             case "map" -> {
-                System.out.println("Test erfolgreich!");
                 PrintWriter out = new PrintWriter(client.getOutputStream(), true);
-                int[][] tiles = this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 2);
+                int[][] tiles = this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 8);
                 String antwort = this.datenbank.dbGetTileAndMakeItIntoJson(tiles);
                 StringBuilder b = new StringBuilder();
                 b.append("HTTP/1.1 200 OK\n" +
-                        "Content-Type: text/html; charset=utf-8\n" +
-                        "Content-Length: 55743\n" +
-                        "Connection: keep-alive\n" +
-                        "Cache-Control: s-maxage=300, public, max-age=0\n" +
-                        "Content-Language: en-US\n" +
-                        "Date: Thu, 06 Dec 2018 17:37:18 GMT\n" +
-                        "ETag: \"2e77ad1dc6ab0b53a2996dfd4653c1c3\"\n" +
-                        "Server: meinheld/0.6.1\n" +
-                        "Strict-Transport-Security: max-age=63072000\n" +
-                        "X-Content-Type-Options: nosniff\n" +
-                        "X-Frame-Options: DENY\n" +
-                        "X-XSS-Protection: 1; mode=block\n" +
-                        "Vary: Accept-Encoding,Cookie\n" +
-                        "Age: 7");
-                b.append("<!DOCTYPE html>\n" +
-                        "<html>\n" +
-                        "<body>\n" +
-                        "\n" +
-                        "<h4>");
+                        "Content-Type: application/json\n" +
+                        "Content-Length: " + antwort.length() + "\n\n");
                 b.append(antwort);
-                b.append("</h4>\n" +
-                        "\n" +
-                        "<p>My first paragraph.</p>\n" +
-                        "\n" +
-                        "</body>\n" +
-                        "</html>");
                 out.println(b.toString());
                 this.close(client);
             }
