@@ -1,15 +1,12 @@
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Scanner;
 
 public class ImagetoMap {
 
-    public static String[][] hexArray = new String[999][999];
+    public static String[][] hexArray = new String[1000][1000];
     public static void getImage(String pfad) throws IOException {
         File inputFile = new File(pfad);
         BufferedImage image = ImageIO.read(inputFile);
@@ -36,44 +33,47 @@ public class ImagetoMap {
 
     }
 
-    public static void loadImage() throws ClassNotFoundException, SQLException {
-        String driver = "com.mysql.cj.jdbc.Driver";
-        Class.forName(driver);
-        String url = "jdbc:mysql://v073086.kasserver.com/d0421573/map";
-        Connection Conn = DriverManager.getConnection(url,"d0421573","pZuw7TVdwLCqWUjMUD8o");
-        String feldtyp = "";
+    public static void loadImage() throws ClassNotFoundException, SQLException, IOException {
+        File file = new File("C:/Users/fynnh/OneDrive/Dokumente/SQL_Abfragen/Abfrage1.sql");
+        FileWriter fileWriter = new FileWriter(file);
+        String insertSQL = "";
+        int feldtyp = 0;
         for (int x = 0; x < 1000; x++) {
             for (int y = 0; y < 1000; y++) {
                 String hexwert = hexArray[x][y];
-                if(hexwert == "PLATZHALTER"){ //TODO Wichtig weil sonst nix gehen
-                    feldtyp = "Wüste"; //TODO Wichtig weil wieder sonst nix gehen
+                //System.out.println(hexwert);
+                if(hexwert.equals("#EADB74")){
+                    feldtyp = 1;
                 }
-                else if(hexwert == "PLATZHALTER"){
-                    feldtyp = "Wasser"; //TODO Wichtig weil wieder sonst nix gehen
+                else if(hexwert.equals("#0097DD")){
+                    feldtyp = 2;
                 }
-                else if(hexwert == "PLATZHALTER"){
-                    feldtyp = "Gras"; //TODO Wichtig weil wieder sonst nix gehen
+                else if(hexwert.equals("#2F9F47")){
+                    feldtyp = 3;
                 }
-                else if(hexwert == "PLATZHALTER"){
-                    feldtyp = "Berg"; //TODO Wichtig weil wieder sonst nix gehen
+                else if(hexwert.equals("#523A2A")){
+                    feldtyp = 14;
                 }
-                else if(hexwert == "PLATZHALTER"){
-                    feldtyp = "Vulkan"; //TODO Wichtig weil wieder sonst nix gehen
+                else if(hexwert == "070505"){
+                    feldtyp = 6;
                 }
-                else if(hexwert == "PLATZHALTER"){
-                    feldtyp = "Weg"; //TODO Wichtig weil wieder sonst nix gehen
+                else if(hexwert == "004D23"){
+                    feldtyp = 10;
                 }
-                else if(hexwert == "PLATZHALTER"){
-                    feldtyp = "Schnee"; //TODO Wichtig weil wieder sonst nix gehen
+                else if(hexwert == "94CB50"){
+                    feldtyp = 8;
                 }
-                else if(hexwert == "PLATZHALTER"){
-                    feldtyp = "Blumenfeld"; //TODO Wichtig weil wieder sonst nix gehen
+                else if(hexwert == "423C56"){
+                    feldtyp = 16;
                 }
-                else if(hexwert == "PLATZHALTER"){
-                    feldtyp = "Eis"; //TODO Wichtig weil wieder sonst nix gehen
+                else if(hexwert == "537C44"){
+                    feldtyp = 9;
                 }
-                String insertSQL = "INSERT INTO map(field_x, field_y, field_type) VALUES(" + x + ", " + y +", " + feldtyp +");";
-                PreparedStatement statement = Conn.prepareStatement(insertSQL);
+
+                insertSQL = "\nINSERT INTO map(field_x, field_y, field_type) VALUES(" + x + ", " + y +", " + feldtyp +");";
+                fileWriter.write(insertSQL);
+                System.out.println(x);
+                //System.out.println(insertSQL);
             }
         }
     }
@@ -85,5 +85,6 @@ public class ImagetoMap {
 
         getImage(eingabe);
         loadImage();
+        System.out.println("Finished");
     }
 }
