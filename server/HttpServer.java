@@ -59,11 +59,12 @@ public class HttpServer extends Datenbank {
         switch (anfrage) {
             case "map" -> {
                 PrintWriter out = new PrintWriter(client.getOutputStream(), true);
-                int[][] tiles = this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 8);
+                int[][] tiles = this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 2);
                 String antwort = this.datenbank.dbGetTileAndMakeItIntoJson(tiles);
                 StringBuilder b = new StringBuilder();
                 b.append("HTTP/1.1 200 OK\n" +
                         "Content-Type: application/json\n" +
+                        "Access-Control-Allow-Origin: *\n" +
                         "Content-Length: " + antwort.length() + "\n\n");
                 b.append(antwort);
                 out.println(b.toString());

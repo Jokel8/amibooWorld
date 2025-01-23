@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="amibooWorld:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/amibooWorld_jar</output-path>
+    <root id="archive" name="amibooWorld.jar">
+      <element id="module-output" name="amibooWorld" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/json/json/20240303/json-20240303.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/mysql-connector-j-9.1.0/mysql-connector-j-9.1.0/mysql-connector-j-9.1.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
