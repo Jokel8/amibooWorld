@@ -2,6 +2,7 @@ package economy;
 
 import java.util.ArrayList;
 import java.util.List;
+import server.HttpServer.*;
 
 /**
  * Represents an inventory that can store items and manage gold for a player or merchant.
@@ -11,15 +12,15 @@ public class Inventory {
 
     private List<Item> items; // Storage for items in the inventory
     private int gold;         // Storage for gold in the inventory
+    public String username;
 
     /**
      * Constructor to initialize the inventory with a starting amount of gold.
      *
-     * @param startingGold The initial amount of gold the inventory starts with.
      */
-    public Inventory(int startingGold) {
+    public Inventory(String username) {
         this.items = new ArrayList<>();
-        this.gold = startingGold;
+        this.username = username;
     }
 
     /**
@@ -118,5 +119,9 @@ public class Inventory {
             System.out.println("- " + item.getName() + " (Value: " + item.getValue() + ")");
         }
         System.out.println("Total gold: " + gold);
+    }
+
+    public String getUsername() {
+        return username;
     }
 }

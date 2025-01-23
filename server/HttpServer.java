@@ -1,5 +1,7 @@
 package server;
 
+import economy.Inventory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,11 +27,13 @@ public class HttpServer extends Datenbank {
             throw new RuntimeException(e);
         }
     }
+
     public HttpServer() throws SQLException, ClassNotFoundException {
-        this.port  = 80;
+        this.port = 80;
         this.datenbank = new Datenbank();
         this.datenbank.dbConnect();
     }
+
     private void verbindungenAkzeptieren() {
 
         new Thread(() -> {
@@ -70,8 +74,16 @@ public class HttpServer extends Datenbank {
                 out.println(b.toString());
                 this.close(client);
             }
+            case "inventory" -> {
+                PrintWriter out = new PrintWriter(client.getOutputStream(), true);
+                String inventar = new Inventory(parameter.get(economy.Inventory.getUsername)).listItems();
+                out.println(inventar);
+
+
+            }
         }
     }
+
 
     private void close(Socket socket) {
         try {
@@ -89,11 +101,12 @@ public class HttpServer extends Datenbank {
 
         }
         i++;
-        for(; chars[i] != ' ' && chars[i] != '?'; i++) {
+        for (; chars[i] != ' ' && chars[i] != '?'; i++) {
             angerfage += chars[i];
         }
         return angerfage;
     }
+
     private HashMap<String, String> getParameter(String anfrage) {
         char[] chars = anfrage.toCharArray();
         StringBuilder name = new StringBuilder();

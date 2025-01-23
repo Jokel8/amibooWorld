@@ -14,8 +14,8 @@ public class PlayerBasedEco {
      */
     public static void main(String[] args) {
         // Create player and merchant inventories
-        Inventory player1Inventory = new Inventory(100);  // Player starts with 100 gold
-        Inventory player2Inventory = new Inventory(500); // Merchant starts with 500 gold
+        Inventory player1Inventory = new Inventory("Player1");  // Player starts with 100 gold
+        Inventory player2Inventory = new Inventory("Player2"); // Merchant starts with 500 gold
 
         // Create a factory instance for Weapon to generate new weapons
         Weapon weaponFactory = new Weapon();
