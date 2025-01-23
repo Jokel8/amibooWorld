@@ -48,6 +48,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo "Fehler beim Hochladen der Datei: " . $images['name'][$i] . "\n";
                 }
             }
+        } elseif (isset($_POST['items'])) {
+            $stmt = $conn->prepare("INSERT INTO items (item_name, item_img, item_img_type) VALUES (?, ?, ?)");
+
+            for ($i = 0; $i < count($images['name']); $i++) {
+                if ($images['error'][$i] === UPLOAD_ERR_OK) {
+                    $tmp_name = $images['tmp_name'][$i];
+                    $image_blob = file_get_contents($tmp_name);
+                    $image_type = $images['type'][$i];
+                    $character_name = pathinfo($images['name'][$i], PATHINFO_FILENAME);
+
+                    $stmt->bind_param("ssi", $character_name, $image_blob, $image_type);
+
+                    if (!$stmt->execute()) {
+                        echo "Fehler beim Einfügen: " . $stmt->error . "\n";
+                    } else {
+                        echo "Bild \"$character_name\" erfolgreich hochgeladen.\n";
+                    }
+                } else {
+                    echo "Fehler beim Hochladen der Datei: " . $images['name'][$i] . "\n";
+                }
+            }
         } else {
             echo "Es konnte nicht erkannt werden welche Art Asset Sie hochladen wollen :/";
         }
