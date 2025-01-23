@@ -5,10 +5,10 @@
 
     async function fetchCharacter(id) {
         try {
-            const titleResponse = await fetch(`../CMS/getCharacter.php?id=${id}&action=title`);
-            if (!titleResponse.ok) return false;
+            const response = await fetch(`../CMS/getCharacter.php?id=${id}&action=title`);
+            if (!response.ok || response.status === 204) return false;
 
-            const titleData = await titleResponse.json();
+            const titleData = await response.json();
             const characterName = titleData.title;
 
             const characterDiv = document.createElement('div');
