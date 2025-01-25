@@ -109,19 +109,20 @@ public class Inventory {
         }
         return false; // Trade failed (not enough gold)
     }
-
-    /**
-     * Displays all items in the inventory along with the total amount of gold.
-     */
-    public void listItems() {
-        System.out.println("Items in inventory:");
-        for (Item item : items) {
-            System.out.println("- " + item.getName() + " (Value: " + item.getValue() + ")");
-        }
-        System.out.println("Total gold: " + gold);
-    }
-
     public String getUsername() {
         return username;
     }
+    /**
+     * Displays all items in the inventory along with the total amount of gold.
+     */
+    public String listItems() {
+        StringBuilder list = new StringBuilder("Inventory of " + this.username + ".\n");
+        for (Item item : items) {
+            list.append("- ").append(item.getName()).append(" (Value: ").append(item.getValue()).append(")\n");
+        }
+       list.append("Total gold: ").append(gold);
+        return list.toString();
+    }
+
+
 }

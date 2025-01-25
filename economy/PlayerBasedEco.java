@@ -53,32 +53,36 @@ public class PlayerBasedEco {
                 Category.WEAPON,
                 37 // Damage
         );
+//
+//        // Add created weapons to merchant's inventory
+//        player2Inventory.addItem(Holzschwert);
+//        player2Inventory.addItem(Kriegsbeil);
+//        player2Inventory.addItem(YamadaKatana);
+//
+//        // Display initial inventories before trade
+//        System.out.println("Before Trade:");
+//        System.out.println("Player Inventory:");
+//        player1Inventory.listItems();
+//        System.out.println("Merchant Inventory:");
+//        player2Inventory.listItems();
+//
+//        // Player attempts to buy the Yamada Katana from the merchant
+//        boolean tradeSuccess = player1Inventory.tradeGoldForItem(YamadaKatana, 500, player2Inventory);
+//        if (tradeSuccess) {
+//            System.out.println("\nTrade Successful! Player bought Yamada Taketsune's Katana.");
+//        } else {
+//            System.out.println("\nTrade Failed! Not enough gold.");
+//        }
+//
+//        // Display inventories after the trade
+//        System.out.println("\nAfter Trade:");
+//        System.out.println("Player Inventory:");
+//        player1Inventory.listItems();
+//        System.out.println("Merchant Inventory:");
+//        player2Inventory.listItems();
 
-        // Add created weapons to merchant's inventory
-        player2Inventory.addItem(Holzschwert);
-        player2Inventory.addItem(Kriegsbeil);
-        player2Inventory.addItem(YamadaKatana);
 
-        // Display initial inventories before trade
-        System.out.println("Before Trade:");
-        System.out.println("Player Inventory:");
-        player1Inventory.listItems();
-        System.out.println("Merchant Inventory:");
-        player2Inventory.listItems();
+        System.out.println(player1Inventory.listItems());
 
-        // Player attempts to buy the Yamada Katana from the merchant
-        boolean tradeSuccess = player1Inventory.tradeGoldForItem(YamadaKatana, 500, player2Inventory);
-        if (tradeSuccess) {
-            System.out.println("\nTrade Successful! Player bought Yamada Taketsune's Katana.");
-        } else {
-            System.out.println("\nTrade Failed! Not enough gold.");
-        }
-
-        // Display inventories after the trade
-        System.out.println("\nAfter Trade:");
-        System.out.println("Player Inventory:");
-        player1Inventory.listItems();
-        System.out.println("Merchant Inventory:");
-        player2Inventory.listItems();
-    }
+   }
 }

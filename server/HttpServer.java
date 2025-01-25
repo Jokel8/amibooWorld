@@ -76,7 +76,8 @@ public class HttpServer extends Datenbank {
             }
             case "inventory" -> {
                 PrintWriter out = new PrintWriter(client.getOutputStream(), true);
-                String inventar = new Inventory(parameter.get(economy.Inventory.getUsername)).listItems();
+                Inventory inventar = new Inventory(parameter.get("Username"));
+                String inv = inventar.listItems();
                 out.println(inventar);
 
 
