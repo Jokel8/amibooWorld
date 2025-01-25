@@ -44,7 +44,6 @@ public class Weapon extends Item {
      * @param damage      The damage value of the weapon.
      * @return A newly created Weapon instance.
      */
-    @Override
     public Weapon createItem(String name, boolean stackable, int value, Rarity rarity, String description, String manufacturer, Category category, int damage) {
         Weapon weapon = new Weapon();
         weapon.setName(name);

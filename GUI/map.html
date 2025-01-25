@@ -61,10 +61,13 @@
 
     <script>
     async function renderMap() {
-        const response = await fetch('../CMS/getMap.php');
+        const response = await fetch('http://pc-513-09/map?x=10&y=10');
         const mapData = await response.json();
         const mapElement = document.getElementById('map');
-        
+
+        console.log(mapData)
+       
+
         // Setze Grid-Eigenschaften
         mapElement.style.gridTemplateColumns = `repeat(${mapData.width}, 50px)`;
         mapElement.style.gridTemplateRows = `repeat(${mapData.height}, 50px)`;

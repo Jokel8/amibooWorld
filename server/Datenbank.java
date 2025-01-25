@@ -5,6 +5,8 @@ import org.json.JSONObject;
 
 import java.sql.*;
 
+import java.sql.*;
+
 public class Datenbank {
     Connection con;
     PreparedStatement pst;
@@ -72,7 +74,7 @@ public class Datenbank {
             properties.put("value", 3);
             properties.put("name", rs.getString("type_name"));
             properties.put("is_walkable", rs.getInt("type_is_walkable"));
-            properties.put("is_simmable", rs.getInt("type_is_swimmable"));
+            properties.put("is_swimmable", rs.getInt("type_is_swimmable"));
             properties.put("is_flyable", rs.getInt("type_is_flyable"));
 
             JSONObject tile = new JSONObject();
