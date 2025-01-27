@@ -34,27 +34,29 @@ public class HttpServer extends Datenbank {
     }
 
     private void verbindungenAkzeptieren() {
+        try {
+            Socket client = this.socket.accept();
 
-        new Thread(() -> {
-            try {
-                Socket client = this.socket.accept();
-
-                if (client.isConnected()) {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                    String line = "";
-
-                    line = in.readLine();
-                    System.out.println(line);
-                    String anfrage = this.getAnfrage(line);
-                    System.out.println(anfrage);
-                    HashMap<String, String> parameter = this.getParameter(line);
-                    anfrageVerarbeiten(anfrage, parameter, client);
-                    in.close();
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            if (client.isConnected()) {
+                new Thread(() -> {
+                    try {
+                        BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                        String line = "";
+                        line = in.readLine();
+                        System.out.println(line);
+                        String anfrage = this.getAnfrage(line);
+                        System.out.println(anfrage);
+                        HashMap<String, String> parameter = this.getParameter(line);
+                        anfrageVerarbeiten(anfrage, parameter, client);
+                        in.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).start();
             }
-        }).start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void anfrageVerarbeiten(String anfrage, HashMap<String, String> parameter, Socket client) {
