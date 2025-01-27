@@ -8,8 +8,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class HttpServer extends Datenbank {
@@ -17,7 +15,7 @@ public class HttpServer extends Datenbank {
     private int port;
     private Datenbank datenbank;
 
-    public void start() throws IOException {
+    public void start() {
         try {
             this.socket = new ServerSocket(port);
 
@@ -29,10 +27,10 @@ public class HttpServer extends Datenbank {
         }
     }
 
-    public HttpServer() throws SQLException, ClassNotFoundException {
+    public HttpServer() {
         this.port = 8080;
         this.datenbank = new Datenbank();
-        this.datenbank.dbConnect();
+        this.datenbank.verbinden();
     }
 
     private void verbindungenAkzeptieren() {
@@ -53,41 +51,46 @@ public class HttpServer extends Datenbank {
                     anfrageVerarbeiten(anfrage, parameter, client);
                     in.close();
                 }
-            } catch (SQLException | IOException e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }).start();
     }
 
-    private void anfrageVerarbeiten(String anfrage, HashMap<String, String> parameter, Socket client) throws IOException, SQLException {
+    private void anfrageVerarbeiten(String anfrage, HashMap<String, String> parameter, Socket client) {
         System.out.println(anfrage);
-        PrintWriter out = new PrintWriter(client.getOutputStream(), true);
-        StringBuilder antwort = new StringBuilder();
-        switch (anfrage) {
-            case "map" -> {
-                int[][] tiles = this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 2);
-                String tilesString = this.datenbank.dbGetTileAndMakeItIntoJson(tiles);
-                antwort.append("HTTP/1.1 200 OK\n" +
-                        "Content-Type: application/json\n" +
-                        "Access-Control-Allow-Origin: *\n" +
-                        "Content-Length: " + antwort.length() + "\n\n");
-                antwort.append(antwort);
+        try {
+            PrintWriter out = new PrintWriter(client.getOutputStream(), true);
+            StringBuilder antwort = new StringBuilder();
+            switch (anfrage) {
+                case "map" -> {
+                    int[][] tiles = this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 2);
+                    String tilesString = this.datenbank.dbGetTileAndMakeItIntoJson(tiles);
+                    antwort.append("HTTP/1.1 200 OK\n" +
+                            "Content-Type: application/json\n" +
+                            "Access-Control-Allow-Origin: *\n" +
+                            "Content-Length: " + antwort.length() + "\n\n");
+                    antwort.append(antwort);
+                }
+                case "inventory" -> {
+                    Inventory inventar = new Inventory(parameter.get("username"));
+                    String inv = inventar.listItems();
+                    antwort.append("HTTP/1.1 200 OK\n" +
+                            "Content-Type: application/json\n" +
+                            "Access-Control-Allow-Origin: *\n" +
+                            "Content-Length: " + inv.length() + "\n\n");
+                    antwort.append(inv);
+                }
+                default -> {
+                    out.println("HTTP/1.1 404 Not Found\n");
+                }
             }
-            case "inventory" -> {
-                Inventory inventar = new Inventory(parameter.get("username"));
-                String inv = inventar.listItems();
-                antwort.append("HTTP/1.1 200 OK\n" +
-                        "Content-Type: application/json\n" +
-                        "Access-Control-Allow-Origin: *\n" +
-                        "Content-Length: " + inv.length() + "\n\n");
-                antwort.append(inv);
-            }
-            default -> {
-                out.println("HTTP/1.1 404 Not Found\n");
-            }
+            out.println(anfrage);
+            this.close(client);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        out.println(anfrage);
-        this.close(client);
+
     }
 
 

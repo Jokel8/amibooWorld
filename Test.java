@@ -7,13 +7,9 @@ import java.util.Arrays;
 
 public class Test {
 
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
+    public static void main(String[] args) {
         HttpServer server = new HttpServer();
-        try {
-            server.start();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        server.start();
 
 //        System.out.println(Arrays.asList(Spieler.getParameter("http://example.com/page?parameter=value&also=another")));
 

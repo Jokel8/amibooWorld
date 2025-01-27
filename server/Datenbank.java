@@ -5,12 +5,8 @@ import org.json.JSONObject;
 
 import java.sql.*;
 
-import java.sql.*;
-
 public class Datenbank {
     Connection con;
-    PreparedStatement pst;
-    ResultSet rs;
 
     private String driver;
 
@@ -35,13 +31,25 @@ public class Datenbank {
      * Prozedur, um das Programm mit der Datenbank zu verknüpfen.
      *
      */
-    public void dbConnect () throws ClassNotFoundException, SQLException {
+    public boolean verbinden() {
+        boolean verbunden = true;
+        try {
             Class.forName(driver);
+        } catch (ClassNotFoundException e) {
+            verbunden = false;
+            System.out.println("Driver nicht gefunden");
+        }
 
+        try {
             this.con = DriverManager.getConnection("jdbc:mysql://v073086.kasserver.com/d0421573?allowMultiQueries=true","d0421573", "pZuw7TVdwLCqWUjMUD8o");
+        } catch (SQLException e) {
+            verbunden = false;
+            System.out.println("Verbundung zur Datenbank konnte nicht hergestellt werden");
+        }
+        return verbunden;
     }
 
-    public String dbGetTileAndMakeItIntoJson(int[][] tiles) throws SQLException {
+    public String dbGetTileAndMakeItIntoJson(int[][] tiles) {
         // SQL-Abfrage, die den field_type basierend auf den Koordinaten sucht
 
 
@@ -62,33 +70,49 @@ public class Datenbank {
         query.append(";");
 
         System.out.println(query);
-        PreparedStatement pstmt = this.con.prepareStatement(query.toString());
+        try {
+            PreparedStatement pstmt = this.con.prepareStatement(query.toString());
 
-        // Führe die Abfrage aus
-        ResultSet rs = pstmt.executeQuery();
+            // Führe die Abfrage aus
+            ResultSet rs = pstmt.executeQuery();
 
-        JSONArray map = new JSONArray();
+            JSONArray map = new JSONArray();
 
-        for (int i = 0; rs.next(); i++) {
-            JSONObject properties = new JSONObject();
-            properties.put("value", 3);
-            properties.put("name", rs.getString("type_name"));
-            properties.put("is_walkable", rs.getInt("type_is_walkable"));
-            properties.put("is_swimmable", rs.getInt("type_is_swimmable"));
-            properties.put("is_flyable", rs.getInt("type_is_flyable"));
+            for (int i = 0; rs.next(); i++) {
+                JSONObject properties = new JSONObject();
+                properties.put("value", 3);
+                properties.put("name", rs.getString("type_name"));
+                properties.put("is_walkable", rs.getInt("type_is_walkable"));
+                properties.put("is_swimmable", rs.getInt("type_is_swimmable"));
+                properties.put("is_flyable", rs.getInt("type_is_flyable"));
 
-            JSONObject tile = new JSONObject();
-            tile.put("x", tiles[i][0]);
-            tile.put("y", tiles[i][1]);
-            tile.put("properties", properties);
-            map.put(tile);
+                JSONObject tile = new JSONObject();
+                tile.put("x", tiles[i][0]);
+                tile.put("y", tiles[i][1]);
+                tile.put("properties", properties);
+                map.put(tile);
+            }
+
+            JSONObject json = new JSONObject();
+            json.put("width", tiles.length);
+            json.put("height", tiles.length);
+            json.put("map", map);
+
+            return json.toString(4);
+        } catch (SQLException e) {
+            try {
+                if (this.con.isClosed()) {
+                    System.out.println("Datenbankverbindung getrennt");
+                    if (this.verbinden()) {
+                        this.dbGetTileAndMakeItIntoJson(tiles);
+                    } else {
+                        throw new SQLException(e);
+                    }
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
         }
-
-        JSONObject json = new JSONObject();
-        json.put("width", tiles.length);
-        json.put("height", tiles.length);
-        json.put("map", map);
-
-        return json.toString(4);
+        return "{\n\t\"fehler\": true\n}";
     }
 }
