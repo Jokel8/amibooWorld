@@ -1,14 +1,14 @@
-<div id="characterArray"></div>
+<div id="characterArray" class="grid"></div>
 <script>
     let id = 1;
     const container = document.getElementById("characterArray");
 
     async function fetchCharacter(id) {
         try {
-            const titleResponse = await fetch(`../CMS/getCharacter.php?id=${id}&action=title`);
-            if (!titleResponse.ok) return false;
+            const response = await fetch(`../CMS/getCharacter.php?id=${id}&action=title`);
+            if (!response.ok || response.status === 204) return false;
 
-            const titleData = await titleResponse.json();
+            const titleData = await response.json();
             const characterName = titleData.title;
 
             const characterDiv = document.createElement('div');
@@ -33,9 +33,16 @@
     }
 
     async function loadCharacters() {
-        while (true) {
-            const success = await fetchCharacter(id);
-            if (!success) break;
+        var count = await fetch('../CMS/getAsset.php');
+        count = await count.json();
+        count = count.total;
+
+        var success = 0;
+
+        console.log(count);
+
+        while (success < count) {
+            success += await fetchCharacter(id);
             id++;
         }
     }

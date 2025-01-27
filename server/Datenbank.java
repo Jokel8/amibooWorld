@@ -1,5 +1,10 @@
 package server;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.sql.*;
+
 import java.sql.*;
 
 public class Datenbank {
@@ -8,12 +13,10 @@ public class Datenbank {
     ResultSet rs;
 
     private String driver;
-    private String url;
 
     //private Json
     public Datenbank() {
         this.driver = "com.mysql.cj.jdbc.Driver";
-        this.url = "jdbc:mysql://localhost:3306/d0421573";
     }
 
     public int[][] welcheTileSollIchHolen(int x, int y, int radius) {
@@ -35,31 +38,55 @@ public class Datenbank {
     public void dbConnect () throws ClassNotFoundException, SQLException {
             Class.forName(driver);
 
-            this.con = DriverManager.getConnection("jdbc:mysql://v073086.kasserver.com/d0421573","d0421573", "pZuw7TVdwLCqWUjMUD8o");
+            this.con = DriverManager.getConnection("jdbc:mysql://v073086.kasserver.com/d0421573?allowMultiQueries=true","d0421573", "pZuw7TVdwLCqWUjMUD8o");
     }
 
     public String dbGetTileAndMakeItIntoJson(int[][] tiles) throws SQLException {
-            // SQL-Abfrage, die den field_type basierend auf den Koordinaten sucht
+        // SQL-Abfrage, die den field_type basierend auf den Koordinaten sucht
 
 
-            StringBuilder query = new StringBuilder();
-            for (int i = 0; i < tiles.length; i++) {
+        StringBuilder query = new StringBuilder();
+        query.append("SELECT type_name, type_is_walkable, type_is_swimmable, type_is_flyable FROM field_type JOIN map ON (map.field_type = field_type.type_id) WHERE ");
+        for (int i = 0; i < tiles.length; i++) {
 
-                // Schleife durch das zweidimensionale Array der Koordinaten
-                int x = tiles[i][0];
-                int y = tiles[i][1];
+            // Schleife durch das zweidimensionale Array der Koordinaten
+            int x = tiles[i][0];
+            int y = tiles[i][1];
 
-                query.append("select field_type from map where field_x = " + x + "and field_y = " + y+";\n");
+            //optional SELECT field_type FROM map WHERE field_x >= 0 AND field_x <= 2 AND field_y >= 0 AND field_y <=2;
+            query.append("field_x = " + x + " AND field_y = " + y);
+            if (i < tiles.length - 1) {
+                query.append(" OR ");
             }
+        }
+        query.append(";");
 
-            PreparedStatement pstmt = this.con.prepareStatement(query.toString());
+        System.out.println(query);
+        PreparedStatement pstmt = this.con.prepareStatement(query.toString());
 
-            // Führe die Abfrage aus
-            ResultSet rs = pstmt.executeQuery();
+        // Führe die Abfrage aus
+        ResultSet rs = pstmt.executeQuery();
 
-            System.out.println(rs.toString());
+        JSONArray map = new JSONArray();
 
-            return null;
+        for (int i = 0; rs.next(); i++) {
+            JSONObject properties = new JSONObject();
+            properties.put("value", 3);
+            properties.put("name", rs.getString("type_name"));
+            properties.put("is_walkable", rs.getInt("type_is_walkable"));
+            properties.put("is_swimmable", rs.getInt("type_is_swimmable"));
+            properties.put("is_flyable", rs.getInt("type_is_flyable"));
 
+            JSONObject tile = new JSONObject();
+            tile.put("x", tiles[i][0]);
+            tile.put("y", tiles[i][1]);
+            tile.put("properties", properties);
+            map.put(tile);
+        }
+
+        JSONObject json = new JSONObject();
+        json.put("map", map);
+
+        return json.toString(4);
     }
 }

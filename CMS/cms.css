@@ -136,7 +136,11 @@ input {
 }
 
 .character{
-    width: fit-content;
+    width: 200px;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     border-width: 2px;
     border-style: solid;
     border-radius: 10px;

@@ -19,7 +19,7 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
             echo $character['character_img'];
         }
     } else {
-        http_response_code(404);
+        http_response_code(204);
         echo "Charakter nicht gefunden.";
     }
 } else {
