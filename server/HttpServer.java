@@ -29,7 +29,7 @@ public class HttpServer extends Datenbank {
     }
 
     public HttpServer() throws SQLException, ClassNotFoundException {
-        this.port = 80;
+        this.port = 8080;
         this.datenbank = new Datenbank();
         this.datenbank.dbConnect();
     }
