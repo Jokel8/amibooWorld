@@ -127,7 +127,7 @@ public class HttpServer extends Datenbank {
     }
 
     private HashMap<String, String> getParameter(String anfrage) {
-        if (!anfrage.contains("?")) {
+        if (!anfrage.contains("?") || !anfrage.contains("=")) {
             return new HashMap<>();
         }
         char[] chars = anfrage.toCharArray();
