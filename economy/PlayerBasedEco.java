@@ -54,10 +54,10 @@ public class PlayerBasedEco {
                 37 // Damage
         );
 //
-//        // Add created weapons to merchant's inventory
-//        player2Inventory.addItem(Holzschwert);
-//        player2Inventory.addItem(Kriegsbeil);
-//        player2Inventory.addItem(YamadaKatana);
+        // Add created weapons to merchant's inventory
+        player1Inventory.addItem(Holzschwert);
+        player1Inventory.addItem(Kriegsbeil);
+        player1Inventory.addItem(YamadaKatana);
 //
 //        // Display initial inventories before trade
 //        System.out.println("Before Trade:");

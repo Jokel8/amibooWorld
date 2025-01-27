@@ -116,11 +116,14 @@ public class Inventory {
      * Displays all items in the inventory along with the total amount of gold.
      */
     public String listItems() {
-        StringBuilder list = new StringBuilder("Inventory of " + this.username + ".\n");
+        StringBuilder list = new StringBuilder();
+        list.append("{\n");
+        list.append("\t\"inventory_of\": \"" + this.username + "\",\n");
         for (Item item : items) {
-            list.append("- ").append(item.getName()).append(" (Value: ").append(item.getValue()).append(")\n");
+            list.append("\t").append("\"" + item.getName() + "\": {\n\t").append("\t\"value\": ").append(item.getValue()).append("\n\t},\n");
         }
-       list.append("Total gold: ").append(gold);
+       list.append("\t\"total_gold\": ").append(gold + "\n");
+        list.append("}");
         return list.toString();
     }
 
