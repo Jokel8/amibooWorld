@@ -1,6 +1,7 @@
 
 import server.HttpServer;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
 
@@ -8,7 +9,11 @@ public class Test {
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         HttpServer server = new HttpServer();
-        server.start();
+        try {
+            server.start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
 //        System.out.println(Arrays.asList(Spieler.getParameter("http://example.com/page?parameter=value&also=another")));
 

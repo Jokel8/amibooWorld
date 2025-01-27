@@ -17,9 +17,10 @@ public class HttpServer extends Datenbank {
     private int port;
     private Datenbank datenbank;
 
-    public void start() {
+    public void start() throws IOException {
         try {
-            socket = new ServerSocket(port);
+            this.socket = new ServerSocket(port);
+
             while (true) {
                 verbindungenAkzeptieren();
             }
@@ -52,7 +53,7 @@ public class HttpServer extends Datenbank {
                     anfrageVerarbeiten(anfrage, parameter, client);
                     in.close();
                 }
-            } catch (IOException | SQLException e) {
+            } catch (SQLException | IOException e) {
                 throw new RuntimeException(e);
             }
         }).start();
@@ -85,8 +86,10 @@ public class HttpServer extends Datenbank {
                         "Content-Length: " + inv.length() + "\n\n");
                 antwort.append(inv);
                 out.println(antwort.toString());
-
-
+            }
+            default -> {
+                PrintWriter out = new PrintWriter(client.getOutputStream(), true);
+                out.println("HTTP/1.1 404 Not Found\n");
             }
         }
     }
@@ -115,6 +118,9 @@ public class HttpServer extends Datenbank {
     }
 
     private HashMap<String, String> getParameter(String anfrage) {
+        if (!anfrage.contains("?")) {
+            return new HashMap<>();
+        }
         char[] chars = anfrage.toCharArray();
         StringBuilder name = new StringBuilder();
         StringBuilder wert = new StringBuilder();
