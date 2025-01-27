@@ -78,7 +78,13 @@ public class HttpServer extends Datenbank {
                 PrintWriter out = new PrintWriter(client.getOutputStream(), true);
                 Inventory inventar = new Inventory(parameter.get("username"));
                 String inv = inventar.listItems();
-                out.println(inv);
+                StringBuilder antwort = new StringBuilder();
+                antwort.append("HTTP/1.1 200 OK\n" +
+                        "Content-Type: application/json\n" +
+                        "Access-Control-Allow-Origin: *\n" +
+                        "Content-Length: " + inv.length() + "\n\n");
+                antwort.append(inv);
+                out.println(antwort.toString());
 
 
             }
