@@ -81,6 +81,13 @@ public class HttpServer extends Datenbank {
                             "Content-Length: " + inv.length() + "\n\n");
                     antwort.append(inv);
                 }
+                case "db" -> {
+                    if (this.datenbank.verbinden()) {
+                        antwort.append("HTTP/1.1 204 No Content\n");
+                    } else {
+                        antwort.append("HTTP/1.1 500 Internal Server Error\n");
+                    }
+                }
                 default -> {
                     out.println("HTTP/1.1 404 Not Found\n");
                 }
