@@ -104,7 +104,7 @@ public class Datenbank {
                 if (this.con.isClosed()) {
                     System.out.println("Datenbankverbindung getrennt");
                     if (this.verbinden()) {
-                        this.dbGetTileAndMakeItIntoJson(tiles);
+                        return this.dbGetTileAndMakeItIntoJson(tiles);
                     } else {
                         throw new SQLException(e);
                     }

@@ -69,8 +69,8 @@ public class HttpServer extends Datenbank {
                     antwort.append("HTTP/1.1 200 OK\n" +
                             "Content-Type: application/json\n" +
                             "Access-Control-Allow-Origin: *\n" +
-                            "Content-Length: " + antwort.length() + "\n\n");
-                    antwort.append(antwort);
+                            "Content-Length: " + tilesString.length() + "\n\n");
+                    antwort.append(tilesString);
                 }
                 case "inventory" -> {
                     Inventory inventar = new Inventory(parameter.get("username"));
@@ -92,7 +92,7 @@ public class HttpServer extends Datenbank {
                     out.println("HTTP/1.1 404 Not Found\n");
                 }
             }
-            out.println(anfrage);
+            out.println(antwort.toString());
             this.close(client);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -110,6 +110,9 @@ public class HttpServer extends Datenbank {
     }
 
     private String getAnfrage(String anfrage) {
+        if (!anfrage.contains("HTTP")) {
+            return "";
+        }
         char[] chars = anfrage.toCharArray();
         String angerfage = "";
         int i = 0;
