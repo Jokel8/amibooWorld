@@ -69,7 +69,7 @@ public class Datenbank {
         }
         query.append(";");
 
-        System.out.println(query);
+        //System.out.println(query);
         try {
             PreparedStatement pstmt = this.con.prepareStatement(query.toString());
 

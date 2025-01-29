@@ -45,7 +45,7 @@ public class HttpServer extends Datenbank {
                         line = in.readLine();
                         System.out.println(line);
                         String anfrage = this.getAnfrage(line);
-                        System.out.println(anfrage);
+                        //System.out.println(anfrage);
                         HashMap<String, String> parameter = this.getParameter(line);
                         anfrageVerarbeiten(anfrage, parameter, client);
                         in.close();
@@ -60,7 +60,7 @@ public class HttpServer extends Datenbank {
     }
 
     private void anfrageVerarbeiten(String anfrage, HashMap<String, String> parameter, Socket client) {
-        System.out.println(anfrage);
+        //System.out.println(anfrage);
         try {
             PrintWriter out = new PrintWriter(client.getOutputStream(), true);
             StringBuilder antwort = new StringBuilder();
@@ -156,7 +156,7 @@ public class HttpServer extends Datenbank {
                 }
             }
 
-            System.out.println(name.toString() + " " + wert.toString());
+            //System.out.println(name.toString() + " " + wert.toString());
 
             parameter.put(name.toString(), wert.toString());
             name = new StringBuilder();
