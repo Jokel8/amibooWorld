@@ -54,13 +54,14 @@ public class HttpServer extends Datenbank {
                         line = in.readLine();
                         //erste zeile des headers aufgeben
                         System.out.println(line);
-                        if (isAnfrageValide(line)) {
+                        if (line != null && isAnfrageValide(line)) {
                             String anfrage = this.getAnfrage(line);
                             //System.out.println(anfrage);
                             HashMap<String, String> parameter = this.getParameter(line);
                             anfrageVerarbeiten(anfrage, parameter, client);
                         } else {
                             System.out.println("^abgelehnt^");
+                            viernullnull(client);
                         }
                         in.close();
                     } catch (IOException e) {
@@ -110,9 +111,6 @@ public class HttpServer extends Datenbank {
                         antwort.append("HTTP/1.1 500 Internal Server Error\n");
                     }
                 }
-                default -> {
-                    out.println("HTTP/1.1 404 Not Found\n");
-                }
                 case "login" -> {
                     long token = this.datenbank.getToken(parameter.get("username"), getHash((parameter.get("password"))));
                     String tokenJson = "{\n\t\"token\": " + token + "\n}";
@@ -121,6 +119,9 @@ public class HttpServer extends Datenbank {
                             "Access-Control-Allow-Origin: *\n" +
                             "Content-Length: " + tokenJson.length() + "\n\n");
                     antwort.append(tokenJson);
+                }
+                default -> {
+                    antwort.append("HTTP/1.1 404 Not Found\n");
                 }
             }
             out.println(antwort.toString());
@@ -131,7 +132,13 @@ public class HttpServer extends Datenbank {
         }
 
     }
-
+    private void viernullnull(Socket client) {
+        try {
+            new PrintWriter(client.getOutputStream(), true).println("HTTP/1.1 400 Bad Request\n");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private void close(Socket socket) {
         try {
