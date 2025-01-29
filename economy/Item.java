@@ -1,5 +1,7 @@
 package economy;
 
+import org.json.JSONObject;
+
 /**
  * Represents a general item in the game.
  * Items can have properties such as name, stackability, value, rarity, description, manufacturer, and category.
@@ -22,6 +24,17 @@ public abstract class Item {
         this.name = null;
         this.rarity = Rarity.COMMON;
         this.description = "description";
+    }
+    public JSONObject toJSON() {
+        JSONObject item = new JSONObject();
+        item.put("name", this.name);
+        item.put("value", this.value);
+        item.put("description", this.description);
+        item.put("manufacturer", this.manufacturer);
+        item.put("category", this.category);
+        item.put("stackable", this.stackable);
+        item.put("rarity", this.rarity.ordinal());
+        return item;
     }
 
     /**

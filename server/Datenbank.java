@@ -16,11 +16,13 @@ public class Datenbank {
     }
 
     public int[][] welcheTileSollIchHolen(int x, int y, int radius) {
+        //liste der benötigten tiles erstellen
         int[][] tiles = new int[(radius+radius+1)*(radius+radius+1)][2];
         int i = 0;
-        for (int x_player = x - radius; x_player <= x + radius; x_player++ ) {
-            for (int y_player = y - radius; y_player <= y + radius; y_player++ ) {
-                tiles[i] = new int[]{x_player, y_player};
+        for (int tileX = x - radius; tileX <= x + radius; tileX++ ) {
+            for (int tileY = y - radius; tileY <= y + radius; tileY++ ) {
+                //macht das es loopt
+                tiles[i] = new int[]{tileX % 1000, tileY % 1000};
                 i++;
             }
         }
@@ -48,63 +50,21 @@ public class Datenbank {
         }
         return verbunden;
     }
+    private ResultSet executeQuery(String query) {
 
-    public String dbGetTileAndMakeItIntoJson(int[][] tiles) {
-        // SQL-Abfrage, die den field_type basierend auf den Koordinaten sucht
-
-
-        StringBuilder query = new StringBuilder();
-        query.append("SELECT field_type_name, field_type_is_walkable, field_type_is_swimmable, field_type_is_flyable FROM field_type JOIN map ON (map.field_type = field_type.field_type_id) WHERE ");
-        for (int i = 0; i < tiles.length; i++) {
-
-            // Schleife durch das zweidimensionale Array der Koordinaten
-            int x = tiles[i][0];
-            int y = tiles[i][1];
-
-            //optional SELECT field_type FROM map WHERE field_x >= 0 AND field_x <= 2 AND field_y >= 0 AND field_y <=2;
-            query.append("field_x = " + x + " AND field_y = " + y);
-            if (i < tiles.length - 1) {
-                query.append(" OR ");
-            }
-        }
-        query.append(";");
-
-        System.out.println(query);
         try {
             PreparedStatement pstmt = this.con.prepareStatement(query.toString());
-
             // Führe die Abfrage aus
             ResultSet rs = pstmt.executeQuery();
-
-            JSONArray map = new JSONArray();
-
-            for (int i = 0; rs.next(); i++) {
-                JSONObject properties = new JSONObject();
-                properties.put("value", 3);
-                properties.put("name", rs.getString("field_type_name"));
-                properties.put("is_walkable", rs.getInt("field_type_is_walkable"));
-                properties.put("is_swimmable", rs.getInt("field_type_is_swimmable"));
-                properties.put("is_flyable", rs.getInt("field_type_is_flyable"));
-
-                JSONObject tile = new JSONObject();
-                tile.put("x", tiles[i][0]);
-                tile.put("y", tiles[i][1]);
-                tile.put("properties", properties);
-                map.put(tile);
-            }
-
-            JSONObject json = new JSONObject();
-            json.put("width", tiles.length);
-            json.put("height", tiles.length);
-            json.put("map", map);
-
-            return json.toString(4);
+            return rs;
         } catch (SQLException e) {
             try {
+                //verbindung zu datenbank prüfen und zur not wieder herstellen
                 if (this.con.isClosed()) {
                     System.out.println("Datenbankverbindung getrennt");
                     if (this.verbinden()) {
-                        return this.dbGetTileAndMakeItIntoJson(tiles);
+                        System.out.println("Datenbankverbindung hergestellt");
+                        return this.executeQuery(query);
                     } else {
                         throw new SQLException(e);
                     }
@@ -113,6 +73,79 @@ public class Datenbank {
                 throw new RuntimeException(ex);
             }
         }
-        return "{\n\t\"fehler\": true\n}";
+        return null;
+    }
+
+    public String dbGetTileAndMakeItIntoJson(int[][] tiles) {
+        //sql abfrage erstellen
+        StringBuilder query = new StringBuilder();
+        query.append("SELECT type_name, type_is_walkable, type_is_swimmable, type_is_flyable, holz, gold FROM field_type JOIN map ON (map.field_type = field_type.type_id) WHERE ");
+        for (int i = 0; i < tiles.length; i++) {
+
+            int x = tiles[i][0];
+            int y = tiles[i][1];
+
+            query.append("field_x = " + x + " AND field_y = " + y);
+            if (i < tiles.length - 1) {
+                query.append(" OR ");
+            }
+        }
+        query.append(";");
+
+        ResultSet rs = this.executeQuery(query.toString());
+
+        //System.out.println(query);
+        if (rs != null) try {
+
+            JSONArray map = new JSONArray();
+
+            //tiles in json umwandeln
+            for (int i = 0; rs.next(); i++) {
+                JSONObject properties = new JSONObject();
+                properties.put("value", 3);
+                properties.put("name", rs.getString("field_type_name"));
+                properties.put("is_walkable", rs.getInt("field_type_is_walkable"));
+                properties.put("is_swimmable", rs.getInt("field_type_is_swimmable"));
+                properties.put("is_flyable", rs.getInt("field_type_is_flyable"));
+
+                JSONObject resources = new JSONObject();
+                resources.put("holz", rs.getInt("holz"));
+                resources.put("gold", rs.getInt("gold"));
+
+                JSONObject tile = new JSONObject();
+                tile.put("x", tiles[i][0]);
+                tile.put("y", tiles[i][1]);
+                tile.put("properties", properties);
+                tile.put("resources", resources);
+                map.put(tile);
+            }
+
+            JSONObject json = new JSONObject();
+            json.put("width", (int) Math.sqrt(tiles.length));
+            json.put("height", (int) Math.sqrt(tiles.length));
+            json.put("map", map);
+
+            return json.toString(4);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } else {
+            return "{\n\t\"fehler\": true\n}";
+        }
+    }
+    public long getToken(String username, String password) {
+        String query = "SELECT user_token FROM user WHERE user_name = '" + username + "' AND user_password = '" + password + "'";
+        ResultSet rs = this.executeQuery(query);
+
+        if (rs != null)try {
+            if (rs.next()) {
+                return rs.getLong("user_token");
+            } else {
+                return 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } else {
+            return 0;
+        }
     }
 }

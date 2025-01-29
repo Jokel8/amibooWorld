@@ -2,6 +2,9 @@ package economy;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import server.HttpServer.*;
 
 /**
@@ -116,16 +119,15 @@ public class Inventory {
      * Displays all items in the inventory along with the total amount of gold.
      */
     public String listItems() {
-        StringBuilder list = new StringBuilder();
-        list.append("{\n");
-        list.append("\t\"inventory_of\": \"" + this.username + "\",\n");
-        for (Item item : items) {
-            list.append("\t").append("\"" + item.getName() + "\": {\n\t").append("\t\"value\": ").append(item.getValue()).append("\n\t},\n");
-        }
-       list.append("\t\"total_gold\": ").append(gold + "\n");
-        list.append("}");
-        return list.toString();
-    }
+        JSONObject json = new JSONObject();
+        JSONArray inventar = new JSONArray();
 
+        for (Item item : items) {
+            inventar.put(item.toJSON());
+        }
+        json.put("items", inventar);
+        json.put("toal_gold", this.gold);
+        return json.toString();
+    }
 
 }
