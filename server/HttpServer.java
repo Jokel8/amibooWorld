@@ -43,6 +43,7 @@ public class HttpServer extends Datenbank {
                         BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                         String line = "";
                         line = in.readLine();
+                        //erste zeile des headers aufgeben
                         System.out.println(line);
                         String anfrage = this.getAnfrage(line);
                         //System.out.println(anfrage);
@@ -68,6 +69,7 @@ public class HttpServer extends Datenbank {
                 case "map" -> {
                     int[][] tiles = this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 2);
                     String tilesString = this.datenbank.dbGetTileAndMakeItIntoJson(tiles);
+                    //http header
                     antwort.append("HTTP/1.1 200 OK\n" +
                             "Content-Type: application/json\n" +
                             "Access-Control-Allow-Origin: *\n" +
@@ -83,6 +85,7 @@ public class HttpServer extends Datenbank {
                             "Content-Length: " + inv.length() + "\n\n");
                     antwort.append(inv);
                 }
+                //datenbank verbindung wieder herstellen
                 case "db" -> {
                     if (this.datenbank.verbinden()) {
                         antwort.append("HTTP/1.1 204 No Content\n");
@@ -95,6 +98,7 @@ public class HttpServer extends Datenbank {
                 }
             }
             out.println(antwort.toString());
+            out.close();
             this.close(client);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -112,6 +116,7 @@ public class HttpServer extends Datenbank {
     }
 
     private String getAnfrage(String anfrage) {
+        //aus dem header das angefragte verzeichniss extrahieren
         if (!anfrage.contains("HTTP")) {
             return "";
         }
@@ -129,6 +134,7 @@ public class HttpServer extends Datenbank {
     }
 
     private HashMap<String, String> getParameter(String anfrage) {
+        //aus dem header die parameter extrahieren
         if (!anfrage.contains("?") || !anfrage.contains("=")) {
             return new HashMap<>();
         }
@@ -139,7 +145,6 @@ public class HttpServer extends Datenbank {
         int i = 0;
 
         for (; chars[i] != '?'; i++) {
-
         }
         i++;
         for (; i < chars.length - 9; i++) {
@@ -148,16 +153,13 @@ public class HttpServer extends Datenbank {
                 name.append(chars[i]);
             }
             i++;
-
             for (; chars[i] != '&'; i++) {
                 wert.append(chars[i]);
                 if (i == chars.length - 10) {
                     break;
                 }
             }
-
             //System.out.println(name.toString() + " " + wert.toString());
-
             parameter.put(name.toString(), wert.toString());
             name = new StringBuilder();
             wert = new StringBuilder();

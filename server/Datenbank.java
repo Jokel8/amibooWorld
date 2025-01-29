@@ -16,10 +16,12 @@ public class Datenbank {
     }
 
     public int[][] welcheTileSollIchHolen(int x, int y, int radius) {
+        //liste der benötigten tiles erstellen
         int[][] tiles = new int[(radius+radius+1)*(radius+radius+1)][2];
         int i = 0;
         for (int tileX = x - radius; tileX <= x + radius; tileX++ ) {
             for (int tileY = y - radius; tileY <= y + radius; tileY++ ) {
+                //macht das es loopt
                 tiles[i] = new int[]{tileX % 1000, tileY % 1000};
                 i++;
             }
@@ -50,18 +52,14 @@ public class Datenbank {
     }
 
     public String dbGetTileAndMakeItIntoJson(int[][] tiles) {
-        // SQL-Abfrage, die den field_type basierend auf den Koordinaten sucht
-
-
+        //sql abfrage erstellen
         StringBuilder query = new StringBuilder();
-        query.append("SELECT type_name, type_is_walkable, type_is_swimmable, type_is_flyable FROM field_type JOIN map ON (map.field_type = field_type.type_id) WHERE ");
+        query.append("SELECT type_name, type_is_walkable, type_is_swimmable, type_is_flyable, holz, gold FROM field_type JOIN map ON (map.field_type = field_type.type_id) WHERE ");
         for (int i = 0; i < tiles.length; i++) {
 
-            // Schleife durch das zweidimensionale Array der Koordinaten
             int x = tiles[i][0];
             int y = tiles[i][1];
 
-            //optional SELECT field_type FROM map WHERE field_x >= 0 AND field_x <= 2 AND field_y >= 0 AND field_y <=2;
             query.append("field_x = " + x + " AND field_y = " + y);
             if (i < tiles.length - 1) {
                 query.append(" OR ");
@@ -78,6 +76,7 @@ public class Datenbank {
 
             JSONArray map = new JSONArray();
 
+            //tiles in json umwandeln
             for (int i = 0; rs.next(); i++) {
                 JSONObject properties = new JSONObject();
                 properties.put("value", 3);
@@ -86,10 +85,15 @@ public class Datenbank {
                 properties.put("is_swimmable", rs.getInt("type_is_swimmable"));
                 properties.put("is_flyable", rs.getInt("type_is_flyable"));
 
+                JSONObject resources = new JSONObject();
+                resources.put("holz", rs.getInt("holz"));
+                resources.put("gold", rs.getInt("gold"));
+
                 JSONObject tile = new JSONObject();
                 tile.put("x", tiles[i][0]);
                 tile.put("y", tiles[i][1]);
                 tile.put("properties", properties);
+                tile.put("resources", resources);
                 map.put(tile);
             }
 
@@ -101,6 +105,7 @@ public class Datenbank {
             return json.toString(4);
         } catch (SQLException e) {
             try {
+                //verbindung zu datenbank prüfen und zur not wieder herstellen
                 if (this.con.isClosed()) {
                     System.out.println("Datenbankverbindung getrennt");
                     if (this.verbinden()) {
