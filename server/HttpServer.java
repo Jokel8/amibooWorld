@@ -164,6 +164,9 @@ public class HttpServer extends Datenbank {
     }
 
     private HashMap<String, String> getParameter(String anfrage) {
+        if (!anfrage.contains("?")) {
+            return null;
+        }
         //aus dem header die parameter extrahieren
         char[] chars = anfrage.toCharArray();
         StringBuilder name = new StringBuilder();
