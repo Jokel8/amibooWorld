@@ -94,8 +94,8 @@ public class Datenbank {
             }
 
             JSONObject json = new JSONObject();
-            json.put("width", tiles.length);
-            json.put("height", tiles.length);
+            json.put("width", (int) Math.sqrt(tiles.length));
+            json.put("height", (int) Math.sqrt(tiles.length));
             json.put("map", map);
 
             return json.toString(4);

@@ -1,10 +1,10 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="amibooWorld:jar2">
-    <output-path>$USER_HOME$/Downloads</output-path>
+    <output-path>/run/user/1000/gvfs/ftp:host=v2202410237002289383.megasrv.de</output-path>
     <root id="archive" name="amibooWorld.jar">
       <element id="module-output" name="amibooWorld" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/json/json/20250107/json-20250107.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/mysql-connector-j-9.1.0/mysql-connector-j-9.1.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../mysql-connector-j-9.1.0/mysql-connector-j-9.1.0.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
