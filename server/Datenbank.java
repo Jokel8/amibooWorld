@@ -18,9 +18,9 @@ public class Datenbank {
     public int[][] welcheTileSollIchHolen(int x, int y, int radius) {
         int[][] tiles = new int[(radius+radius+1)*(radius+radius+1)][2];
         int i = 0;
-        for (int x_player = x - radius; x_player <= x + radius; x_player++ ) {
-            for (int y_player = y - radius; y_player <= y + radius; y_player++ ) {
-                tiles[i] = new int[]{x_player, y_player};
+        for (int tileX = x - radius; tileX <= x + radius; tileX++ ) {
+            for (int tileY = y - radius; tileY <= y + radius; tileY++ ) {
+                tiles[i] = new int[]{tileX % 1000, tileY % 1000};
                 i++;
             }
         }
