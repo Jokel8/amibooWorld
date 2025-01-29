@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             echo $image_type;
 
-            $stmt = $conn->prepare("INSERT INTO items (item_name, item_img, item_img_type, item_value, item_damage_mult, item_health_eat, item_weight, item_durability, item_fun_factor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $conn->prepare("INSERT INTO item (item_name, item_img, item_img_type, item_value, item_damage_mult, item_health_eat, item_weight, item_durability, item_fun_factor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->bind_param("sssiiiiii", $_POST['item_name'], $image_blob, $image_type, $_POST['item_value'], $_POST['item_damage_mult'], $_POST['item_health_eat'], $_POST['item_weight'], $_POST['item_durability'], $_POST['item_fun_factor']);
         } elseif (isset($_POST['field_id'])) {
             $tmp_name = $images['tmp_name'];
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $conn->prepare("UPDATE field_type SET type_img = ?, type_img_type = ? WHERE type_id = ?");
             $stmt->bind_param("ssi", $image_blob, $image_type, intval($_POST['type_id']));
         } elseif (isset($_POST['characters'])) {
-            $stmt = $conn->prepare("INSERT INTO characters (character_name, character_img, character_img_type) VALUES (?, ?, ?)");
+            $stmt = $conn->prepare("INSERT INTO `character` (character_name, character_img, character_img_type) VALUES (?, ?, ?)");
 
             for ($i = 0; $i < count($images['name']); $i++) {
                 if ($images['error'][$i] === UPLOAD_ERR_OK) {
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         } elseif (isset($_POST['items'])) {
-            $stmt = $conn->prepare("INSERT INTO items (item_name, item_img, item_img_type) VALUES (?, ?, ?)");
+            $stmt = $conn->prepare("INSERT INTO item (item_name, item_img, item_img_type) VALUES (?, ?, ?)");
 
             for ($i = 0; $i < count($images['name']); $i++) {
                 if ($images['error'][$i] === UPLOAD_ERR_OK) {

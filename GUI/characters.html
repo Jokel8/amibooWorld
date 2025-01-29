@@ -1,48 +1,50 @@
+<link rel="stylesheet" href="css/gridView.css">
 <div id="characterArray" class="grid"></div>
 <script>
     let id = 1;
     const container = document.getElementById("characterArray");
 
-    async function fetchCharacter(id) {
+    async function fetchCharacter(name, id) {
         try {
-            const response = await fetch(`../CMS/getCharacter.php?id=${id}&action=title`);
-            if (!response.ok || response.status === 204) return false;
-
-            const titleData = await response.json();
-            const characterName = titleData.title;
-
             const characterDiv = document.createElement('div');
-            characterDiv.className = 'character';
+            characterDiv.className = 'element';
 
             const img = document.createElement('img');
-            img.src = `../CMS/getCharacter.php?id=${id}`;
+            img.src = `../CMS/getAsset.php?action=getImg&type=character&id=${id}`;
             img.alt = `Charakter ${id}`;
 
-            const h2 = document.createElement('h2');
-            h2.textContent = characterName;
+            const title = document.createElement('div');
+            title.className = 'elementTitle';
+            title.textContent = name;
 
             characterDiv.appendChild(img);
-            characterDiv.appendChild(h2);
+            characterDiv.appendChild(title);
             container.appendChild(characterDiv);
 
-            return true;
+            return 1;
         } catch (error) {
             console.error('Fehler beim Laden des Charakters:', error);
-            return false;
+            return 0;
         }
     }
 
     async function loadCharacters() {
-        var count = await fetch('../CMS/getAsset.php');
+        var count = await fetch('../CMS/getAsset.php?action=getAmount&type=character');
         count = await count.json();
         count = count.total;
+        console.log(count + " Elemente gefunden.");
 
         var success = 0;
 
-        console.log(count);
-
         while (success < count) {
-            success += await fetchCharacter(id);
+            const response = await fetch(`../CMS/getAsset.php?action=getTitle&type=character&id=${id}`);
+
+            if (response.ok && response.status != 204) {
+                const data = await response.json();
+                const name = data.title;
+                await fetchCharacter(name, id);
+                success++;
+            }
             id++;
         }
     }
