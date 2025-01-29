@@ -6,14 +6,21 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HttpServer extends Datenbank {
     private ServerSocket socket;
     private int port;
     private Datenbank datenbank;
+    private String regex;
+    private Pattern pattern;
 
     public void start() {
         try {
@@ -31,6 +38,8 @@ public class HttpServer extends Datenbank {
         this.port = 8080;
         this.datenbank = new Datenbank();
         this.datenbank.verbinden();
+        this.regex = "GET /[a-z]*((\\?[a-z]+=([a-z]|[0-9])+)(&[a-z]+=([a-z]|[0-9])+)*)?\\sHTTP/1\\.1";
+        this.pattern = Pattern.compile(regex);
     }
 
     private void verbindungenAkzeptieren() {
@@ -45,10 +54,14 @@ public class HttpServer extends Datenbank {
                         line = in.readLine();
                         //erste zeile des headers aufgeben
                         System.out.println(line);
-                        String anfrage = this.getAnfrage(line);
-                        //System.out.println(anfrage);
-                        HashMap<String, String> parameter = this.getParameter(line);
-                        anfrageVerarbeiten(anfrage, parameter, client);
+                        if (isAnfrageValide(line)) {
+                            String anfrage = this.getAnfrage(line);
+                            //System.out.println(anfrage);
+                            HashMap<String, String> parameter = this.getParameter(line);
+                            anfrageVerarbeiten(anfrage, parameter, client);
+                        } else {
+                            System.out.println("^abgelehnt^");
+                        }
                         in.close();
                     } catch (IOException e) {
                         throw new RuntimeException(e);
@@ -58,6 +71,10 @@ public class HttpServer extends Datenbank {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+    private boolean isAnfrageValide(String anfrage) {
+        Matcher matcher = this.pattern.matcher(anfrage);
+        return matcher.matches();
     }
 
     private void anfrageVerarbeiten(String anfrage, HashMap<String, String> parameter, Socket client) {
@@ -96,6 +113,15 @@ public class HttpServer extends Datenbank {
                 default -> {
                     out.println("HTTP/1.1 404 Not Found\n");
                 }
+                case "login" -> {
+                    long token = this.datenbank.getToken(parameter.get("username"), getHash((parameter.get("password"))));
+                    String tokenJson = "{\n\t\"token\": " + token + "\n}";
+                    antwort.append("HTTP/1.1 200 OK\n" +
+                            "Content-Type: application/json\n" +
+                            "Access-Control-Allow-Origin: *\n" +
+                            "Content-Length: " + tokenJson.length() + "\n\n");
+                    antwort.append(tokenJson);
+                }
             }
             out.println(antwort.toString());
             out.close();
@@ -117,9 +143,6 @@ public class HttpServer extends Datenbank {
 
     private String getAnfrage(String anfrage) {
         //aus dem header das angefragte verzeichniss extrahieren
-        if (!anfrage.contains("HTTP")) {
-            return "";
-        }
         char[] chars = anfrage.toCharArray();
         String angerfage = "";
         int i = 0;
@@ -135,9 +158,6 @@ public class HttpServer extends Datenbank {
 
     private HashMap<String, String> getParameter(String anfrage) {
         //aus dem header die parameter extrahieren
-        if (!anfrage.contains("?") || !anfrage.contains("=")) {
-            return new HashMap<>();
-        }
         char[] chars = anfrage.toCharArray();
         StringBuilder name = new StringBuilder();
         StringBuilder wert = new StringBuilder();
@@ -166,5 +186,19 @@ public class HttpServer extends Datenbank {
         }
 
         return parameter;
+    }
+    private String getHash(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            byte[] hash = md.digest(password.getBytes());
+            BigInteger no = new BigInteger(1, hash);
+            String hashtext = no.toString(16);
+            while (hashtext.length() < 32) {
+                hashtext = "0" + hashtext;
+            }
+            return hashtext;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

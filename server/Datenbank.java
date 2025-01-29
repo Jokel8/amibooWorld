@@ -50,6 +50,31 @@ public class Datenbank {
         }
         return verbunden;
     }
+    private ResultSet executeQuery(String query) {
+
+        try {
+            PreparedStatement pstmt = this.con.prepareStatement(query.toString());
+            // Führe die Abfrage aus
+            ResultSet rs = pstmt.executeQuery();
+            return rs;
+        } catch (SQLException e) {
+            try {
+                //verbindung zu datenbank prüfen und zur not wieder herstellen
+                if (this.con.isClosed()) {
+                    System.out.println("Datenbankverbindung getrennt");
+                    if (this.verbinden()) {
+                        System.out.println("Datenbankverbindung hergestellt");
+                        return this.executeQuery(query);
+                    } else {
+                        throw new SQLException(e);
+                    }
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        return null;
+    }
 
     public String dbGetTileAndMakeItIntoJson(int[][] tiles) {
         //sql abfrage erstellen
@@ -67,12 +92,10 @@ public class Datenbank {
         }
         query.append(";");
 
-        //System.out.println(query);
-        try {
-            PreparedStatement pstmt = this.con.prepareStatement(query.toString());
+        ResultSet rs = this.executeQuery(query.toString());
 
-            // Führe die Abfrage aus
-            ResultSet rs = pstmt.executeQuery();
+        //System.out.println(query);
+        if (rs != null) try {
 
             JSONArray map = new JSONArray();
 
@@ -104,20 +127,25 @@ public class Datenbank {
 
             return json.toString(4);
         } catch (SQLException e) {
-            try {
-                //verbindung zu datenbank prüfen und zur not wieder herstellen
-                if (this.con.isClosed()) {
-                    System.out.println("Datenbankverbindung getrennt");
-                    if (this.verbinden()) {
-                        return this.dbGetTileAndMakeItIntoJson(tiles);
-                    } else {
-                        throw new SQLException(e);
-                    }
-                }
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
+            throw new RuntimeException(e);
+        } else {
+            return "{\n\t\"fehler\": true\n}";
         }
-        return "{\n\t\"fehler\": true\n}";
+    }
+    public long getToken(String username, String password) {
+        String query = "SELECT user_token FROM user WHERE user_name = '" + username + "' AND user_password = '" + password + "'";
+        ResultSet rs = this.executeQuery(query);
+
+        if (rs != null)try {
+            if (rs.next()) {
+                return rs.getLong("user_token");
+            } else {
+                return 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } else {
+            return 0;
+        }
     }
 }
