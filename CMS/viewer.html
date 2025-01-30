@@ -51,15 +51,15 @@
                 fieldTypes.forEach(type => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                <td>${type.type_id}</td>
-                <td>${type.type_name}</td>
-                <td><img src="getTile.php?id=${type.type_id}" alt="Bild nicht verfügbar"></td>
-                <td>${type.type_is_walkable}</td>
-                <td>${type.type_is_swimmable}</td>
-                <td>${type.type_is_flyable}</td>
-                <td>${type.probability}</td>
+                <td>${type.field_type_id}</td>
+                <td>${type.field_type_name}</td>
+                <td><img src="getAsset.php?action=getImg&type=field_type&id=${type.field_type_id}" alt="Bild nicht verfügbar"></td>
+                <td>${type.field_type_is_walkable}</td>
+                <td>${type.field_type_is_swimmable}</td>
+                <td>${type.field_type_is_flyable}</td>
+                <td>${type.field_type_probability}</td>
                 <td>
-                    <button onclick="deleteFieldType(${type.type_id})" 
+                    <button onclick="deleteFieldType(${type.field_type_id})" 
                             class="bg-red-500 text-white p-1 rounded">Löschen</button>
                 </td>
             `;

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet", href="css/account.css">
+</head>
+<body>
+    <div class="profile-section">
+        <h1>Willkommen</h1>
+        <h2>Max Mustermann</h2>
+        <div class="profile-pic">
+            <img src="../CMS/getAsset.php?action=getImg&type=character&id=100" alt="Profile">
+            <div class="upload-overlay">wechseln</div>
+        </div>
+    </div>
+
+    <div class="settings-group">
+        <div class="settings-header">Personalisierung</div>
+        <div class="setting-item">
+            <span class="setting-label">Character</span>
+            <select>
+                <option>Nicht verfügbar</option>
+            </select>
+        </div>
+        <div class="setting-item">
+            <span class="setting-label">Sprache</span>
+            <select>
+                <option>🇩🇪 Deutsch</option>
+            </select>
+        </div>
+        <div class="setting-item">
+            <span class="setting-label">Sprache</span>
+            <select>
+                <option>Darkmode</option>
+                <option>Brightmode</option>
+                <option>Googymode</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="settings-group">
+        <div class="settings-header">Datenschutz</div>
+        <div class="setting-item">
+            <span class="setting-label">Multiplayer-Spiel</span>
+            <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="settings-group">
+        <div class="settings-header">Sicherheit</div>
+        <button class="btn btn-primary">Passwort ändern</button>
+        <button class="btn btn-danger">Account löschen</button>
+    </div>
+</body>
+</html>

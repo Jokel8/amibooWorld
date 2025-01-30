@@ -11,33 +11,33 @@ try {
     switch ($action) {
         case 'add_type':
             $stmt = $pdo->prepare("INSERT INTO field_type 
-                (type_name, type_img, type_is_walkable, type_is_swimmable, type_is_flyable, probability) 
+                (field_type_name, field_type_img, field_type_is_walkable, field_type_is_swimmable, field_type_is_flyable, field_type_probability) 
                 VALUES (?, ?, ?, ?, ?, ?)");
             $stmt->execute([
-                $_POST['type_name'] ?? '',
-                $_POST['type_img'] ?? '',
-                isset($_POST['type_is_walkable']) ? 1 : 0,
-                isset($_POST['type_is_swimmable']) ? 1 : 0,
-                isset($_POST['type_is_flyable']) ? 1 : 0,
-                $_POST['probability'] ?? 1.0
+                $_POST['field_type_name'] ?? '',
+                $_POST['field_type_img'] ?? '',
+                isset($_POST['field_type_is_walkable']) ? 1 : 0,
+                isset($_POST['field_type_is_swimmable']) ? 1 : 0,
+                isset($_POST['field_type_is_flyable']) ? 1 : 0,
+                $_POST['field_type_probability'] ?? 1.0
             ]);
             echo json_encode(['success' => true]);
             break;
 
         case 'delete_type':
-            $stmt = $pdo->prepare("DELETE FROM field_type WHERE type_id = ?");
-            $stmt->execute([$_POST['type_id']]);
+            $stmt = $pdo->prepare("DELETE FROM field_type WHERE field_type_id = ?");
+            $stmt->execute([$_POST['field_type_id']]);
             echo json_encode(['success' => true]);
             break;
 
         default:
             $stmt = $pdo->query("
-                SELECT type_id, 
-                       type_name,
-                       type_is_walkable,
-                       type_is_swimmable,
-                       type_is_flyable,
-                       probability 
+                SELECT field_type_id, 
+                       field_type_name,
+                       field_type_is_walkable,
+                       field_type_is_swimmable,
+                       field_type_is_flyable,
+                       field_type_probability 
                 FROM field_type
             ");
             $fieldTypes = $stmt->fetchAll();

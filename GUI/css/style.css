@@ -1,4 +1,4 @@
-body{
+body {
     height: 100vh;
     width: 100vw;
     margin: 0%;
@@ -6,36 +6,55 @@ body{
     margin: 0;
 }
 
-#gesamtaction{
+#gesamtaction {
     float: right;
 }
 
-#buttoncontainer{
+#buttoncontainer {
     width: 100%;
     height: 8%;
     display: flex;
 }
 
-.button{
+.button {
     width: 100%;
     border-top-left-radius: 35px;
     border-top-right-radius: 35px;
 }
 
-#functioncontainer1 h3{
+.functioncontainer {
+    display: none;
+    overflow: hidden;
+    color: white;
     text-align: center;
-    font-size: 3vw; 
-    margin-top: 5%; 
-    color: white;;  
+    padding-top: 20px;
 }
 
-.tableb{
+.functioncontainer {
+    animation: slide 0.5s ease-in-out;
+}
+
+@keyframes slide {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+.active {
+    display: block;
+}
+
+.tableb {
     margin-left: 10%;
     margin-right: 10%;
     width: 80%;
 }
 
-.buttonfunctioncontainer1buttons{
+.buttonfunctioncontainer1buttons {
     width: 100%;
     margin-top: 10%;
     padding-top: 5%;
@@ -44,16 +63,16 @@ body{
     border-radius: 15px;
 }
 
-.container{
+.container {
     border-radius: 10px;
 }
 
-#map{
+#map {
     height: 100vh;
     width: 100vw;
 }
 
-#actionlist{
+#actionlist {
     width: 400px;
     height: 100%;
     position: fixed;
@@ -61,14 +80,14 @@ body{
     top: 0px;
 }
 
-#joystick{
+#joystick {
     position: fixed;
     left: 0px;
     bottom: 0px;
     background: none;
 }
 
-#instructor{
+#instructor {
     width: 500px;
     height: 50px;
     position: fixed;
@@ -136,7 +155,7 @@ body{
     transform: rotate(90deg)
 }
 
-#middle{
+#middle {
     border-radius: 0px;
     background-color: #929292;
 }
