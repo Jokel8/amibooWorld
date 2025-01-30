@@ -2,24 +2,29 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WASD Tasteneingaben</title>
+    <title>Keydown simulieren</title>
 </head>
 <body>
-    <h1>Drücke W, A, S oder D</h1>
+    <button id="simulateW">Simuliere 'w'-Taste</button>
+
     <script>
-        // Event-Listener für Tasteneingaben hinzufügen
-        document.addEventListener("keydown", function(event) {
-            // Tasteneingabe prüfen und ausgeben
-            if (event.key === "w" || event.key === "W") {
-                console.log("W gedrückt");
-            } else if (event.key === "a" || event.key === "A") {
-                console.log("A gedrückt");
-            } else if (event.key === "s" || event.key === "S") {
-                console.log("S gedrückt");
-            } else if (event.key === "d" || event.key === "D") {
-                console.log("D gedrückt");
+        // Keydown-Listener, der auf alle Tastendrücke reagiert
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'w') {
+                console.log("Die Taste 'w' wurde gedrückt!");
             }
+        });
+
+        // Button-Eventlistener, der einen 'w'-Keydown simuliert
+        document.getElementById('simulateW').addEventListener('click', () => {
+            const event = new KeyboardEvent('keydown', {
+                key: 'w',
+                code: 'KeyW',
+                keyCode: 87, // Entspricht der Taste 'w'
+                bubbles: true,
+                cancelable: true
+            });
+            document.dispatchEvent(event); // Löst den Keydown-Event aus
         });
     </script>
 </body>

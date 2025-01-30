@@ -78,6 +78,13 @@ body {
     justify-content: center;
 }
 
+#mapInformation{
+    margin: 20px;
+    display: flex;
+    gap: 10px;
+    display: none;
+}
+
 #mapGrid {
     display: grid;
     background-color: #333;
