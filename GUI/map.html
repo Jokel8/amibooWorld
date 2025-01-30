@@ -1,148 +1,159 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <title>Map Renderer</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        #map {
-            display: grid;
-            gap: 2px;
-            background-color: #333;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        .tile {
-            width: 50px;
-            height: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            cursor: default;
-        }
-        .tile-layer {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .resources {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            display: flex;
-            gap: 2px;
-        }
-        .resources i {
-            font-size: 12px;
-        }
-        .walkable {
-            cursor: pointer;
-        }
-        .walkable:hover {
-            outline: 2px solid yellow;
-        }
-        .not-walkable {
-            cursor: not-allowed;
-        }
-        .not-walkable::before {
-            content: '✖';
-            color: red;
-            font-size: 30px;
-            position: absolute;
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-    <div id="map"></div>
+    <div id="mapGrid">
+        <div id="crosshair"></div>
+    </div>
 
     <script>
-    async function renderMap() {
-        const response = await fetch('http://pc-513-09/map?x=10&y=10');
-        const mapData = await response.json();
-        const mapElement = document.getElementById('map');
+        var width;
+        var height;
 
-        console.log(mapData)
-       
+        document.addEventListener('DOMContentLoaded', () => {
+            const crosshair = document.getElementById('crosshair');
+            const mapElement = document.getElementById('mapGrid');
+            let crosshairX = 4;
+            let crosshairY = 4;
 
-        // Setze Grid-Eigenschaften
-        mapElement.style.gridTemplateColumns = `repeat(${mapData.width}, 50px)`;
-        mapElement.style.gridTemplateRows = `repeat(${mapData.height}, 50px)`;
-
-        // Erstelle eine Struktur zum Sammeln von Layern
-        const layers = {};
-
-        // Durchlaufe die Karte und erstelle Layers
-        mapData.map.forEach((tile) => {
-            const key = `${tile.x}-${tile.y}`;
-            if (!layers[key]) {
-                layers[key] = [];
+            function updateCrosshair() {
+                crosshair.style.transform = `translate(${crosshairX * 102}px, ${crosshairY * 102}px)`;
             }
-            layers[key].push(tile);
+
+            const steps = [];
+
+            // Funktion: Feld abdunkeln (zur Spur hinzufügen)
+            function darkenTile(x, y) {
+                const tiles = mapElement.children;
+                const index = y * width + x + 1;
+                if (tiles[index]) {
+                    tiles[index].style.filter = 'brightness(50%)';
+                }
+            }
+
+            // Initiales Positionieren des Fadenkreuzes
+            updateCrosshair();
+
+            // Eventlistener für WASD-Tasten
+            document.addEventListener('keydown', (event) => {
+                const prevX = crosshairX;
+                const prevY = crosshairY;
+
+                if (event.key === 'w' && crosshairY > 0) {
+                    const targetTile = mapElement.children[(crosshairY - 1) * width + crosshairX + 1];
+                    if (targetTile && targetTile.classList.contains('walkable')) {
+                        crosshairY--; // Nach oben bewegen
+                    }
+                } else if (event.key === 's' && crosshairY < height - 1) {
+                    const targetTile = mapElement.children[(crosshairY + 1) * width + crosshairX + 1];
+                    if (targetTile && targetTile.classList.contains('walkable')) {
+                        crosshairY++; // Nach unten bewegen
+                    }
+                } else if (event.key === 'a' && crosshairX > 0) {
+                    const targetTile = mapElement.children[crosshairY * width + (crosshairX - 1) + 1];
+                    if (targetTile && targetTile.classList.contains('walkable')) {
+                        crosshairX--; // Nach links bewegen
+                    }
+                } else if (event.key === 'd' && crosshairX < width - 1) {
+                    const targetTile = mapElement.children[crosshairY * width + (crosshairX + 1) + 1];
+                    if (targetTile && targetTile.classList.contains('walkable')) {
+                        crosshairX++; // Nach rechts bewegen
+                    }
+                }
+
+                updateCrosshair();
+
+                if (prevX !== crosshairX || prevY !== crosshairY) {
+                    steps.push({ x: crosshairX, y: crosshairY });
+                    console.log(`Moved to: (${crosshairX}, ${crosshairY})`);
+                    darkenTile(prevX, prevY);
+                }
+            });
         });
 
-        // Rendere die Layers
-        Object.entries(layers).forEach(([key, tileLayers]) => {
-            const [x, y] = key.split('-').map(Number);
-            const tileContainer = document.createElement('div');
-            tileContainer.classList.add('tile');
+        async function renderMap() {
+            const response = await fetch('http://v2202410237002289383.megasrv.de:8080/map?x=404&y=498');
+            const mapData = await response.json();
+            const mapElement = document.getElementById('mapGrid');
 
-            tileLayers.forEach((tileData, index) => {
-                const tileLayer = document.createElement('div');
-                tileLayer.classList.add('tile-layer');
-                
-                // Farbe basierend auf dem Feldtyp
-                const colors = {
-                    1: '#DEB887', // hellgrün
-                    2: '#87CEFA', // hellblau
-                    3: '#90EE90', // sandfarben
-                    4: '#4169E1', // königsblau
-                    5: '#32CD32'  // limegreen
-                };
+            console.log(mapData)
 
-                tileLayer.style.backgroundColor = colors[tileData.properties.value];
-                tileLayer.style.zIndex = index;
-                tileLayer.textContent = tileData.properties.value;
+            height = mapData.height;
+            width = mapData.width;
 
-                // Cursor und Interaktivität basierend auf Begehbarkeit
-                if (tileData.properties.is_walkable) {
-                    tileContainer.classList.add('walkable');
-                } else {
-                    tileContainer.classList.add('not-walkable');
+            // Setze Grid-Eigenschaften
+            mapElement.style.gridTemplateColumns = `repeat(${width}, 100px)`;
+            mapElement.style.gridTemplateRows = `repeat(${height}, 100px)`;
+
+            // Erstelle eine Struktur zum Sammeln von Layern
+            const layers = {};
+
+            // Durchlaufe die Karte und erstelle Layers
+            mapData.map.forEach((tile) => {
+                const key = `${tile.x}-${tile.y}`;
+                if (!layers[key]) {
+                    layers[key] = [];
                 }
-
-                tileContainer.appendChild(tileLayer);
-
-                // Ressourcen-Icons
-                const resourcesDiv = document.createElement('div');
-                resourcesDiv.classList.add('resources');
-
-                if (tileData.resources.holz > 50) {
-                    const woodIcon = document.createElement('i');
-                    woodIcon.classList.add('fas', 'fa-tree', 'text-green-500');
-                    woodIcon.title = `Holz: ${tileData.resources.holz}`;
-                    resourcesDiv.appendChild(woodIcon);
-                }
-
-                if (tileData.resources.gold > 50) {
-                    const goldIcon = document.createElement('i');
-                    goldIcon.classList.add('fas', 'fa-coins', 'text-yellow-500');
-                    goldIcon.title = `Gold: ${tileData.resources.gold}`;
-                    resourcesDiv.appendChild(goldIcon);
-                }
-
-                tileContainer.appendChild(resourcesDiv);
+                layers[key].push(tile);
             });
 
-            mapElement.appendChild(tileContainer);
-        });
-    }
+            // Rendere die Layers
+            Object.entries(layers).forEach(([key, tileLayers]) => {
+                const [x, y] = key.split('-').map(Number);
+                const tileContainer = document.createElement('div');
+                tileContainer.classList.add('tile');
 
-    // Initiiere Rendering beim Laden der Seite
-    renderMap();
+                tileLayers.forEach((tileData, index) => {
+                    const tileLayer = document.createElement('div');
+                    tileLayer.classList.add('tile-layer');
+
+                    tileLayer.style.backgroundImage = 'url(../CMS/getAsset.php?action=getImg&type=field_type&id=' + tileData.properties.value + ')';
+                    tileLayer.style.zIndex = index;
+                    tileLayer.textContent = tileData.properties.value;
+
+                    // Cursor und Interaktivität basierend auf Begehbarkeit
+                    if (tileData.properties.is_walkable) {
+                        tileContainer.classList.add('walkable');
+                    } else {
+                        tileContainer.classList.add('not-walkable');
+                    }
+
+                    tileContainer.appendChild(tileLayer);
+
+                    // Ressourcen-Icons
+                    const resourcesDiv = document.createElement('div');
+                    resourcesDiv.classList.add('resources');
+
+                    if (tileData.resources.holz > 50) {
+                        const woodIcon = document.createElement('i');
+                        woodIcon.classList.add('fas', 'fa-tree', 'text-green-500');
+                        woodIcon.title = `Holz: ${tileData.resources.holz}`;
+                        resourcesDiv.appendChild(woodIcon);
+                    }
+
+                    if (tileData.resources.gold > 50) {
+                        const goldIcon = document.createElement('i');
+                        goldIcon.classList.add('fas', 'fa-coins', 'text-yellow-500');
+                        goldIcon.title = `Gold: ${tileData.resources.gold}`;
+                        resourcesDiv.appendChild(goldIcon);
+                    }
+
+                    tileContainer.appendChild(resourcesDiv);
+                });
+
+                mapElement.appendChild(tileContainer);
+            });
+        }
+
+        // Initiiere Rendering beim Laden der Seite
+        renderMap();
     </script>
 </body>
+
 </html>
