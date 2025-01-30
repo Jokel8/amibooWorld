@@ -22,7 +22,7 @@ public class Datenbank {
         for (int tileX = x - radius; tileX <= x + radius; tileX++ ) {
             for (int tileY = y - radius; tileY <= y + radius; tileY++ ) {
                 //macht das es loopt
-                tiles[i] = new int[]{tileX % 1000, tileY % 1000};
+                tiles[i] = new int[]{Math.floorMod(tileX, 1000), Math.floorMod(tileY, 1000)};
                 i++;
             }
         }
@@ -68,18 +68,19 @@ public class Datenbank {
                     } else {
                         throw new SQLException(e);
                     }
+                } else {
+                    throw new RuntimeException(e);
                 }
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
         }
-        return null;
     }
 
     public String dbGetTileAndMakeItIntoJson(int[][] tiles) {
         //sql abfrage erstellen
         StringBuilder query = new StringBuilder();
-        query.append("SELECT field_type_name, field_type_is_walkable, field_type_is_swimmable, field_type_is_flyable FROM field_type JOIN map ON (map.field_type = field_type.field_type_id) WHERE ");
+        query.append("SELECT field_type, field_type_name, field_type_is_walkable, field_type_is_swimmable, field_type_is_flyable, holz, gold FROM field_type JOIN map ON (map.field_type = field_type.field_type_id) WHERE ");
         for (int i = 0; i < tiles.length; i++) {
 
             int x = tiles[i][0];
@@ -91,6 +92,7 @@ public class Datenbank {
             }
         }
         query.append(";");
+        //System.out.println(query.toString());
 
         ResultSet rs = this.executeQuery(query.toString());
 
@@ -102,7 +104,7 @@ public class Datenbank {
             //tiles in json umwandeln
             for (int i = 0; rs.next(); i++) {
                 JSONObject properties = new JSONObject();
-                properties.put("value", 3);
+                properties.put("value", rs.getInt("field_type"));
                 properties.put("name", rs.getString("field_type_name"));
                 properties.put("is_walkable", rs.getInt("field_type_is_walkable"));
                 properties.put("is_swimmable", rs.getInt("field_type_is_swimmable"));

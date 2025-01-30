@@ -58,7 +58,8 @@ public class Weapon extends Item {
         weapon.setDamage(damage);
         return weapon;
     }
-    public JSONObject toJson() {
+    @Override
+    public JSONObject toJSON() {
         JSONObject weapon = new JSONObject();
         weapon.put("name", this.getName());
         weapon.put("stackable", this.isStackable());

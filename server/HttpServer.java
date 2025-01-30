@@ -85,7 +85,7 @@ public class HttpServer extends Datenbank {
             StringBuilder antwort = new StringBuilder();
             switch (anfrage) {
                 case "map" -> {
-                    int[][] tiles = this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 2);
+                    int[][] tiles = this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 4);
                     String tilesString = this.datenbank.dbGetTileAndMakeItIntoJson(tiles);
                     //http header
                     antwort.append("HTTP/1.1 200 OK\n" +
