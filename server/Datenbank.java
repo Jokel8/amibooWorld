@@ -68,18 +68,19 @@ public class Datenbank {
                     } else {
                         throw new SQLException(e);
                     }
+                } else {
+                    throw new RuntimeException(e);
                 }
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
         }
-        return null;
     }
 
     public String dbGetTileAndMakeItIntoJson(int[][] tiles) {
         //sql abfrage erstellen
         StringBuilder query = new StringBuilder();
-        query.append("SELECT type_name, type_is_walkable, type_is_swimmable, type_is_flyable, holz, gold FROM field_type JOIN map ON (map.field_type = field_type.type_id) WHERE ");
+        query.append("SELECT field_type_name, field_type_is_walkable, field_type_is_swimmable, field_type_is_flyable, holz, gold FROM field_type JOIN map ON (map.field_type = field_type.field_type_id) WHERE ");
         for (int i = 0; i < tiles.length; i++) {
 
             int x = tiles[i][0];
@@ -91,6 +92,7 @@ public class Datenbank {
             }
         }
         query.append(";");
+        //System.out.println(query.toString());
 
         ResultSet rs = this.executeQuery(query.toString());
 
@@ -103,10 +105,10 @@ public class Datenbank {
             for (int i = 0; rs.next(); i++) {
                 JSONObject properties = new JSONObject();
                 properties.put("value", 3);
-                properties.put("name", rs.getString("type_name"));
-                properties.put("is_walkable", rs.getInt("type_is_walkable"));
-                properties.put("is_swimmable", rs.getInt("type_is_swimmable"));
-                properties.put("is_flyable", rs.getInt("type_is_flyable"));
+                properties.put("name", rs.getString("field_type_name"));
+                properties.put("is_walkable", rs.getInt("field_type_is_walkable"));
+                properties.put("is_swimmable", rs.getInt("field_type_is_swimmable"));
+                properties.put("is_flyable", rs.getInt("field_type_is_flyable"));
 
                 JSONObject resources = new JSONObject();
                 resources.put("holz", rs.getInt("holz"));
