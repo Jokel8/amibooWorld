@@ -80,7 +80,7 @@ public class Datenbank {
     public String dbGetTileAndMakeItIntoJson(int[][] tiles) {
         //sql abfrage erstellen
         StringBuilder query = new StringBuilder();
-        query.append("SELECT field_type, field_type_name, field_type_is_walkable, field_type_is_swimmable, field_type_is_flyable, holz, gold FROM field_type JOIN map ON (map.field_type = field_type.field_type_id) WHERE ");
+        query.append("SELECT field_type, field_type_name, field_type_is_walkable, field_type_is_swimmable, field_type_is_flyable, feld_holz, feld_gestein FROM field_type JOIN map ON (map.field_type = field_type.field_type_id) WHERE ");
         for (int i = 0; i < tiles.length; i++) {
 
             int x = tiles[i][0];
@@ -111,8 +111,8 @@ public class Datenbank {
                 properties.put("is_flyable", rs.getInt("field_type_is_flyable"));
 
                 JSONObject resources = new JSONObject();
-                resources.put("holz", rs.getInt("holz"));
-                resources.put("gold", rs.getInt("gold"));
+                resources.put("holz", rs.getInt("feld_holz"));
+                resources.put("gold", rs.getInt("feld_gestein"));
 
                 JSONObject tile = new JSONObject();
                 tile.put("x", tiles[i][0]);
