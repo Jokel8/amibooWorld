@@ -128,6 +128,10 @@ public class HttpServer extends Datenbank {
                     antwort.append("HTTP/1.1 204 No Content\n");
                     this.datenbank.setFeld(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 0, 0, Integer.parseInt(parameter.get("type")));
                 }
+                case "strike" -> {
+                    antwort.append("HTTP/1.1 204 No Content\n");
+                    this.datenbank.setFeld(this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 1), 0, 0, 6);
+                }
                 default -> {
                     antwort.append("HTTP/1.1 404 Not Found\n");
                 }
