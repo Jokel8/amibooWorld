@@ -120,6 +120,10 @@ public class HttpServer extends Datenbank {
                             "Content-Length: " + tokenJson.length() + "\n\n");
                     antwort.append(tokenJson);
                 }
+                case "mine" -> {
+                    antwort.append("HTTP/1.1 204 No Content\n");
+                    this.datenbank.setFeld(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 0, 0);
+                }
                 default -> {
                     antwort.append("HTTP/1.1 404 Not Found\n");
                 }
