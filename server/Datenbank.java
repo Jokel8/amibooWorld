@@ -50,7 +50,7 @@ public class Datenbank {
         }
         return verbunden;
     }
-    private ResultSet executeQuery(String query) {
+    private ResultSet abfragMachen(String query) {
 
         try {
             PreparedStatement pstmt = this.con.prepareStatement(query.toString());
@@ -64,7 +64,7 @@ public class Datenbank {
                     System.out.println("Datenbankverbindung getrennt");
                     if (this.verbinden()) {
                         System.out.println("Datenbankverbindung hergestellt");
-                        return this.executeQuery(query);
+                        return this.abfragMachen(query);
                     } else {
                         throw new SQLException(e);
                     }
@@ -80,7 +80,7 @@ public class Datenbank {
     public String dbGetTileAndMakeItIntoJson(int[][] tiles) {
         //sql abfrage erstellen
         StringBuilder query = new StringBuilder();
-        query.append("SELECT field_type, field_type_name, field_type_is_walkable, field_type_is_swimmable, field_type_is_flyable, feld_holz, feld_gestein FROM field_type JOIN map ON (map.field_type = field_type.field_type_id) WHERE ");
+        query.append("SELECT field_type, field_type_name, field_type_is_walkable, field_type_is_swimmable, field_type_is_flyable, field_holz, field_gestein FROM field_type JOIN map ON (map.field_type = field_type.field_type_id) WHERE ");
         for (int i = 0; i < tiles.length; i++) {
 
             int x = tiles[i][0];
@@ -94,7 +94,7 @@ public class Datenbank {
         query.append(";");
         //System.out.println(query.toString());
 
-        ResultSet rs = this.executeQuery(query.toString());
+        ResultSet rs = this.abfragMachen(query.toString());
 
         //System.out.println(query);
         if (rs != null) try {
@@ -111,8 +111,8 @@ public class Datenbank {
                 properties.put("is_flyable", rs.getInt("field_type_is_flyable"));
 
                 JSONObject resources = new JSONObject();
-                resources.put("holz", rs.getInt("feld_holz"));
-                resources.put("gold", rs.getInt("feld_gestein"));
+                resources.put("holz", rs.getInt("field_holz"));
+                resources.put("gold", rs.getInt("field_gestein"));
 
                 JSONObject tile = new JSONObject();
                 tile.put("x", tiles[i][0]);
@@ -136,7 +136,7 @@ public class Datenbank {
     }
     public long getToken(String username, String password) {
         String query = "SELECT user_token FROM user WHERE user_name = '" + username + "' AND user_password = '" + password + "'";
-        ResultSet rs = this.executeQuery(query);
+        ResultSet rs = this.abfragMachen(query);
 
         if (rs != null)try {
             if (rs.next()) {
@@ -148,6 +148,58 @@ public class Datenbank {
             throw new RuntimeException(e);
         } else {
             return 0;
+        }
+    }
+
+    public void setFeld(int x, int y, int holz, int gestein) {
+        String query = "UPDATE map SET field_holz = " + holz + ", field_gestein = " + gestein + " WHERE field_x = " + x + " AND field_y = " + y + ";";
+        updateMachen(query);
+    }
+
+    public void setFeld(int x, int y, int holz, int gestein, int type) {
+        String query = "UPDATE map SET field_holz = " + holz + ", field_gestein = " + gestein + ", field_type = " + type + " WHERE field_x = " + x + " AND field_y = " + y + ";";
+        updateMachen(query);
+    }
+    public void setFeld(int[][] tiles, int holz, int gestein, int type) {
+        //sql abfrage erstellen
+        StringBuilder query = new StringBuilder();
+        query.append("UPDATE map SET field_holz = " + holz + ", field_gestein = " + gestein + ", field_type = " + type + " WHERE ");
+        for (int i = 0; i < tiles.length; i++) {
+
+            int x = tiles[i][0];
+            int y = tiles[i][1];
+
+            query.append("field_x = " + x + " AND field_y = " + y);
+            if (i < tiles.length - 1) {
+                query.append(" OR ");
+            }
+        }
+        query.append(";");
+        updateMachen(query.toString());
+    }
+
+    private void updateMachen(String query) {
+        try {
+            PreparedStatement pstmt = this.con.prepareStatement(query.toString());
+            // Führe die Abfrage aus
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            try {
+                //verbindung zu datenbank prüfen und zur not wieder herstellen
+                if (this.con.isClosed()) {
+                    System.out.println("Datenbankverbindung getrennt");
+                    if (this.verbinden()) {
+                        System.out.println("Datenbankverbindung hergestellt");
+                        this.updateMachen(query);
+                    } else {
+                        throw new SQLException(e);
+                    }
+                } else {
+                    throw new RuntimeException(e);
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 }
