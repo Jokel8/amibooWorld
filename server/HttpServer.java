@@ -95,8 +95,7 @@ public class HttpServer extends Datenbank {
                     antwort.append(tilesString);
                 }
                 case "inventory" -> {
-                    Inventory inventar = new Inventory(parameter.get("username"));
-                    String inv = inventar.listItems();
+                    String inv = datenbank.getInventar(parameter.get("token"));
                     antwort.append("HTTP/1.1 200 OK\n" +
                             "Content-Type: application/json\n" +
                             "Access-Control-Allow-Origin: *\n" +

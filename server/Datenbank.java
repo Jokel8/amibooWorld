@@ -6,11 +6,10 @@ import org.json.JSONObject;
 import java.sql.*;
 
 public class Datenbank {
-    Connection con;
+    private Connection con;
 
     private String driver;
 
-    //private Json
     public Datenbank() {
         this.driver = "com.mysql.cj.jdbc.Driver";
     }
@@ -178,6 +177,16 @@ public class Datenbank {
         updateMachen(query.toString());
     }
 
+    public String getInventar(String token) {
+        String query = "SELECT user_inventoy FROM user WHERE user_token = " + token + ";";
+        ResultSet rs = this.abfragMachen(query);
+        if (rs != null)try {
+            return rs.getString("user_inventory");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return "{\n\t\"token\": false\n}";
+    }
     private void updateMachen(String query) {
         try {
             PreparedStatement pstmt = this.con.prepareStatement(query.toString());
