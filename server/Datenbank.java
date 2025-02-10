@@ -195,16 +195,22 @@ public class Datenbank {
         if (rs != null) try {
             while(rs.next()) {
                 String inventar = rs.getString("user_inventory");
-                JSONTokener jsontokener = new JSONTokener(inventar);
-                while (!jsontokener.end()) {
-                    JSONObject json = (JSONObject) jsontokener.nextValue();
-                    inventory.addItem(new Item(json.getString("name"), json.getBoolean("stackable"), json.getInt("value"), json.getEnum(Rarity.class, "rarity"), json.getString("description"), json.getString("manufacturer"), json.getEnum(Category.class, "category")));
+                JSONObject json = new JSONObject(inventar);
+                JSONArray items = json.getJSONArray("items");
+                for (int i = 0; i < items.length(); i++) {
+                    JSONObject item = items.getJSONObject(i);
+                    inventory.addItem(new Item(item.getString("name"), item.getBoolean("stackable"), item.getInt("value"), item.getEnum(Rarity.class, "rarity"), item.getString("description"), item.getString("manufacturer"), item.getEnum(Category.class, "category")));
                 }
+                inventory.addGold(json.getInt("toal_gold"));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } else {
+            Inventory fehler = new Inventory("fehler");
+            fehler.addItem(new Item("fehler", false, 0, Rarity.UNCOMMON, "falscher token", "server", Category.OTHER));
+            return fehler;
         }
-        return null;
+        return inventory;
     }
     public String getInventar(String token) {
         String query = "SELECT user_inventoy FROM user WHERE user_token = " + token + ";";

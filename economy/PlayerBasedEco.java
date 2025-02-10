@@ -1,5 +1,7 @@
 package economy;
 
+import server.Datenbank;
+
 /**
  * This class demonstrates a simple player-based economy where a player can purchase items (weapons)
  * from a merchant inventory using gold.
@@ -82,7 +84,11 @@ public class PlayerBasedEco {
 //        player2Inventory.listItems();
 
 
-        System.out.println(player1Inventory.listItems());
+        //System.out.println(player1Inventory.listItems());
 
+        Datenbank test = new Datenbank();
+        test.verbinden();
+        Inventory testinventory = test.inventarEinlesen("123456");
+        System.out.println(testinventory.listItems());
    }
 }

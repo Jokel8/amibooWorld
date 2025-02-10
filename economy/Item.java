@@ -31,9 +31,9 @@ public class Item {
         item.put("value", this.value);
         item.put("description", this.description);
         item.put("manufacturer", this.manufacturer);
-        item.put("category", this.category.ordinal());
+        item.put("category", this.category);
         item.put("stackable", this.stackable);
-        item.put("rarity", this.rarity.ordinal());
+        item.put("rarity", this.rarity);
         return item;
     }
 
