@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/login_style.css">
+</head>
+<body>
+    <div class="big_container">
+        <div class="form">
+            <form action="./add.php" method="post">
+                <div class="inputs_container"></div>
+                    <input name="user" id="text" type="text" placeholder="Username">
+                    <br>
+                    <input name="password" id="text" type="password" placeholder="Password">
+                    <input name="password_v" id="text" type="password" placeholder="Verify Password">
+                    <br>
+                    <select name="class" id="select">
+                        <option value="1">7a</option>
+                        <option value="2">7b</option>
+                        <option value="3">7c</option>
+                        <option value="4">7d</option>
+                        <option value="5">8a</option>
+                        <option value="6">8b</option>
+                        <option value="7">8c</option>
+                        <option value="8">8d</option>
+                        <option value="9">9a</option>
+                        <option value="10">9b</option>
+                        <option value="11">9c</option>
+                        <option value="12">9d</option>
+                    </select>
+                    <br><br>
+                    <input type="submit">
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+<style>
+    #text {
+        display: block;
+    }
+</style>
