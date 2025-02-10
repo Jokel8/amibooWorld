@@ -1,7 +1,12 @@
 package server;
 
+import economy.Category;
+import economy.Inventory;
+import economy.Item;
+import economy.Rarity;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.sql.*;
 
@@ -27,6 +32,13 @@ public class Datenbank {
         }
         return tiles;
     }
+//    public int[][] welcheTileSollIchHolen(int x, int y, int x_alt, int y_alt, int radius) {
+//        int[][] xy = welcheTileSollIchHolen(x, y, radius);
+//        int[][] xyAlt = welcheTileSollIchHolen(x, y, radius);
+//        int minX = Math.min(xy[0][0], xyAlt[0][0]);
+//        int minY = Math.min(xy[2*radius+1][1], xyAlt[2*radius+1][1]);
+//        int maxXAlt = Math
+//    }
 
     /**
      * Prozedur, um das Programm mit der Datenbank zu verknüpfen.
@@ -176,7 +188,24 @@ public class Datenbank {
         query.append(";");
         updateMachen(query.toString());
     }
-
+    public Inventory inventarEinlesen(String token) {
+        Inventory inventory = new Inventory(token);
+        String query = "SELECT user_inventory FROM user WHERE user_token = " + token + ";";
+        ResultSet rs = this.abfragMachen(query);
+        if (rs != null) try {
+            while(rs.next()) {
+                String inventar = rs.getString("user_inventory");
+                JSONTokener jsontokener = new JSONTokener(inventar);
+                while (!jsontokener.end()) {
+                    JSONObject json = (JSONObject) jsontokener.nextValue();
+                    inventory.addItem(new Item(json.getString("name"), json.getBoolean("stackable"), json.getInt("value"), json.getEnum(Rarity.class, "rarity"), json.getString("description"), json.getString("manufacturer"), json.getEnum(Category.class, "category")));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
     public String getInventar(String token) {
         String query = "SELECT user_inventoy FROM user WHERE user_token = " + token + ";";
         ResultSet rs = this.abfragMachen(query);

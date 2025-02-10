@@ -6,7 +6,7 @@ import org.json.JSONObject;
  * Represents a general item in the game.
  * Items can have properties such as name, stackability, value, rarity, description, manufacturer, and category.
  */
-public abstract class Item {
+public class Item {
 
     protected String name;
     protected boolean stackable;
@@ -31,10 +31,20 @@ public abstract class Item {
         item.put("value", this.value);
         item.put("description", this.description);
         item.put("manufacturer", this.manufacturer);
-        item.put("category", this.category);
+        item.put("category", this.category.ordinal());
         item.put("stackable", this.stackable);
         item.put("rarity", this.rarity.ordinal());
         return item;
+    }
+
+    public Item(String name, boolean stackable, int value, Rarity rarity, String description, String manufacturer, Category category) {
+        this.name = name;
+        this.stackable = stackable;
+        this.value = value;
+        this.rarity = rarity;
+        this.description = description;
+        this.manufacturer = manufacturer;
+        this.category = category;
     }
 
     /**
@@ -49,7 +59,9 @@ public abstract class Item {
      * @param category    The category of the item.
      * @return A new instance of an Item (usually a subclass like Weapon).
      */
-    public abstract Item createItem(String name, boolean stackable, int value, Rarity rarity, String description, String manufacturer, Category category);
+    public Item createItem(String name, boolean stackable, int value, Rarity rarity, String description, String manufacturer, Category category) {
+        return new Item(name, stackable, value, rarity, description, manufacturer, category);
+    }
 
     // Getters and Setters
     public String getName() {
@@ -108,5 +120,5 @@ public abstract class Item {
         this.category = category;
     }
 
-    public abstract Weapon createItem(String name, boolean stackable, int value, Rarity rarity, String description, String manufacturer, Category category, int damage);
+    //public Weapon createItem(String name, boolean stackable, int value, Rarity rarity, String description, String manufacturer, Category category, int damage);
 }

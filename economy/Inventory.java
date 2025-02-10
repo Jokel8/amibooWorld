@@ -127,7 +127,7 @@ public class Inventory {
         }
         json.put("items", inventar);
         json.put("toal_gold", this.gold);
-        return json.toString();
+        return json.toString(4);
     }
 
 }
