@@ -161,12 +161,10 @@ public class Datenbank {
             return 0;
         }
     }
-
     public void setFeld(int x, int y, int holz, int gestein) {
         String query = "UPDATE map SET field_holz = " + holz + ", field_gestein = " + gestein + " WHERE field_x = " + x + " AND field_y = " + y + ";";
         updateMachen(query);
     }
-
     public void setFeld(int x, int y, int holz, int gestein, int type) {
         String query = "UPDATE map SET field_holz = " + holz + ", field_gestein = " + gestein + ", field_type = " + type + " WHERE field_x = " + x + " AND field_y = " + y + ";";
         updateMachen(query);
@@ -222,7 +220,7 @@ public class Datenbank {
         }
         return "{\n\t\"token\": false\n}";
     }
-    private void updateMachen(String query) {
+    public void updateMachen(String query) {
         try {
             PreparedStatement pstmt = this.con.prepareStatement(query.toString());
             // Führe die Abfrage aus

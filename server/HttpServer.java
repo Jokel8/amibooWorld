@@ -1,6 +1,6 @@
 package server;
 
-import economy.Inventory;
+import org.json.HTTPTokener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class HttpServer extends Datenbank {
     private ServerSocket socket;
@@ -52,13 +53,13 @@ public class HttpServer extends Datenbank {
                         BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                         String line = "";
                         line = in.readLine();
-                        //erste zeile des headers aufgeben
+                        //erste zeile des headers ausgeben
                         System.out.println(line);
                         if (line != null && isAnfrageValide(line)) {
                             String anfrage = this.getAnfrage(line);
                             //System.out.println(anfrage);
                             HashMap<String, String> parameter = this.getParameter(line);
-                            anfrageVerarbeiten(anfrage, parameter, client);
+                            anfrageVerarbeiten(anfrage, parameter, client, in);
                         } else {
                             System.out.println("^abgelehnt^");
                             viernullnull(client);
@@ -78,7 +79,7 @@ public class HttpServer extends Datenbank {
         return matcher.matches();
     }
 
-    private void anfrageVerarbeiten(String anfrage, HashMap<String, String> parameter, Socket client) {
+    private void anfrageVerarbeiten(String anfrage, HashMap<String, String> parameter, Socket client, BufferedReader in) {
         //System.out.println(anfrage);
         try {
             PrintWriter out = new PrintWriter(client.getOutputStream(), true);
@@ -135,6 +136,10 @@ public class HttpServer extends Datenbank {
                     antwort.append("HTTP/1.1 204 No Content\n");
                     this.datenbank.setFeld(this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 1), 0, 0, 6);
                 }
+                case "queue" -> {
+                    queueSpeichern(in, parameter.get("token"));
+                    antwort.append("HTTP/1.1 204 No Content\n");
+                }
                 default -> {
                     antwort.append("HTTP/1.1 404 Not Found\n");
                 }
@@ -146,6 +151,17 @@ public class HttpServer extends Datenbank {
             throw new RuntimeException(e);
         }
 
+    }
+    private void queueSpeichern(BufferedReader in, String token) {
+        StringBuilder queue = new StringBuilder();
+        Stream<String> lines = in.lines();
+        in.lines().forEach(queue::append);
+        System.out.println(queue.toString());
+        String[] headerbody = queue.toString().split("(?s)\r?\n\r?\n", 2);
+        if (headerbody.length == 2) {
+            this.datenbank.updateMachen("UPDATE user SET user_queue = '" + headerbody[1] + "' WHERE user_token = " + token + ";");
+            this.datenbank.updateMachen("UPDATE user SET user_queue_start = " + (long)(System.currentTimeMillis() / 1000) + " WHERE user_token = " + token + ";");
+        }
     }
     private void viernullnull(Socket client) {
         try {
