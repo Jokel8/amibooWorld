@@ -61,6 +61,12 @@ public class Datenbank {
         }
         return verbunden;
     }
+
+    /**
+     * sql abfrage machen
+     * @param query sql befehl
+     * @return result set muss noch auf != null geprüft werden
+     */
     private ResultSet abfragMachen(String query) {
 
         try {
@@ -186,23 +192,22 @@ public class Datenbank {
         query.append(";");
         updateMachen(query.toString());
     }
+    /**
+     * liest das inventar aus der datenbankn ein und wandelt es in ein Inventar Objekt um
+     * @param token Usertoken
+     * @return Inventar mit den Items aus der Datenbank
+     */
     public Inventory inventarEinlesen(String token) {
         Inventory inventory = new Inventory(token);
-        String query = "SELECT user_inventory FROM user WHERE user_token = " + token + ";";
-        ResultSet rs = this.abfragMachen(query);
-        if (rs != null) try {
-            while(rs.next()) {
-                String inventar = rs.getString("user_inventory");
-                JSONObject json = new JSONObject(inventar);
-                JSONArray items = json.getJSONArray("items");
-                for (int i = 0; i < items.length(); i++) {
-                    JSONObject item = items.getJSONObject(i);
-                    inventory.addItem(new Item(item.getString("name"), item.getBoolean("stackable"), item.getInt("value"), item.getEnum(Rarity.class, "rarity"), item.getString("description"), item.getString("manufacturer"), item.getEnum(Category.class, "category")));
-                }
+        String inventar = this.getInventar(token);
+        JSONObject json = new JSONObject(inventar);
+        if (!json.has("fehler")) {
+            JSONArray items = json.getJSONArray("items");
+            for (int i = 0; i < items.length(); i++) {
+                JSONObject item = items.getJSONObject(i);
+                inventory.addItem(new Item(item.getString("name"), item.getBoolean("stackable"), item.getInt("value"), item.getEnum(Rarity.class, "rarity"), item.getString("description"), item.getString("manufacturer"), item.getEnum(Category.class, "category")));
                 inventory.addGold(json.getInt("toal_gold"));
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         } else {
             Inventory fehler = new Inventory("fehler");
             fehler.addItem(new Item("fehler", false, 0, Rarity.UNCOMMON, "falscher token", "server", Category.OTHER));
@@ -210,6 +215,11 @@ public class Datenbank {
         }
         return inventory;
     }
+    /**
+     * inventar aus der datenbank als json
+     * @param token usertoken
+     * @return json
+     */
     public String getInventar(String token) {
         String query = "SELECT user_inventoy FROM user WHERE user_token = " + token + ";";
         ResultSet rs = this.abfragMachen(query);
@@ -218,8 +228,12 @@ public class Datenbank {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return "{\n\t\"token\": false\n}";
+        return "{\n\t\"fehler\": true\n}";
     }
+    /**
+     * update zur datenbank machen
+     * @param query sql befehl
+     */
     public void updateMachen(String query) {
         try {
             PreparedStatement pstmt = this.con.prepareStatement(query.toString());
