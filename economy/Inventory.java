@@ -3,6 +3,10 @@ package economy;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import server.HttpServer.*;
+
 /**
  * Represents an inventory that can store items and manage gold for a player or merchant.
  * The inventory allows adding/removing items and managing the amount of gold the owner has.
@@ -11,15 +15,15 @@ public class Inventory {
 
     private List<Item> items; // Storage for items in the inventory
     private int gold;         // Storage for gold in the inventory
+    public String username;
 
     /**
      * Constructor to initialize the inventory with a starting amount of gold.
      *
-     * @param startingGold The initial amount of gold the inventory starts with.
      */
-    public Inventory(int startingGold) {
+    public Inventory(String username) {
         this.items = new ArrayList<>();
-        this.gold = startingGold;
+        this.username = username;
     }
 
     /**
@@ -108,15 +112,22 @@ public class Inventory {
         }
         return false; // Trade failed (not enough gold)
     }
-
+    public String getUsername() {
+        return username;
+    }
     /**
      * Displays all items in the inventory along with the total amount of gold.
      */
-    public void listItems() {
-        System.out.println("Items in inventory:");
+    public String listItems() {
+        JSONObject json = new JSONObject();
+        JSONArray inventar = new JSONArray();
+
         for (Item item : items) {
-            System.out.println("- " + item.getName() + " (Value: " + item.getValue() + ")");
+            inventar.put(item.toJSON());
         }
-        System.out.println("Total gold: " + gold);
+        json.put("items", inventar);
+        json.put("toal_gold", this.gold);
+        return json.toString(4);
     }
+
 }

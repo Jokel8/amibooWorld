@@ -1,5 +1,7 @@
 package economy;
 
+import org.json.JSONObject;
+
 /**
  * Represents a weapon item in the game, inheriting from the general Item class.
  * A weapon has a damage value in addition to the usual properties of an item.
@@ -44,7 +46,6 @@ public class Weapon extends Item {
      * @param damage      The damage value of the weapon.
      * @return A newly created Weapon instance.
      */
-    @Override
     public Weapon createItem(String name, boolean stackable, int value, Rarity rarity, String description, String manufacturer, Category category, int damage) {
         Weapon weapon = new Weapon();
         weapon.setName(name);
@@ -55,6 +56,19 @@ public class Weapon extends Item {
         weapon.setManufacturer(manufacturer);
         weapon.setCategory(category);
         weapon.setDamage(damage);
+        return weapon;
+    }
+    @Override
+    public JSONObject toJSON() {
+        JSONObject weapon = new JSONObject();
+        weapon.put("name", this.getName());
+        weapon.put("stackable", this.isStackable());
+        weapon.put("value", this.getValue());
+        weapon.put("rarity", this.getRarity());
+        weapon.put("description", this.getDescription());
+        weapon.put("manufacturer", this.getManufacturer());
+        weapon.put("category", this.getCategory());
+        weapon.put("damage", this.getDamage());
         return weapon;
     }
 }

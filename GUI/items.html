@@ -1,8 +1,8 @@
 <link rel="stylesheet" href="css/gridView.css">
-<div id="characterArray" class="grid"></div>
+<div id="itemArray" class="grid"></div>
 <script>
     let id = 1;
-    const container = document.getElementById("characterArray");
+    const container = document.getElementById("itemArray");
 
     async function fetchCharacter(name, id) {
         try {
@@ -10,7 +10,7 @@
             characterDiv.className = 'element';
 
             const img = document.createElement('img');
-            img.src = `../CMS/getAsset.php?action=getImg&type=character&id=${id}`;
+            img.src = `../CMS/getAsset.php?action=getImg&type=item&id=${id}`;
             img.alt = `Charakter ${id}`;
 
             const title = document.createElement('div');
@@ -29,7 +29,7 @@
     }
 
     async function loadCharacters() {
-        var count = await fetch('../CMS/getAsset.php?action=getAmount&type=character');
+        var count = await fetch('../CMS/getAsset.php?action=getAmount&type=item');
         count = await count.json();
         count = count.total;
         console.log(count + " Elemente gefunden.");
@@ -37,7 +37,7 @@
         var success = 0;
 
         while (success < count) {
-            const response = await fetch(`../CMS/getAsset.php?action=getTitle&type=character&id=${id}`);
+            const response = await fetch(`../CMS/getAsset.php?action=getTitle&type=item&id=${id}`);
 
             if (response.ok && response.status != 204) {
                 const data = await response.json();

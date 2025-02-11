@@ -1,23 +1,32 @@
 package server;
 
+import org.json.HTTPTokener;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class HttpServer extends Datenbank {
     private ServerSocket socket;
     private int port;
     private Datenbank datenbank;
+    private String regex;
+    private Pattern pattern;
 
     public void start() {
         try {
-            socket = new ServerSocket(port);
+            this.socket = new ServerSocket(port);
+
             while (true) {
                 verbindungenAkzeptieren();
             }
@@ -25,74 +34,144 @@ public class HttpServer extends Datenbank {
             throw new RuntimeException(e);
         }
     }
-    public HttpServer() throws SQLException, ClassNotFoundException {
-        this.port  = 8080;
+
+    public HttpServer() {
+        this.port = 8080;
         this.datenbank = new Datenbank();
-        this.datenbank.dbConnect();
+        this.datenbank.verbinden();
+        this.regex = "GET /[a-z]*((\\?[a-z]+=([a-z]|[0-9])+)(&[a-z]+=([a-z]|[0-9])+)*)?\\sHTTP/1\\.1";
+        this.pattern = Pattern.compile(regex);
     }
+
     private void verbindungenAkzeptieren() {
+        try {
+            Socket client = this.socket.accept();
 
-        new Thread(() -> {
-            try {
-                Socket client = this.socket.accept();
-
-                if (client.isConnected()) {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                    String line = "";
-
-                    line = in.readLine();
-                    System.out.println(line);
-                    String anfrage = this.getAnfrage(line);
-                    System.out.println(anfrage);
-                    HashMap<String, String> parameter = this.getParameter(line);
-                    anfrageVerarbeiten(anfrage, parameter, client);
-                    in.close();
-                }
-            } catch (IOException | SQLException e) {
-                throw new RuntimeException(e);
+            if (client.isConnected()) {
+                new Thread(() -> {
+                    try {
+                        BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                        String line = "";
+                        line = in.readLine();
+                        //erste zeile des headers ausgeben
+                        System.out.println(line);
+                        if (line != null && isAnfrageValide(line)) {
+                            String anfrage = this.getAnfrage(line);
+                            //System.out.println(anfrage);
+                            HashMap<String, String> parameter = this.getParameter(line);
+                            anfrageVerarbeiten(anfrage, parameter, client, in);
+                        } else {
+                            System.out.println("^abgelehnt^");
+                            viernullnull(client);
+                        }
+                        in.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).start();
             }
-        }).start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private boolean isAnfrageValide(String anfrage) {
+        Matcher matcher = this.pattern.matcher(anfrage);
+        return matcher.matches();
     }
 
-    private void anfrageVerarbeiten(String anfrage, HashMap<String, String> parameter, Socket client) throws IOException, SQLException {
-        System.out.println(anfrage);
-        switch (anfrage) {
-            case "map" -> {
-                System.out.println("Test erfolgreich!");
-                PrintWriter out = new PrintWriter(client.getOutputStream(), true);
-                int[][] tiles = this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 2);
-                String antwort = this.datenbank.dbGetTileAndMakeItIntoJson(tiles);
-                StringBuilder b = new StringBuilder();
-                b.append("HTTP/1.1 200 OK\n" +
-                        "Content-Type: text/html; charset=utf-8\n" +
-                        "Content-Length: 55743\n" +
-                        "Connection: keep-alive\n" +
-                        "Cache-Control: s-maxage=300, public, max-age=0\n" +
-                        "Content-Language: en-US\n" +
-                        "Date: Thu, 06 Dec 2018 17:37:18 GMT\n" +
-                        "ETag: \"2e77ad1dc6ab0b53a2996dfd4653c1c3\"\n" +
-                        "Server: meinheld/0.6.1\n" +
-                        "Strict-Transport-Security: max-age=63072000\n" +
-                        "X-Content-Type-Options: nosniff\n" +
-                        "X-Frame-Options: DENY\n" +
-                        "X-XSS-Protection: 1; mode=block\n" +
-                        "Vary: Accept-Encoding,Cookie\n" +
-                        "Age: 7");
-                b.append("<!DOCTYPE html>\n" +
-                        "<html>\n" +
-                        "<body>\n" +
-                        "\n" +
-                        "<h4>");
-                b.append(antwort);
-                b.append("</h4>\n" +
-                        "\n" +
-                        "<p>My first paragraph.</p>\n" +
-                        "\n" +
-                        "</body>\n" +
-                        "</html>");
-                out.println(b.toString());
-                this.close(client);
+    private void anfrageVerarbeiten(String anfrage, HashMap<String, String> parameter, Socket client, BufferedReader in) {
+        //System.out.println(anfrage);
+        try {
+            PrintWriter out = new PrintWriter(client.getOutputStream(), true);
+            StringBuilder antwort = new StringBuilder();
+            switch (anfrage) {
+                case "map" -> {
+                    int[][] tiles;
+//                    if (parameter.containsKey("px") && parameter.containsKey("py")) {
+//                        //tiles = this.datenbank.welcheTileSollIchHolen()
+//                    } else {
+                    if (parameter.containsKey("r")) {
+                        tiles = this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), Integer.parseInt(parameter.get("r")));
+                    } else {
+                        tiles = this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 4);
+                    }
+                    String tilesString = this.datenbank.dbGetTileAndMakeItIntoJson(tiles);
+                    //http header
+                    antwort.append("HTTP/1.1 200 OK\n" +
+                            "Content-Type: application/json\n" +
+                            "Access-Control-Allow-Origin: *\n" +
+                            "Content-Length: " + tilesString.length() + "\n\n");
+                    antwort.append(tilesString);
+                }
+                case "inventory" -> {
+                    String inv = datenbank.getInventar(parameter.get("token"));
+                    antwort.append("HTTP/1.1 200 OK\n" +
+                            "Content-Type: application/json\n" +
+                            "Access-Control-Allow-Origin: *\n" +
+                            "Content-Length: " + inv.length() + "\n\n");
+                    antwort.append(inv);
+                }
+                //datenbank verbindung wieder herstellen
+                case "db" -> {
+                    if (this.datenbank.verbinden()) {
+                        antwort.append("HTTP/1.1 204 No Content\n");
+                    } else {
+                        antwort.append("HTTP/1.1 500 Internal Server Error\n");
+                    }
+                }
+                case "login" -> {
+                    long token = this.datenbank.getToken(parameter.get("username"), getHash((parameter.get("password"))));
+                    String tokenJson = "{\n\t\"token\": " + token + "\n}";
+                    antwort.append("HTTP/1.1 200 OK\n" +
+                            "Content-Type: application/json\n" +
+                            "Access-Control-Allow-Origin: *\n" +
+                            "Content-Length: " + tokenJson.length() + "\n\n");
+                    antwort.append(tokenJson);
+                }
+                case "mine" -> {
+                    antwort.append("HTTP/1.1 204 No Content\n");
+                    this.datenbank.setFeld(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 0, 0);
+                }
+                case "build" -> {
+                    antwort.append("HTTP/1.1 204 No Content\n");
+                    this.datenbank.setFeld(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 0, 0, Integer.parseInt(parameter.get("type")));
+                }
+                case "strike" -> {
+                    antwort.append("HTTP/1.1 204 No Content\n");
+                    this.datenbank.setFeld(this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 1), 0, 0, 6);
+                }
+                case "queue" -> {
+                    queueSpeichern(in, parameter.get("token"));
+                    antwort.append("HTTP/1.1 204 No Content\n");
+                }
+                default -> {
+                    antwort.append("HTTP/1.1 404 Not Found\n");
+                }
             }
+            out.println(antwort.toString());
+            out.close();
+            this.close(client);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+    private void queueSpeichern(BufferedReader in, String token) {
+        StringBuilder queue = new StringBuilder();
+        Stream<String> lines = in.lines();
+        in.lines().forEach(queue::append);
+        System.out.println(queue.toString());
+        String[] headerbody = queue.toString().split("(?s)\r?\n\r?\n", 2);
+        if (headerbody.length == 2) {
+            this.datenbank.updateMachen("UPDATE user SET user_queue = '" + headerbody[1] + "' WHERE user_token = " + token + ";");
+            this.datenbank.updateMachen("UPDATE user SET user_queue_start = " + (long)(System.currentTimeMillis() / 1000) + " WHERE user_token = " + token + ";");
+        }
+    }
+    private void viernullnull(Socket client) {
+        try {
+            new PrintWriter(client.getOutputStream(), true).println("HTTP/1.1 400 Bad Request\n");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -105,6 +184,7 @@ public class HttpServer extends Datenbank {
     }
 
     private String getAnfrage(String anfrage) {
+        //aus dem header das angefragte verzeichniss extrahieren
         char[] chars = anfrage.toCharArray();
         String angerfage = "";
         int i = 0;
@@ -112,12 +192,17 @@ public class HttpServer extends Datenbank {
 
         }
         i++;
-        for(; chars[i] != ' ' && chars[i] != '?'; i++) {
+        for (; chars[i] != ' ' && chars[i] != '?'; i++) {
             angerfage += chars[i];
         }
         return angerfage;
     }
+
     private HashMap<String, String> getParameter(String anfrage) {
+        if (!anfrage.contains("?")) {
+            return null;
+        }
+        //aus dem header die parameter extrahieren
         char[] chars = anfrage.toCharArray();
         StringBuilder name = new StringBuilder();
         StringBuilder wert = new StringBuilder();
@@ -125,7 +210,6 @@ public class HttpServer extends Datenbank {
         int i = 0;
 
         for (; chars[i] != '?'; i++) {
-
         }
         i++;
         for (; i < chars.length - 9; i++) {
@@ -134,21 +218,32 @@ public class HttpServer extends Datenbank {
                 name.append(chars[i]);
             }
             i++;
-
             for (; chars[i] != '&'; i++) {
                 wert.append(chars[i]);
                 if (i == chars.length - 10) {
                     break;
                 }
             }
-
-            System.out.println(name.toString() + " " + wert.toString());
-
+            //System.out.println(name.toString() + " " + wert.toString());
             parameter.put(name.toString(), wert.toString());
             name = new StringBuilder();
             wert = new StringBuilder();
         }
 
         return parameter;
+    }
+    private String getHash(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            byte[] hash = md.digest(password.getBytes());
+            BigInteger no = new BigInteger(1, hash);
+            String hashtext = no.toString(16);
+            while (hashtext.length() < 32) {
+                hashtext = "0" + hashtext;
+            }
+            return hashtext;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
