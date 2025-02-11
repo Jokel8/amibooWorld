@@ -90,7 +90,11 @@ public class HttpServer extends Datenbank {
 //                    if (parameter.containsKey("px") && parameter.containsKey("py")) {
 //                        //tiles = this.datenbank.welcheTileSollIchHolen()
 //                    } else {
-                    tiles = this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 4);
+                    if (parameter.containsKey("r")) {
+                        tiles = this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), Integer.parseInt(parameter.get("r")));
+                    } else {
+                        tiles = this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 4);
+                    }
                     String tilesString = this.datenbank.dbGetTileAndMakeItIntoJson(tiles);
                     //http header
                     antwort.append("HTTP/1.1 200 OK\n" +
