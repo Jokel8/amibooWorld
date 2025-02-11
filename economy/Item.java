@@ -11,6 +11,7 @@ public class Item {
     protected String name;
     protected boolean stackable;
     protected int value;
+    protected int item_id;
     protected Rarity rarity;
     protected String description;
     protected String manufacturer;
@@ -34,21 +35,12 @@ public class Item {
         item.put("category", this.category);
         item.put("stackable", this.stackable);
         item.put("rarity", this.rarity);
+        item.put("item_id", this.item_id);
         return item;
     }
 
-    public Item(String name, boolean stackable, int value, Rarity rarity, String description, String manufacturer, Category category) {
-        this.name = name;
-        this.stackable = stackable;
-        this.value = value;
-        this.rarity = rarity;
-        this.description = description;
-        this.manufacturer = manufacturer;
-        this.category = category;
-    }
-
     /**
-     * Factory method to create an item.
+     * create an item.
      *
      * @param name        The name of the item.
      * @param stackable   Whether the item is stackable.
@@ -57,11 +49,21 @@ public class Item {
      * @param description A description of the item.
      * @param manufacturer The manufacturer of the item.
      * @param category    The category of the item.
+     * @param item_id item id aus der DATENBANK entnehmen
      * @return A new instance of an Item (usually a subclass like Weapon).
      */
-    public Item createItem(String name, boolean stackable, int value, Rarity rarity, String description, String manufacturer, Category category) {
-        return new Item(name, stackable, value, rarity, description, manufacturer, category);
+    public Item(String name, boolean stackable, int value, Rarity rarity, String description, String manufacturer, Category category, int item_id) {
+        this.name = name;
+        this.stackable = stackable;
+        this.value = value;
+        this.rarity = rarity;
+        this.description = description;
+        this.manufacturer = manufacturer;
+        this.category = category;
+        this.item_id = item_id;
     }
+
+
 
     // Getters and Setters
     public String getName() {
@@ -118,6 +120,14 @@ public class Item {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public int getItem_id() {
+        return item_id;
+    }
+
+    public void setItem_id(int item_id) {
+        this.item_id = item_id;
     }
 
     //public Weapon createItem(String name, boolean stackable, int value, Rarity rarity, String description, String manufacturer, Category category, int damage);

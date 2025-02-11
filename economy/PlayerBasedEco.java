@@ -86,9 +86,9 @@ public class PlayerBasedEco {
 
         //System.out.println(player1Inventory.listItems());
 
-        Datenbank test = new Datenbank();
-        test.verbinden();
-        Inventory testinventory = test.inventarEinlesen("123456");
-        System.out.println(testinventory.listItems());
+        //Datenbank test = new Datenbank();
+        //test.verbinden();
+        //Inventory testinventory = test.inventarEinlesen("123456");
+        System.out.println(player1Inventory.listItems());
    }
 }

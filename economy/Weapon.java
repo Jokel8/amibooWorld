@@ -28,10 +28,6 @@ public class Weapon extends Item {
         this.damage = damage;
     }
 
-    @Override
-    public Item createItem(String name, boolean stackable, int value, Rarity rarity, String description, String manufacturer, Category category) {
-        return null;
-    }
 
     /**
      * Factory method to create a new Weapon instance with specific attributes.
@@ -56,6 +52,7 @@ public class Weapon extends Item {
         weapon.setManufacturer(manufacturer);
         weapon.setCategory(category);
         weapon.setDamage(damage);
+        weapon.setItem_id(6);
         return weapon;
     }
     @Override
@@ -69,6 +66,7 @@ public class Weapon extends Item {
         weapon.put("manufacturer", this.getManufacturer());
         weapon.put("category", this.getCategory());
         weapon.put("damage", this.getDamage());
+        weapon.put("item_id", this.getItem_id());
         return weapon;
     }
 }

@@ -205,12 +205,12 @@ public class Datenbank {
             JSONArray items = json.getJSONArray("items");
             for (int i = 0; i < items.length(); i++) {
                 JSONObject item = items.getJSONObject(i);
-                inventory.addItem(new Item(item.getString("name"), item.getBoolean("stackable"), item.getInt("value"), item.getEnum(Rarity.class, "rarity"), item.getString("description"), item.getString("manufacturer"), item.getEnum(Category.class, "category")));
+                inventory.addItem(new Item(item.getString("name"), item.getBoolean("stackable"), item.getInt("value"), item.getEnum(Rarity.class, "rarity"), item.getString("description"), item.getString("manufacturer"), item.getEnum(Category.class, "category"), item.getInt("item_id")));
                 inventory.addGold(json.getInt("toal_gold"));
             }
         } else {
             Inventory fehler = new Inventory("fehler");
-            fehler.addItem(new Item("fehler", false, 0, Rarity.UNCOMMON, "falscher token", "server", Category.OTHER));
+            fehler.addItem(new Item("fehler", false, 0, Rarity.UNCOMMON, "falscher token", "server", Category.OTHER, 3));
             return fehler;
         }
         return inventory;
@@ -221,9 +221,10 @@ public class Datenbank {
      * @return json
      */
     public String getInventar(String token) {
-        String query = "SELECT user_inventoy FROM user WHERE user_token = " + token + ";";
+        String query = "SELECT user_inventory FROM user WHERE user_token = " + token + ";";
         ResultSet rs = this.abfragMachen(query);
         if (rs != null)try {
+            rs.next();
             return rs.getString("user_inventory");
         } catch (SQLException e) {
             throw new RuntimeException(e);

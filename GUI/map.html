@@ -20,6 +20,9 @@
         var width;
         var height;
 
+        let xpos = 404;
+        let ypos = 498;
+
         async function performMove() {
             console.log('Hallo_Welt');
             const crosshair = document.getElementById('crosshair');
@@ -56,25 +59,33 @@
                     const targetTile = mapElement.children[(crosshairY - 1) * width + crosshairX + 1];
                     if (targetTile && targetTile.classList.contains('walkable')) {
                         crosshairY--; // Nach oben bewegen
+                        ypos++;
+                        renderMap(xpos, ypos);
                     }
                 } else if (event.key === 's' && crosshairY < height - 1) {
                     const targetTile = mapElement.children[(crosshairY + 1) * width + crosshairX + 1];
                     if (targetTile && targetTile.classList.contains('walkable')) {
                         crosshairY++; // Nach unten bewegen
+                        ypos--;
+                        renderMap(xpos, ypos);
                     }
                 } else if (event.key === 'a' && crosshairX > 0) {
                     const targetTile = mapElement.children[crosshairY * width + (crosshairX - 1) + 1];
                     if (targetTile && targetTile.classList.contains('walkable')) {
                         crosshairX--; // Nach links bewegen
+                        xpos++;
+                        renderMap(xpos, ypos);
                     }
                 } else if (event.key === 'd' && crosshairX < width - 1) {
                     const targetTile = mapElement.children[crosshairY * width + (crosshairX + 1) + 1];
                     if (targetTile && targetTile.classList.contains('walkable')) {
                         crosshairX++; // Nach rechts bewegen
+                        xpos--;
+                        renderMap(xpos, ypos);
                     }
                 }
 
-                updateCrosshair();
+                //updateCrosshair();
 
                 if (prevX !== crosshairX || prevY !== crosshairY) {
                     steps.push({ x: crosshairX, y: crosshairY });
@@ -84,8 +95,12 @@
             });
         }
 
-        async function renderMap() {
-            const response = await fetch('http://v2202410237002289383.megasrv.de:8080/map?x=404&y=498');
+        async function renderMap(x, y) {
+            // const queryString = window.location.search;
+            // const urlParams = new URLSearchParams(queryString);
+            // console.log(urlParams.get('x'));
+
+            const response = await fetch('http://v2202410237002289383.megasrv.de:8080/map?x=' + x + '&y=' + y);
             const mapData = await response.json();
             const mapElement = document.getElementById('mapGrid');
 
