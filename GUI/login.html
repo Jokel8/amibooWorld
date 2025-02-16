@@ -167,12 +167,13 @@
 
             showLoader();
 
-            fetch('login.php', {
+            fetch('user_data.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
+                    action: 'login',
                     name: name,
                     password: password
                 })
@@ -207,7 +208,7 @@
 
             showLoader();
 
-            fetch('login.php', {
+            fetch('user_data.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

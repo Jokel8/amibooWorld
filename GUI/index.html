@@ -41,6 +41,10 @@
                     <table class="tableb">
                         <tr>
                             <td><button class="buttonfunctioncontainer1buttons" class="buttondesign"
+                                    onclick="wait()">Hier warten</button></td>
+                        </tr>
+                        <tr>
+                            <td><button class="buttonfunctioncontainer1buttons" class="buttondesign"
                                     onclick="">Abbauen</button></td>
                         </tr>
                         <tr>
@@ -66,37 +70,49 @@
     </div>
 
     <script>
-        function changeAktionen(name) {
-            document.getElementById('agieren').classList.remove('active');
-            document.getElementById('profil').classList.remove('active');
-            document.getElementById('inventar').classList.remove('active');
-            document.getElementById(name).classList.add('active');
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
         }
 
+        // Überprüfen, ob "token" gesetzt ist
+        const token = getQueryParam('token');
 
-
-        const darkTheme = 'css/darkTheme.css';
-        const brightTheme = 'css/brightTheme.css';
-
-        const themeStylesheet = document.getElementById('themeStylesheet');
-        const themeToggleButton = document.getElementById('themeToggleButton');
-
-        function toggleTheme() {
-            if (themeStylesheet.getAttribute('href') === brightTheme) {
-                themeStylesheet.setAttribute('href', darkTheme);
-                themeToggleButton.textContent = 'Bright Mode aktivieren';
-            } else {
-                themeStylesheet.setAttribute('href', brightTheme);
-                themeToggleButton.textContent = 'Dark Mode aktivieren';
+        if (!token) {
+            // Weiterleiten, falls "token" nicht gesetzt ist
+            window.location.href = 'login.html';
+            document.body.innerHTML = '<h1>Zugriff verweigert: Melde dich zuerst an!</h1><a href="login.html">Zur Anmeldung</a>';
+        } else {
+            function changeAktionen(name) {
+                document.getElementById('agieren').classList.remove('active');
+                document.getElementById('profil').classList.remove('active');
+                document.getElementById('inventar').classList.remove('active');
+                document.getElementById(name).classList.add('active');
             }
+
+
+
+            const darkTheme = 'css/darkTheme.css';
+            const brightTheme = 'css/brightTheme.css';
+
+            const themeStylesheet = document.getElementById('themeStylesheet');
+            const themeToggleButton = document.getElementById('themeToggleButton');
+
+            function toggleTheme() {
+                if (themeStylesheet.getAttribute('href') === brightTheme) {
+                    themeStylesheet.setAttribute('href', darkTheme);
+                    themeToggleButton.textContent = 'Bright Mode aktivieren';
+                } else {
+                    themeStylesheet.setAttribute('href', brightTheme);
+                    themeToggleButton.textContent = 'Dark Mode aktivieren';
+                }
+            }
+
+            loadHTML('map.html', 'map');
+            loadHTML('joystick.html', 'joystick');
+            loadHTML('account.html', 'profil');
+            loadHTML('items.html', 'inventar');
         }
-
-
-        // Rufe die Funktion auf, um "map.html" zu laden
-        loadHTML('map.html', 'map');
-        loadHTML('joystick.html', 'joystick');
-        loadHTML('account.html', 'profil');
-        loadHTML('items.html', 'inventar');
 
         async function loadHTML(url, targetElementId) {
             try {
@@ -145,19 +161,33 @@
     </script>
 
     <script>
-        // Funktion zum Abrufen des Werts eines URL-Parameters
-        function getQueryParam(name) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(name);
-        }
-
-        // Überprüfen, ob "token" gesetzt ist
-        const token = getQueryParam('token');
-
-        if (!token) {
-            // Weiterleiten, falls "token" nicht gesetzt ist
-            window.location.href = 'login.html';
-            document.body.innerHTML = '<h1>Zugriff verweigert: Melde dich zuerst an!</h1><a href="login.html">Zur Anmeldung</a>';
+        //Actionbuttons:
+        function wait() {
+            const lastStep = steps[steps.length - 1];
+            const x = lastStep['x'];
+            const y = lastStep['y'];
+            console.log(steps[steps.length - 1]);
+            
+            fetch('user_data.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'update',
+                    token: token,
+                    update: "position",
+                    x: x,
+                    y: y
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    renderMap();
+                })
+                .catch(error => {
+                    console.error('Fehler:', error);
+                });
         }
     </script>
 </body>

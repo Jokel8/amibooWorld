@@ -12,87 +12,120 @@
         X: <input id="x-info" type="text" readonly="readonly" value="0">
         Y: <input id="y-info" type="text" readonly="readonly" value="0">
     </div>
+
+    Wenn die Map nicht reagiert, drücke Sie ein Mal an
+    
     <div id="mapGrid">
-        <div id="crosshair"></div>
     </div>
 
     <script>
         var width;
         var height;
+        var middle;
+        const steps = [];
 
-        async function performMove() {
-            console.log('Hallo_Welt');
-            const crosshair = document.getElementById('crosshair');
-            const mapElement = document.getElementById('mapGrid');
-            let crosshairX = 4;
-            let crosshairY = 4;
+        var originX;
+        var originY;
 
-            function updateCrosshair() {
-                crosshair.style.transform = `translate(${crosshairX * 102}px, ${crosshairY * 102}px)`;
-                document.getElementById("x-info").value = crosshairX;
-                document.getElementById("y-info").value = crosshairY;
+        var crosshair;
+        var mapElement;
+        let crosshairX;
+        let crosshairY;
+
+        function darkenTile(x, y) {
+            const tiles = mapElement.children;
+            const index = y * width + x + 1;
+            if (tiles[index]) {
+                tiles[index].style.filter = 'brightness(50%)';
             }
+        }
 
-            const steps = [];
+        function updateCrosshair() {
+            crosshair.style.transform = `translate(${crosshairX * 102}px, ${crosshairY * 102}px)`;
+            const absoluteX = originX + crosshairX - middle;
+            const absoluteY = originY + crosshairY - middle;
+            steps.push({ x: absoluteX, y: absoluteY});
+            console.log(`Moved to: (${absoluteX}, ${absoluteY})`);
+            
+            document.getElementById("x-info").value = absoluteX;
+            document.getElementById("y-info").value = absoluteY;
+        }
 
-            // Funktion: Feld abdunkeln (zur Spur hinzufügen)
-            function darkenTile(x, y) {
-                const tiles = mapElement.children;
-                const index = y * width + x + 1;
-                if (tiles[index]) {
-                    tiles[index].style.filter = 'brightness(50%)';
+        function eventListener(event) {
+            const prevX = crosshairX;
+            const prevY = crosshairY;
+
+            if (event.key === 'w' && crosshairY > 0) {
+                const targetTile = mapElement.children[(crosshairY - 1) * width + crosshairX + 1];
+                if (targetTile && targetTile.classList.contains('walkable')) {
+                    crosshairY--; // Nach oben bewegen
+                }
+            } else if (event.key === 's' && crosshairY < height - 1) {
+                const targetTile = mapElement.children[(crosshairY + 1) * width + crosshairX + 1];
+                if (targetTile && targetTile.classList.contains('walkable')) {
+                    crosshairY++; // Nach unten bewegen
+                }
+            } else if (event.key === 'a' && crosshairX > 0) {
+                const targetTile = mapElement.children[crosshairY * width + (crosshairX - 1) + 1];
+                if (targetTile && targetTile.classList.contains('walkable')) {
+                    crosshairX--; // Nach links bewegen
+                }
+            } else if (event.key === 'd' && crosshairX < width - 1) {
+                const targetTile = mapElement.children[crosshairY * width + (crosshairX + 1) + 1];
+                if (targetTile && targetTile.classList.contains('walkable')) {
+                    crosshairX++; // Nach rechts bewegen
                 }
             }
 
-            // Initiales Positionieren des Fadenkreuzes
-            updateCrosshair();
-
-            // Eventlistener für WASD-Tasten
-            document.addEventListener('keydown', (event) => {
-                const prevX = crosshairX;
-                const prevY = crosshairY;
-
-                if (event.key === 'w' && crosshairY > 0) {
-                    const targetTile = mapElement.children[(crosshairY - 1) * width + crosshairX + 1];
-                    if (targetTile && targetTile.classList.contains('walkable')) {
-                        crosshairY--; // Nach oben bewegen
-                    }
-                } else if (event.key === 's' && crosshairY < height - 1) {
-                    const targetTile = mapElement.children[(crosshairY + 1) * width + crosshairX + 1];
-                    if (targetTile && targetTile.classList.contains('walkable')) {
-                        crosshairY++; // Nach unten bewegen
-                    }
-                } else if (event.key === 'a' && crosshairX > 0) {
-                    const targetTile = mapElement.children[crosshairY * width + (crosshairX - 1) + 1];
-                    if (targetTile && targetTile.classList.contains('walkable')) {
-                        crosshairX--; // Nach links bewegen
-                    }
-                } else if (event.key === 'd' && crosshairX < width - 1) {
-                    const targetTile = mapElement.children[crosshairY * width + (crosshairX + 1) + 1];
-                    if (targetTile && targetTile.classList.contains('walkable')) {
-                        crosshairX++; // Nach rechts bewegen
-                    }
-                }
-
+            if (prevX !== crosshairX || prevY !== crosshairY) {
+                darkenTile(prevX, prevY);
                 updateCrosshair();
-
-                if (prevX !== crosshairX || prevY !== crosshairY) {
-                    steps.push({ x: crosshairX, y: crosshairY });
-                    console.log(`Moved to: (${crosshairX}, ${crosshairY})`);
-                    darkenTile(prevX, prevY);
-                }
-            });
+            }
         }
 
         async function renderMap() {
-            const response = await fetch('http://v2202410237002289383.megasrv.de:8080/map?x=404&y=498');
-            const mapData = await response.json();
-            const mapElement = document.getElementById('mapGrid');
+            await fetch('user_data.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'get',
+                    token: token,
+                    get: "position"
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        originX = data.x;
+                        originY = data.y;
+                        console.log(data.x, "-", data.y);
+                    } else {
+                        console.log('Abfrage fehlgeschlagen. ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fehler:', error);
+                });
 
+            const response = await fetch('http://v2202410237002289383.megasrv.de:8080/map?x=' + originX + '&y=' + originY);
+            const mapData = await response.json();
             console.log(mapData)
 
             height = mapData.height;
             width = mapData.width;
+            middle = (width - 1) / 2;
+
+            mapElement = document.getElementById('mapGrid');
+            mapElement.innerHTML = '<div id="crosshair"></div>';
+            document.removeEventListener('keydown', eventListener)
+            crosshair = document.getElementById('crosshair');
+            crosshairX = middle;
+            crosshairY = middle;
+            updateCrosshair();
+            document.addEventListener('keydown', eventListener);
+
 
             // Setze Grid-Eigenschaften
             mapElement.style.gridTemplateColumns = `repeat(${width}, 100px)`;
@@ -159,7 +192,6 @@
         }
 
         renderMap();
-        performMove();
     </script>
 </body>
 

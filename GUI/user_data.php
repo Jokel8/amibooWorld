@@ -8,8 +8,7 @@ $user = 'd0421573';
 $pass = 'pZuw7TVdwLCqWUjMUD8o';
 
 // Sicherheits- und Validierungsfunktionen
-function validateInput($input)
-{
+function validateInput($input){
     $input = trim($input);
     $input = stripslashes($input);
     $input = htmlspecialchars($input);
@@ -44,7 +43,7 @@ try {
         } else {
             echo json_encode(['success' => false, 'message' => 'Registrierung fehlgeschlagen']);
         }
-    } else {
+    } else if ((isset($data['action']) && $data['action'] === 'login')) {
         // Login-Prozess
         $name = validateInput($data['name']);
         $password = validateInput($data['password']);
@@ -65,6 +64,30 @@ try {
                 $stmt->execute([$token, $name]);
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
                 echo json_encode(['success' => true, 'token' => $token]);
+            }
+        }
+    } else if (isset($data['action']) && $data['action'] === 'update') {
+        $token = validateInput($data['token']);
+
+        if ($data['update'] == "position") {
+            $stmt = $pdo->prepare('UPDATE user SET user_x = ?, user_y = ? WHERE user_token = ?');
+            $stmt->execute([validateInput($data['x']), validateInput($data['y']), validateInput($token)]);
+            $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            echo json_encode(['success' => true]);
+        }
+    } else if (isset($data['action']) && $data['action'] === 'get') {
+        $token = validateInput($data['token']);
+
+        if ($data['get'] == "position") {
+            $stmt = $pdo->prepare('SELECT user_x, user_y FROM user WHERE user_token = ?');
+            $stmt->execute([validateInput($token)]);
+            $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if(!$userData){
+                echo json_encode(['success' => false, 'message' => "Token abgelaufen"]);
+            }else{
+                echo json_encode(['success' => true, 'x' => $userData['user_x'], 'y' => $userData['user_y']]);
             }
         }
     }
