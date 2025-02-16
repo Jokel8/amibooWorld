@@ -1,5 +1,5 @@
 <?php
-//header('Content-Type: application/json');
+header('Content-Type: application/json');
 
 // Datenbank-Verbindungseinstellungen
 $host = 'v073086.kasserver.com';
@@ -7,33 +7,7 @@ $db   = 'd0421573';
 $user = 'd0421573';
 $pass = 'pZuw7TVdwLCqWUjMUD8o';
 
-// $login_name = $_POST["login-name"];
-// $login_password = $_POST["login-password"];
-// $register_name = $_POST["register-name"];
-// $register_password = $_POST["register-password"];
-// $register_confirm_password = $_POST["register-confirm-password"];
-//
-// $conn = mysqli_connect($host, $user, $pass, $db);
-//
-// if (!$conn) {
-//     die("Verbindung nicht möglich oder so, Error: " . mysqli_connect_error());
-// }
-//
-// if
-//
-// if($password == $password_v) {
-//     $password = md5($password);
-//     $sql = "INSERT INTO spieler (user, password, class) VALUES ('$user', '$password', $class)";
-//     if (mysqli_query($conn, $sql)) {
-//         echo("erfolg");
-//     }
-// }
-// else {
-//     echo("fehler");
-// }
-//
-// ?>
-Sicherheits- und Validierungsfunktionen
+// Sicherheits- und Validierungsfunktionen
 function validateInput($input)
 {
     $input = trim($input);

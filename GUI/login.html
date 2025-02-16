@@ -88,24 +88,22 @@
 <body>
     <div class="container">
         <div class="form-container">
-            <form action="login.php" method="post">
-                <div class="login-form">
-                    <h2>Anmelden</h2>
-                    <input type="text" id="login-name" placeholder="E-Mail" required>
-                    <input type="password" id="login-password" placeholder="Passwort" required>
-                    <input type="submit">Anmelden</input>
-                    <button class="switch-btn" onclick="showRegister()">Noch kein Konto? Registrieren</button>
-                </div>
+            <div class="login-form">
+                <h2>Anmelden</h2>
+                <input type="text" id="login-name" placeholder="E-Mail" required>
+                <input type="password" id="login-password" placeholder="Passwort" required>
+                <button onclick="login()">Anmelden</button>
+                <button class="switch-btn" onclick="showRegister()">Noch kein Konto? Registrieren</button>
+            </div>
 
-                <div class="register-form">
-                    <h2>Registrieren</h2>
-                    <input type="text" id="register-name" placeholder="Name" required>
-                    <input type="password" id="register-password" placeholder="Passwort" required>
-                    <input type="password" id="register-confirm-password" placeholder="Passwort bestätigen" required>
-                    <input type="submit">Registrieren</input>
-                    <button class="switch-btn" onclick="showLogin()">Zurück zum Login</button>
-                </div>
-            </form>
+            <div class="register-form">
+                <h2>Registrieren</h2>
+                <input type="text" id="register-name" placeholder="Name" required>
+                <input type="password" id="register-password" placeholder="Passwort" required>
+                <input type="password" id="register-confirm-password" placeholder="Passwort bestätigen" required>
+                <button onclick="register()">Registrieren</button>
+                <button class="switch-btn" onclick="showLogin()">Zurück zum Login</button>
+            </div>
         </div>
 
         <div id="loader">
