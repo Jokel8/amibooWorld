@@ -45,6 +45,7 @@ public class Datenbank {
      *
      */
     public boolean verbinden() {
+        System.out.println("verbinden...");
         boolean verbunden = true;
         try {
             Class.forName(driver);
@@ -59,6 +60,7 @@ public class Datenbank {
             verbunden = false;
             System.out.println("Verbundung zur Datenbank konnte nicht hergestellt werden");
         }
+        System.out.println("verbunden");
         return verbunden;
     }
 
@@ -68,7 +70,6 @@ public class Datenbank {
      * @return result set muss noch auf != null geprüft werden
      */
     private ResultSet abfragMachen(String query) {
-
         try {
             PreparedStatement pstmt = this.con.prepareStatement(query.toString());
             // Führe die Abfrage aus
