@@ -16,10 +16,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-public class HttpServer extends Datenbank {
+public abstract class HttpServer {
     private ServerSocket socket;
     private int port;
-    private Datenbank datenbank;
     private String regex;
     private Pattern pattern;
 
@@ -35,10 +34,8 @@ public class HttpServer extends Datenbank {
         }
     }
 
-    public HttpServer() {
-        this.port = 8080;
-        this.datenbank = new Datenbank();
-        this.datenbank.verbinden();
+    public HttpServer(int port) {
+        this.port = port;
         this.regex = "GET /[a-z]*((\\?[a-z]+=([a-z]|[0-9])+)(&[a-z]+=([a-z]|[0-9])+)*)?\\sHTTP/1\\.1";
         this.pattern = Pattern.compile(regex);
     }
@@ -79,94 +76,8 @@ public class HttpServer extends Datenbank {
         return matcher.matches();
     }
 
-    private void anfrageVerarbeiten(String anfrage, HashMap<String, String> parameter, Socket client, BufferedReader in) {
-        //System.out.println(anfrage);
-        try {
-            PrintWriter out = new PrintWriter(client.getOutputStream(), true);
-            StringBuilder antwort = new StringBuilder();
-            switch (anfrage) {
-                case "map" -> {
-                    int[][] tiles;
-//                    if (parameter.containsKey("px") && parameter.containsKey("py")) {
-//                        //tiles = this.datenbank.welcheTileSollIchHolen()
-//                    } else {
-                    if (parameter.containsKey("r")) {
-                        tiles = this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), Integer.parseInt(parameter.get("r")));
-                    } else {
-                        tiles = this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 4);
-                    }
-                    String tilesString = this.datenbank.dbGetTileAndMakeItIntoJson(tiles);
-                    //http header
-                    antwort.append("HTTP/1.1 200 OK\n" +
-                            "Content-Type: application/json\n" +
-                            "Access-Control-Allow-Origin: *\n" +
-                            "Content-Length: " + tilesString.length() + "\n\n");
-                    antwort.append(tilesString);
-                }
-                case "inventory" -> {
-                    String inv = datenbank.getInventar(parameter.get("token"));
-                    antwort.append("HTTP/1.1 200 OK\n" +
-                            "Content-Type: application/json\n" +
-                            "Access-Control-Allow-Origin: *\n" +
-                            "Content-Length: " + inv.length() + "\n\n");
-                    antwort.append(inv);
-                }
-                //datenbank verbindung wieder herstellen
-                case "db" -> {
-                    if (this.datenbank.verbinden()) {
-                        antwort.append("HTTP/1.1 204 No Content\n");
-                    } else {
-                        antwort.append("HTTP/1.1 500 Internal Server Error\n");
-                    }
-                }
-                case "login" -> {
-                    long token = this.datenbank.getToken(parameter.get("username"), getHash((parameter.get("password"))));
-                    String tokenJson = "{\n\t\"token\": " + token + "\n}";
-                    antwort.append("HTTP/1.1 200 OK\n" +
-                            "Content-Type: application/json\n" +
-                            "Access-Control-Allow-Origin: *\n" +
-                            "Content-Length: " + tokenJson.length() + "\n\n");
-                    antwort.append(tokenJson);
-                }
-                case "mine" -> {
-                    antwort.append("HTTP/1.1 204 No Content\n");
-                    this.datenbank.setFeld(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 0, 0);
-                }
-                case "build" -> {
-                    antwort.append("HTTP/1.1 204 No Content\n");
-                    this.datenbank.setFeld(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 0, 0, Integer.parseInt(parameter.get("type")));
-                }
-                case "strike" -> {
-                    antwort.append("HTTP/1.1 204 No Content\n");
-                    this.datenbank.setFeld(this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 1), 0, 0, 6);
-                }
-                case "queue" -> {
-                    queueSpeichern(in, parameter.get("token"));
-                    antwort.append("HTTP/1.1 204 No Content\n");
-                }
-                default -> {
-                    antwort.append("HTTP/1.1 404 Not Found\n");
-                }
-            }
-            out.println(antwort.toString());
-            out.close();
-            this.close(client);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public abstract void anfrageVerarbeiten(String anfrage, HashMap<String, String> parameter, Socket client, BufferedReader in);
 
-    }
-    private void queueSpeichern(BufferedReader in, String token) {
-        StringBuilder queue = new StringBuilder();
-        Stream<String> lines = in.lines();
-        in.lines().forEach(queue::append);
-        System.out.println(queue.toString());
-        String[] headerbody = queue.toString().split("(?s)\r?\n\r?\n", 2);
-        if (headerbody.length == 2) {
-            this.datenbank.updateMachen("UPDATE user SET user_queue = '" + headerbody[1] + "' WHERE user_token = " + token + ";");
-            this.datenbank.updateMachen("UPDATE user SET user_queue_start = " + (long)(System.currentTimeMillis() / 1000) + " WHERE user_token = " + token + ";");
-        }
-    }
     private void viernullnull(Socket client) {
         try {
             new PrintWriter(client.getOutputStream(), true).println("HTTP/1.1 400 Bad Request\n");
@@ -175,7 +86,7 @@ public class HttpServer extends Datenbank {
         }
     }
 
-    private void close(Socket socket) {
+    public void close(Socket socket) {
         try {
             socket.close();
         } catch (IOException e) {
@@ -183,7 +94,7 @@ public class HttpServer extends Datenbank {
         }
     }
 
-    private String getAnfrage(String anfrage) {
+    public String getAnfrage(String anfrage) {
         //aus dem header das angefragte verzeichniss extrahieren
         char[] chars = anfrage.toCharArray();
         String angerfage = "";
@@ -198,7 +109,7 @@ public class HttpServer extends Datenbank {
         return angerfage;
     }
 
-    private HashMap<String, String> getParameter(String anfrage) {
+    public HashMap<String, String> getParameter(String anfrage) {
         if (!anfrage.contains("?")) {
             return null;
         }
@@ -231,19 +142,5 @@ public class HttpServer extends Datenbank {
         }
 
         return parameter;
-    }
-    private String getHash(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-1");
-            byte[] hash = md.digest(password.getBytes());
-            BigInteger no = new BigInteger(1, hash);
-            String hashtext = no.toString(16);
-            while (hashtext.length() < 32) {
-                hashtext = "0" + hashtext;
-            }
-            return hashtext;
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
