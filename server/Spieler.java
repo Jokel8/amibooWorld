@@ -10,14 +10,12 @@ import org.json.JSONObject;
 public class Spieler {
     private JSONObject queue;
     private Inventory inventory;
-    private int[] position;
     private long startZeit;
     private double geschwindigkeit;
 
-    public Spieler(String queue, String inventory, int positionX, int positionY, double geschwindigkeit, long startZeit) {
+    public Spieler(String queue, JSONObject inventory, double geschwindigkeit, long startZeit) {
         this.queue = new JSONObject(queue);
         this.inventory = this.inventarEinlesen(inventory);
-        this.position = new int[]{positionX, positionY};
         this.startZeit = startZeit;
         this.geschwindigkeit = geschwindigkeit;
     }
@@ -42,14 +40,13 @@ public class Spieler {
      * @param inventar Inventar als Json
      * @return Inventar mit den Items aus der Datenbank
      */
-    private Inventory inventarEinlesen(String inventar) {
-        JSONObject json = new JSONObject(inventar);
-        if (!json.has("fehler")) {
-            JSONArray items = json.getJSONArray("items");
+    private Inventory inventarEinlesen(JSONObject inventar) {
+        if (!inventar.has("fehler")) {
+            JSONArray items = inventar.getJSONArray("items");
             for (int i = 0; i < items.length(); i++) {
                 JSONObject item = items.getJSONObject(i);
                 inventory.addItem(new Item(item.getString("name"), item.getBoolean("stackable"), item.getInt("value"), item.getEnum(Rarity.class, "rarity"), item.getString("description"), item.getString("manufacturer"), item.getEnum(Category.class, "category"), item.getInt("item_id")));
-                inventory.addGold(json.getInt("toal_gold"));
+                inventory.addGold(inventar.getInt("toal_gold"));
             }
         } else {
             Inventory fehler = new Inventory("fehler");
