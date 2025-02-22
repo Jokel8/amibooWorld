@@ -18,7 +18,7 @@ public class UserUpdaterServer extends HttpServer {
             PrintWriter out = new PrintWriter(client.getOutputStream(), true);
             StringBuilder antwort = new StringBuilder();
             switch (anfrage) {
-                case "enterpos" -> {
+                case "enterquery" -> {
 
                 }
             }
@@ -38,4 +38,5 @@ public class UserUpdaterServer extends HttpServer {
             return null;
         }
     }
+
 }

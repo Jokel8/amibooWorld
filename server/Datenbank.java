@@ -193,29 +193,7 @@ public class Datenbank {
         query.append(";");
         updateMachen(query.toString());
     }
-    /**
-     * liest das inventar aus der datenbankn ein und wandelt es in ein Inventar Objekt um
-     * @param token Usertoken
-     * @return Inventar mit den Items aus der Datenbank
-     */
-    public Inventory inventarEinlesen(String token) {
-        Inventory inventory = new Inventory(token);
-        String inventar = this.getInventar(token);
-        JSONObject json = new JSONObject(inventar);
-        if (!json.has("fehler")) {
-            JSONArray items = json.getJSONArray("items");
-            for (int i = 0; i < items.length(); i++) {
-                JSONObject item = items.getJSONObject(i);
-                inventory.addItem(new Item(item.getString("name"), item.getBoolean("stackable"), item.getInt("value"), item.getEnum(Rarity.class, "rarity"), item.getString("description"), item.getString("manufacturer"), item.getEnum(Category.class, "category"), item.getInt("item_id")));
-                inventory.addGold(json.getInt("toal_gold"));
-            }
-        } else {
-            Inventory fehler = new Inventory("fehler");
-            fehler.addItem(new Item("fehler", false, 0, Rarity.UNCOMMON, "falscher token", "server", Category.OTHER, 3));
-            return fehler;
-        }
-        return inventory;
-    }
+
     /**
      * inventar aus der datenbank als json
      * @param token usertoken
