@@ -1,28 +1,35 @@
 package server;
 
-import org.json.HTTPTokener;
+import economy.Holz;
+import economy.Inventory;
 
+import javax.xml.datatype.Duration;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.math.BigInteger;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class APIServer extends HttpServer {
     private Datenbank datenbank;
+    private SichereVerketteteSpielerListe spieler;
 
     public APIServer(int port) {
         super(port);
         this.datenbank = new Datenbank();
         this.datenbank.verbinden();
+        new Thread(() -> {
+           spieler.speichern(this.datenbank);
+            try {
+                Thread.sleep(300000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Override
@@ -51,7 +58,9 @@ public class APIServer extends HttpServer {
                     antwort.append(tilesString);
                 }
                 case "inventory" -> {
-                    String inv = datenbank.getInventar(parameter.get("token"));
+                    Spieler spieler = this.spieler.getSpieler(parameter.get("token"));
+                    Inventory inventory = spieler.getInventory();
+                    String inv = inventory.toString();
                     antwort.append("HTTP/1.1 200 OK\n" +
                             "Content-Type: application/json\n" +
                             "Access-Control-Allow-Origin: *\n" +
@@ -67,17 +76,18 @@ public class APIServer extends HttpServer {
                     }
                 }
                 case "login" -> {
-                    long token = this.datenbank.getToken(parameter.get("username"), getHash((parameter.get("password"))));
-                    String tokenJson = "{\n\t\"token\": " + token + "\n}";
+                    String token = parameter.get("token");
+                    this.spieler.addSpieler(new Spieler(this.datenbank.getQueue(token), this.datenbank.getInventar(token), token));
+                    antwort.append("HTTP/1.1 204 No Content\n");
+                }
+                case "mine" -> {
+                    this.abbauen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 0, parameter.get("token"));
+                    String inv = this.spieler.getSpieler(parameter.get("token")).getInventory().toString();
                     antwort.append("HTTP/1.1 200 OK\n" +
                             "Content-Type: application/json\n" +
                             "Access-Control-Allow-Origin: *\n" +
-                            "Content-Length: " + tokenJson.length() + "\n\n");
-                    antwort.append(tokenJson);
-                }
-                case "mine" -> {
-                    antwort.append("HTTP/1.1 204 No Content\n");
-                    this.datenbank.setFeld(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 0, 0);
+                            "Content-Length: " + inv.length() + "\n\n");
+                    antwort.append(inv);
                 }
                 case "build" -> {
                     antwort.append("HTTP/1.1 204 No Content\n");
@@ -113,6 +123,18 @@ public class APIServer extends HttpServer {
             this.datenbank.updateMachen("UPDATE user SET user_queue = '" + headerbody[1] + "' WHERE user_token = " + token + ";");
             this.datenbank.updateMachen("UPDATE user SET user_queue_start = " + (long)(System.currentTimeMillis() / 1000) + " WHERE user_token = " + token + ";");
         }
+        Spieler spieler = this.spieler.getSpieler(token);
+        spieler.setQueue(new Queue(headerbody[1], System.currentTimeMillis() / 1000L, 0.1));
+        this.spieler.setSpieler(token, spieler);
+    }
+    private void abbauen(int x, int y, int radius, String token) {
+        int[][] tiles = datenbank.welcheTileSollIchHolen(x, y, radius);
+        int[] resourcen = datenbank.getResourcen(tiles);
+        this.datenbank.setResourcen(tiles, 0, 0);
+        Spieler spieler = this.spieler.getSpieler(token);
+        spieler.inventory.addItem(new Holz(resourcen[0]));
+        spieler.inventory.addItem(new Holz(resourcen[1]));
+        this.spieler.addSpieler(spieler);
     }
     private String getHash(String password) {
         try {

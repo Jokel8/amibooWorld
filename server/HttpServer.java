@@ -22,6 +22,7 @@ public abstract class HttpServer {
     private String regex;
     private Pattern pattern;
 
+
     public void start() {
         try {
             this.socket = new ServerSocket(port);
@@ -107,6 +108,19 @@ public abstract class HttpServer {
             angerfage += chars[i];
         }
         return angerfage;
+    }
+
+    public String getBody(BufferedReader in) {
+        StringBuilder queue = new StringBuilder();
+        Stream<String> lines = in.lines();
+        in.lines().forEach(queue::append);
+        System.out.println(queue.toString());
+        String[] headerbody = queue.toString().split("(?s)\r?\n\r?\n", 2);
+        if (headerbody.length == 2) {
+            return headerbody[1];
+        } else {
+            return null;
+        }
     }
 
     public HashMap<String, String> getParameter(String anfrage) {

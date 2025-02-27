@@ -7,52 +7,51 @@ import economy.Rarity;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class Spieler {
-    private JSONObject queue;
-    private Inventory inventory;
-    private long startZeit;
-    private double geschwindigkeit;
+public class  Spieler {
+    private Queue queue;
+    public Inventory inventory;
+    private String token;
+    private long lezterZugriff;
 
-    public Spieler(String queue, JSONObject inventory, double geschwindigkeit, long startZeit) {
-        this.queue = new JSONObject(queue);
-        this.inventory = this.inventarEinlesen(inventory);
-        this.startZeit = startZeit;
-        this.geschwindigkeit = geschwindigkeit;
-    }
-
-    public int[] getPosition() {
-        JSONArray queueliste = this.queue.getJSONArray("queue");
-        int[] position = new int[2];
-        long zeit = System.currentTimeMillis() / 1000;
-        long vergangenezeit = zeit - startZeit;
-        JSONObject pos = queueliste.getJSONObject((int)(vergangenezeit / geschwindigkeit));
-        position[0] = pos.getInt("x");
-        position[1] = pos.getInt("y");
-        return position;
+    public Spieler(Queue queue, Inventory inventory, String token) {
+        this.queue = queue;
+        this.inventory = inventory;
+        this.token = token;
+        this.lezterZugriff = System.currentTimeMillis() / 1000L;
     }
 
     public Inventory getInventory() {
-        return inventory;
+        return this.inventory;
     }
 
-    /**
-     * liest das inventar aus der datenbankn ein und wandelt es in ein Inventar Objekt um
-     * @param inventar Inventar als Json
-     * @return Inventar mit den Items aus der Datenbank
-     */
-    private Inventory inventarEinlesen(JSONObject inventar) {
-        if (!inventar.has("fehler")) {
-            JSONArray items = inventar.getJSONArray("items");
-            for (int i = 0; i < items.length(); i++) {
-                JSONObject item = items.getJSONObject(i);
-                inventory.addItem(new Item(item.getString("name"), item.getBoolean("stackable"), item.getInt("value"), item.getEnum(Rarity.class, "rarity"), item.getString("description"), item.getString("manufacturer"), item.getEnum(Category.class, "category"), item.getInt("item_id")));
-                inventory.addGold(inventar.getInt("toal_gold"));
-            }
-        } else {
-            Inventory fehler = new Inventory("fehler");
-            fehler.addItem(new Item("fehler", false, 0, Rarity.UNCOMMON, "falscher token", "server", Category.OTHER, 3));
-            return fehler;
-        }
-        return inventory;
+    public void setQueue(Queue queue) {
+        this.queue = queue;
+    }
+    public Queue getQueue() {
+        return this.queue;
+    }
+    //    /**
+//     * liest das inventar aus der datenbankn ein und wandelt es in ein Inventar Objekt um
+//     * @param inventar Inventar als Json
+//     * @return Inventar mit den Items aus der Datenbank
+//     */
+//    private Inventory inventarEinlesen(JSONObject inventar) {
+//        if (!inventar.has("fehler")) {
+//            JSONArray items = inventar.getJSONArray("items");
+//            for (int i = 0; i < items.length(); i++) {
+//                JSONObject item = items.getJSONObject(i);
+//                inventory.addItem(new Item(item.getString("name"), item.getBoolean("stackable"), item.getInt("value"), item.getEnum(Rarity.class, "rarity"), item.getString("description"), item.getString("manufacturer"), item.getEnum(Category.class, "category"), item.getInt("item_id")));
+//                inventory.addGold(inventar.getInt("toal_gold"));
+//            }
+//        } else {
+//            Inventory fehler = new Inventory("fehler");
+//            fehler.addItem(new Item("fehler", false, 0, Rarity.UNCOMMON, "falscher token", "server", Category.OTHER, 3));
+//            return fehler;
+//        }
+//        return inventory;
+//    }
+
+    public String getToken() {
+        return token;
     }
 }

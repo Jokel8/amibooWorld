@@ -183,6 +183,8 @@
                     hideLoader();
                     if (data.success) {
                         window.location.href = 'index.html?token=' + data.token;
+                        //der API muss erst mitgeteilt werden, dass ein spieler online ist!!!!!!!!!!!!!!!!!!!!!!!!!
+                        fetch('https://v2202410237002289383.megasrv.de/login?token=' + data.token);
                     } else {
                         alert('Login fehlgeschlagen. ' + data.message);
                     }

@@ -33,7 +33,7 @@ public class UserUpdaterServer extends HttpServer {
                     if (spieler.containsKey(token)) {
                         antwort.append("HTTP/1.1 500 Internal Server Error\n");
                     } else {
-                        spieler.put(token, new Spieler(token, json.getJSONObject("inventory"), json.getInt("geschwindigkeit"), json.getLong("start_zeit")));
+                        //spieler.put(token, new Spieler(token, json.getJSONObject("inventory"), json.getInt("geschwindigkeit"), json.getLong("start_zeit")));
                     }
                 }
             }
@@ -44,18 +44,7 @@ public class UserUpdaterServer extends HttpServer {
             throw new RuntimeException(e);
         }
     }
-    private String getBody(BufferedReader in) {
-        StringBuilder queue = new StringBuilder();
-        Stream<String> lines = in.lines();
-        in.lines().forEach(queue::append);
-        System.out.println(queue.toString());
-        String[] headerbody = queue.toString().split("(?s)\r?\n\r?\n", 2);
-        if (headerbody.length == 2) {
-            return headerbody[1];
-        } else {
-            return null;
-        }
-    }
+
     private String getInventory(String token) {
         Socket socket = null;
         try {

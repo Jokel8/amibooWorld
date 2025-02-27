@@ -15,15 +15,25 @@ public class Inventory {
 
     private List<Item> items; // Storage for items in the inventory
     private int gold;         // Storage for gold in the inventory
-    public String username;
 
     /**
      * Constructor to initialize the inventory with a starting amount of gold.
      *
      */
-    public Inventory(String username) {
+    public Inventory(String inventory) {
         this.items = new ArrayList<>();
-        this.username = username;
+
+        JSONObject inventar = new JSONObject(inventory);
+        if (!inventar.has("fehler")) {
+            JSONArray items = inventar.getJSONArray("items");
+            for (int i = 0; i < items.length(); i++) {
+                JSONObject item = items.getJSONObject(i);
+                this.addItem(new Item(item.getString("name"), item.getBoolean("stackable"), item.getEnum(Rarity.class, "rarity"), item.getString("description"), item.getString("manufacturer"), item.getEnum(Category.class, "category"), item.getInt("item_id"), item.getInt("menge")));
+                this.addGold(inventar.getInt("toal_gold"));
+            }
+        } else {
+            this.addItem(new Item("fehler", false, Rarity.UNCOMMON, "falscher token", "server", Category.OTHER, 3, 1));
+        }
     }
 
     /**
@@ -32,7 +42,16 @@ public class Inventory {
      * @param item The item to be added to the inventory.
      */
     public void addItem(Item item) {
-        items.add(item);
+        boolean found = false;
+        for (Item i : this.items) {
+            if (i.getName().equals(item.getName()) && i.stackable) {
+                found = true;
+                i.menge += item.menge;
+            }
+        }
+        if (!found) {
+            this.items.add(item);
+        }
     }
 
     /**
@@ -112,9 +131,7 @@ public class Inventory {
         }
         return false; // Trade failed (not enough gold)
     }
-    public String getUsername() {
-        return username;
-    }
+
     /**
      * Displays all items in the inventory along with the total amount of gold.
      */

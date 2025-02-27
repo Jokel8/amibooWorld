@@ -8,7 +8,8 @@ import org.json.JSONObject;
  */
 public class Weapon extends Item {
 
-    private int damage; // The damage value for the weapon
+    private int damage;// The damage value for the weapon
+    private int value;
 
     /**
      * Getter for the damage value of the weapon.
@@ -68,5 +69,12 @@ public class Weapon extends Item {
         weapon.put("damage", this.getDamage());
         weapon.put("item_id", this.getItem_id());
         return weapon;
+    }
+
+    public int getValue() {
+        return value;
+    }
+    public void setValue(int value) {
+        this.value = value;
     }
 }

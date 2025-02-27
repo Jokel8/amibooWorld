@@ -95,7 +95,29 @@ public class Datenbank {
         }
     }
 
+    public int[] getResourcen(int[][] tiles) {
+        int[] resourcen = new int[2];
+        ResultSet rs = this.dbGetTiles(tiles);
+
+        if (rs != null) try {
+            while (rs.next()) {
+                int holz = rs.getInt("field_holz");
+                int gestein = rs.getInt("field_gestein");
+                resourcen[0] += holz;
+                resourcen[1] += gestein;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return resourcen;
+    }
     public String dbGetTileAndMakeItIntoJson(int[][] tiles) {
+        ResultSet rs = this.dbGetTiles(tiles);
+        String json = this.tilesToJson(rs, tiles);
+        return json;
+    }
+
+    private ResultSet dbGetTiles(int[][] tiles) {
         //sql abfrage erstellen
         StringBuilder query = new StringBuilder();
         query.append("SELECT field_type, field_type_name, field_type_is_walkable, field_type_is_swimmable, field_type_is_flyable, field_holz, field_gestein FROM field_type JOIN map ON (map.field_type = field_type.field_type_id) WHERE ");
@@ -115,6 +137,9 @@ public class Datenbank {
         ResultSet rs = this.abfragMachen(query.toString());
 
         //System.out.println(query);
+        return rs;
+    }
+    private String tilesToJson(ResultSet rs, int[][] tiles) {
         if (rs != null) try {
 
             JSONArray map = new JSONArray();
@@ -193,22 +218,41 @@ public class Datenbank {
         query.append(";");
         updateMachen(query.toString());
     }
+    public void setResourcen(int[][] tiles, int holz, int gestein) {
+        //sql abfrage erstellen
+        StringBuilder query = new StringBuilder();
+        query.append("UPDATE map SET field_holz = " + holz + ", field_gestein = " + gestein + " WHERE ");
+        for (int i = 0; i < tiles.length; i++) {
+
+            int x = tiles[i][0];
+            int y = tiles[i][1];
+
+            query.append("field_x = " + x + " AND field_y = " + y);
+            if (i < tiles.length - 1) {
+                query.append(" OR ");
+            }
+        }
+        query.append(";");
+        updateMachen(query.toString());
+    }
 
     /**
      * inventar aus der datenbank als json
      * @param token usertoken
      * @return json
      */
-    public String getInventar(String token) {
+    public Inventory getInventar(String token) {
         String query = "SELECT user_inventory FROM user WHERE user_token = " + token + ";";
         ResultSet rs = this.abfragMachen(query);
-        if (rs != null)try {
+
+        if (rs != null) try {
             rs.next();
-            return rs.getString("user_inventory");
+            String inventar = rs.getString("user_inventory");
+            return new Inventory(inventar);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return "{\n\t\"fehler\": true\n}";
+        return new Inventory("{\"fehler\": true}");
     }
     /**
      * update zur datenbank machen
@@ -237,5 +281,22 @@ public class Datenbank {
                 throw new RuntimeException(ex);
             }
         }
+    }
+    public Queue getQueue(String token) {
+        String query = "SELECT user_queue, user_queue_start, user_velocity FROM user WHERE user_token = " + token + ";";
+        String queueS = "";
+        long start = 0;
+        double velocity = 0;
+        ResultSet rs = this.abfragMachen(query);
+        if (rs != null) try {
+            rs.next();
+            queueS = rs.getString("user_queue");
+            start = rs.getLong("user_queue_start");
+            velocity = rs.getDouble("user_velocity");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        Queue queue = new Queue(queueS, start, velocity);
+        return queue;
     }
 }
