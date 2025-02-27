@@ -1,5 +1,7 @@
 package server;
 
+import economy.Inventory;
+
 public class SichereVerketteteSpielerListe {
     private Node kopf;
 
@@ -34,7 +36,7 @@ public class SichereVerketteteSpielerListe {
         }
         return next.spieler;
     }
-    public void setSpieler(String token, Spieler spieler) {
+    public void setInventory(String token, Inventory inventory) {
         Node next = this.kopf;
         while(!next.spieler.getToken().equals(token)) {
             if (next.next == null) {
@@ -42,7 +44,17 @@ public class SichereVerketteteSpielerListe {
             }
             next = next.next;
         }
-        next.spieler = spieler;
+        next.spieler.inventory = inventory;
+    }
+    public void setQueue(String token, Queue queue) {
+        Node next = this.kopf;
+        while(!next.spieler.getToken().equals(token)) {
+            if (next.next == null) {
+                return;
+            }
+            next = next.next;
+        }
+        next.spieler.queue = queue;
     }
     public void speichern(Datenbank datenbank) {
         Node next = this.kopf.next;

@@ -8,7 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class  Spieler {
-    private Queue queue;
+    public Queue queue;
     public Inventory inventory;
     private String token;
     private long lezterZugriff;

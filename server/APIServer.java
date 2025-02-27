@@ -123,18 +123,16 @@ public class APIServer extends HttpServer {
             this.datenbank.updateMachen("UPDATE user SET user_queue = '" + headerbody[1] + "' WHERE user_token = " + token + ";");
             this.datenbank.updateMachen("UPDATE user SET user_queue_start = " + (long)(System.currentTimeMillis() / 1000) + " WHERE user_token = " + token + ";");
         }
-        Spieler spieler = this.spieler.getSpieler(token);
-        spieler.setQueue(new Queue(headerbody[1], System.currentTimeMillis() / 1000L, 0.1));
-        this.spieler.setSpieler(token, spieler);
+        this.spieler.setQueue(token, new Queue(headerbody[1], System.currentTimeMillis() / 1000L, 0.1));
     }
     private void abbauen(int x, int y, int radius, String token) {
         int[][] tiles = datenbank.welcheTileSollIchHolen(x, y, radius);
         int[] resourcen = datenbank.getResourcen(tiles);
         this.datenbank.setResourcen(tiles, 0, 0);
-        Spieler spieler = this.spieler.getSpieler(token);
-        spieler.inventory.addItem(new Holz(resourcen[0]));
-        spieler.inventory.addItem(new Holz(resourcen[1]));
-        this.spieler.addSpieler(spieler);
+        Inventory inventory = this.spieler.getSpieler(token).inventory;
+        inventory.addItem(new Holz(resourcen[0]));
+        inventory.addItem(new Holz(resourcen[1]));
+        this.spieler.setInventory(token, inventory);
     }
     private String getHash(String password) {
         try {
