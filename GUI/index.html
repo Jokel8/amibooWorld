@@ -45,7 +45,7 @@
                         </tr>
                         <tr>
                             <td><button class="buttonfunctioncontainer1buttons" class="buttondesign"
-                                    onclick="">Abbauen</button></td>
+                                    onclick="abbauen()">Abbauen</button></td>
                         </tr>
                         <tr>
                             <td><button class="buttonfunctioncontainer1buttons" class="buttondesign"
@@ -188,6 +188,13 @@
                 .catch(error => {
                     console.error('Fehler:', error);
                 });
+        }
+
+        function abbauen() {
+            const lastStep = steps[steps.length - 1];
+            x = lastStep['x'];
+            y = lastStep['y'];
+            fetch('https://v2202410237002289383.megasrv.de/mine?x=' + x + '&y=' + y);
         }
     </script>
 </body>
