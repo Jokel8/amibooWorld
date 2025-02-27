@@ -55,6 +55,10 @@
                             <td><button class="buttonfunctioncontainer1buttons" class="buttondesign"
                                     onclick="">Sammeln</button></td>
                         </tr>
+                        <tr>
+                            <td><button class="buttonfunctioncontainer1buttons" class="buttondesign"
+                                        onclick="bauen()">Haus bauen</button></td>
+                        </tr>
                     </table>
                 </div>
             </div>
@@ -192,9 +196,15 @@
 
         function abbauen() {
             const lastStep = steps[steps.length - 1];
-            x = lastStep['x'];
-            y = lastStep['y'];
+            const x = lastStep['x'];
+            const y = lastStep['y'];
             fetch('https://v2202410237002289383.megasrv.de/mine?x=' + x + '&y=' + y);
+        }
+        function bauen() {
+            const lastStep = steps[steps.length - 1];
+            const x = lastStep['x'];
+            const y = lastStep['y'];
+            fetch('https://v2202410237002289383.megasrv.de/build?x=' + x + '&y=' + y + '&type=' + 21);
         }
     </script>
 </body>
