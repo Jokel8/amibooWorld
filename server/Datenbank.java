@@ -299,4 +299,18 @@ public class Datenbank {
         Queue queue = new Queue(queueS, start, velocity);
         return queue;
     }
+    public String getCharacters() {
+        String query = "SELECT character_name FROM character;";
+        ResultSet rs = this.abfragMachen(query);
+        StringBuilder html = new StringBuilder();
+
+        if (rs != null) try {
+            while (rs.next()) {
+                html.append("<option>" + rs.getString("character_name") + "</option>\n");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return html.toString();
+    }
 }

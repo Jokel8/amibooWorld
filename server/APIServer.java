@@ -101,6 +101,14 @@ public class APIServer extends HttpServer {
                     queueSpeichern(in, parameter.get("token"));
                     antwort.append("HTTP/1.1 204 No Content\n");
                 }
+                case "characters" -> {
+                    String html = this.datenbank.getCharacters();
+                    antwort.append("HTTP/1.1 200 OK\n" +
+                            "Content-Type: application/json\n" +
+                            "Access-Control-Allow-Origin: *\n" +
+                            "Content-Length: " + html.length() + "\n\n");
+                    antwort.append(html);
+                }
                 default -> {
                     antwort.append("HTTP/1.1 404 Not Found\n");
                 }
