@@ -16,8 +16,8 @@ public class PlayerBasedEco {
      */
     public static void main(String[] args) {
         // Create player and merchant inventories
-        Inventory player1Inventory = new Inventory("Player1");  // Player starts with 100 gold
-        Inventory player2Inventory = new Inventory("Player2"); // Merchant starts with 500 gold
+        Inventory player1Inventory = new Inventory();  // Player starts with 100 gold
+        Inventory player2Inventory = new Inventory(); // Merchant starts with 500 gold
 
         // Create a factory instance for Weapon to generate new weapons
         Weapon weaponFactory = new Weapon();
@@ -57,9 +57,10 @@ public class PlayerBasedEco {
         );
 //
         // Add created weapons to merchant's inventory
-        player1Inventory.addItem(Holzschwert);
-        player1Inventory.addItem(Kriegsbeil);
-        player1Inventory.addItem(YamadaKatana);
+//        player1Inventory.addItem(Holzschwert);
+//        player1Inventory.addItem(Kriegsbeil);
+//        player1Inventory.addItem(YamadaKatana);
+        player1Inventory.addItem(new Holz(20));
 //
 //        // Display initial inventories before trade
 //        System.out.println("Before Trade:");

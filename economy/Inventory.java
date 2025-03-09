@@ -13,7 +13,7 @@ import server.HttpServer.*;
  */
 public class Inventory {
 
-    private List<Item> items; // Storage for items in the inventory
+    private ArrayList<Item> items; // Storage for items in the inventory
     private int gold;         // Storage for gold in the inventory
 
     /**
@@ -32,8 +32,11 @@ public class Inventory {
                 this.addGold(inventar.getInt("toal_gold"));
             }
         } else {
-            this.addItem(new Item("fehler", false, Rarity.UNCOMMON, "falscher token", "server", Category.OTHER, 3, 1));
+            this.addItem(new Item("fehler", false, Rarity.UNCOMMON, "falscher token", "server", Category.OTHER, 20, 1));
         }
+    }
+    public Inventory() {
+        this.items = new ArrayList<>();
     }
 
     /**
@@ -51,6 +54,23 @@ public class Inventory {
         }
         if (!found) {
             this.items.add(item);
+        }
+    }
+    public int getMenge(String item) {
+        int menge = 0;
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).getName().equals(item)) {
+                menge += items.get(i).menge;
+                break;
+            }
+        }
+        return menge;
+    }
+    public void setMenge(String item, int menge) {
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).getName().equals(item)) {
+                items.get(i).menge = menge;
+            }
         }
     }
 
@@ -147,4 +167,8 @@ public class Inventory {
         return json.toString(4);
     }
 
+    @Override
+    public String toString() {
+        return this.listItems();
+    }
 }
