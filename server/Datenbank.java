@@ -106,8 +106,52 @@ public class Datenbank {
         StringBuilder query = new StringBuilder();
         query.append("SELECT field_type, field_type_name, field_type_is_walkable, field_type_is_swimmable, field_type_is_flyable, field_holz, field_gestein FROM field_type ");
         query.append("JOIN map ON map.field_type = field_type.field_type_id ");
-        query.append("WHERE field_x BETWEEN ").append(xMin).append(" AND ").append(xMax);
-        query.append(" AND field_y BETWEEN ").append(yMin).append(" AND ").append(yMax).append(";");
+        query.append("WHERE (");
+
+        // x-coordinate conditions
+        if (x - radius >= 0 && x + radius <= 999) {
+            // No wrapping needed for x
+            query.append("field_x BETWEEN ").append(x - radius).append(" AND ").append(x + radius);
+        } else {
+            query.append("(");
+            if (x - radius < 0) {
+                // Left side wrap for x
+                query.append("field_x BETWEEN ").append(1000 + (x - radius)).append(" AND ").append(1000 - 1);
+                query.append(" OR ");
+            }
+            // Regular x-range
+            query.append("field_x BETWEEN 0 AND ").append(x + radius);
+            if (x + radius > 999) {
+                // Right side wrap for x
+                query.append(" OR ");
+                query.append("field_x BETWEEN 0 AND ").append(x + radius - 1000);
+            }
+            query.append(")");
+        }
+
+        // y-coordinate conditions
+        query.append(" AND ");
+        if (y - radius >= 0 && y + radius <= 999) {
+            // No wrapping needed for y
+            query.append("field_y BETWEEN ").append(y - radius).append(" AND ").append(y + radius);
+        } else {
+            query.append("(");
+            if (y - radius < 0) {
+                // Top side wrap for y
+                query.append("field_y BETWEEN ").append(1000 + (y - radius)).append(" AND ").append(1000 - 1);
+                query.append(" OR ");
+            }
+            // Regular y-range
+            query.append("field_y BETWEEN 0 AND ").append(y + radius);
+            if (y + radius > 999) {
+                // Bottom side wrap for y
+                query.append(" OR ");
+                query.append("field_y BETWEEN 0 AND ").append(y + radius - 1000);
+            }
+            query.append(")");
+        }
+
+        query.append(");");
 
         // Use prepared statement (assuming abfragMachen supports it)
         ResultSet rs = this.abfragMachen(query.toString());
