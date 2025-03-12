@@ -32,6 +32,9 @@
         let crosshairX;
         let crosshairY;
 
+        let absoluteX;
+        let absoluteY;
+
         function darkenTile(x, y) {
             const tiles = mapElement.children;
             const index = y * width + x + 1;
@@ -42,8 +45,6 @@
 
         function updateCrosshair() {
             crosshair.style.transform = `translate(${crosshairX * 102}px, ${crosshairY * 102}px)`;
-            const absoluteX = originX + crosshairX - middle;
-            const absoluteY = originY + crosshairY - middle;
             steps.push({ x: absoluteX, y: absoluteY});
             console.log(`Moved to: (${absoluteX}, ${absoluteY})`);
             
@@ -59,21 +60,25 @@
                 const targetTile = mapElement.children[(crosshairY - 1) * width + crosshairX + 1];
                 if (targetTile && targetTile.classList.contains('walkable')) {
                     crosshairY--; // Nach oben bewegen
+                    absoluteY++;
                 }
             } else if (event.key === 's' && crosshairY < height - 1) {
                 const targetTile = mapElement.children[(crosshairY + 1) * width + crosshairX + 1];
                 if (targetTile && targetTile.classList.contains('walkable')) {
                     crosshairY++; // Nach unten bewegen
+                    absoluteY--;
                 }
             } else if (event.key === 'a' && crosshairX > 0) {
                 const targetTile = mapElement.children[crosshairY * width + (crosshairX - 1) + 1];
                 if (targetTile && targetTile.classList.contains('walkable')) {
                     crosshairX--; // Nach links bewegen
+                    absoluteX--;
                 }
             } else if (event.key === 'd' && crosshairX < width - 1) {
                 const targetTile = mapElement.children[crosshairY * width + (crosshairX + 1) + 1];
                 if (targetTile && targetTile.classList.contains('walkable')) {
                     crosshairX++; // Nach rechts bewegen
+                    absoluteX++;
                 }
             }
 
@@ -100,6 +105,8 @@
                     if (data.success) {
                         originX = data.x;
                         originY = data.y;
+                        absoluteX = originX;
+                        absoluteY = originY;
                         console.log(data.x, "-", data.y);
                     } else {
                         console.log('Abfrage fehlgeschlagen. ' + data.message);
@@ -131,64 +138,78 @@
             mapElement.style.gridTemplateColumns = `repeat(${width}, 100px)`;
             mapElement.style.gridTemplateRows = `repeat(${height}, 100px)`;
 
-            // Erstelle eine Struktur zum Sammeln von Layern
-            const layers = {};
+            const layers = [];
 
-            // Durchlaufe die Karte und erstelle Layers
-            mapData.map.forEach((tile) => {
-                const key = `${tile.x}-${tile.y}`;
-                if (!layers[key]) {
-                    layers[key] = [];
+            // Find the maximum x and y values to define the map dimensions
+            const maxX = Math.max(...mapData.map.map(tile => tile.x));
+            const maxY = Math.max(...mapData.map.map(tile => tile.y));
+
+            // Initialize the layers as a 2D array (with y axis flipped)
+            for (let i = 0; i <= maxY; i++) {
+                layers[i] = [];
+                for (let j = 0; j <= maxX; j++) {
+                    layers[i][j] = [];
                 }
-                layers[key].push(tile);
+            }
+
+            // Fill the 2D array with tiles from the mapData
+            mapData.map.forEach((tile) => {
+                // We reverse the y index to ensure that (0, 0) is the bottom-left corner
+                const invertedY = maxY - tile.y;
+                layers[invertedY][tile.x].push(tile);
             });
 
-            // Rendere die Layers
-            Object.entries(layers).forEach(([key, tileLayers]) => {
-                const [x, y] = key.split('-').map(Number);
-                const tileContainer = document.createElement('div');
-                tileContainer.classList.add('tile');
+            // Render the Layers
+            layers.forEach((row, y) => {
+                row.forEach((tileLayers, x) => {
+                    if (tileLayers.length === 0) return; // Skip empty cells
 
-                tileLayers.forEach((tileData, index) => {
-                    const tileLayer = document.createElement('div');
-                    tileLayer.classList.add('tile-layer');
+                    const tileContainer = document.createElement('div');
+                    tileContainer.classList.add('tile');
 
-                    tileLayer.style.backgroundImage = 'url(../CMS/getAsset.php?action=getImg&type=field_type&id=' + tileData.properties.value + ')';
-                    tileLayer.style.zIndex = index;
-                    tileLayer.textContent = tileData.properties.value;
+                    tileLayers.forEach((tileData, index) => {
+                        const tileLayer = document.createElement('div');
+                        tileLayer.classList.add('tile-layer');
 
-                    // Cursor und Interaktivität basierend auf Begehbarkeit
-                    if (tileData.properties.is_walkable) {
-                        tileContainer.classList.add('walkable');
-                    } else {
-                        tileContainer.classList.add('not-walkable');
-                    }
+                        tileLayer.style.backgroundImage = 'url(../CMS/getAsset.php?action=getImg&type=field_type&id=' + tileData.properties.value + ')';
+                        tileLayer.style.zIndex = index;
+                        tileLayer.textContent = tileData.properties.value;
 
-                    tileContainer.appendChild(tileLayer);
+                        // Cursor und Interaktivität basierend auf Begehbarkeit
+                        if (tileData.properties.is_walkable) {
+                            tileContainer.classList.add('walkable');
+                        } else {
+                            tileContainer.classList.add('not-walkable');
+                        }
 
-                    // Ressourcen-Icons
-                    const resourcesDiv = document.createElement('div');
-                    resourcesDiv.classList.add('resources');
+                        tileContainer.appendChild(tileLayer);
 
-                    if (tileData.resources.holz > 50) {
-                        const woodIcon = document.createElement('i');
-                        woodIcon.classList.add('fas', 'fa-tree', 'text-green-500');
-                        woodIcon.title = `Holz: ${tileData.resources.holz}`;
-                        resourcesDiv.appendChild(woodIcon);
-                    }
+                        // Ressourcen-Icons
+                        const resourcesDiv = document.createElement('div');
+                        resourcesDiv.classList.add('resources');
 
-                    if (tileData.resources.gold > 50) {
-                        const goldIcon = document.createElement('i');
-                        goldIcon.classList.add('fas', 'fa-coins', 'text-yellow-500');
-                        goldIcon.title = `Gold: ${tileData.resources.gold}`;
-                        resourcesDiv.appendChild(goldIcon);
-                    }
+                        if (tileData.resources.holz > 50) {
+                            const woodIcon = document.createElement('i');
+                            woodIcon.classList.add('fas', 'fa-tree', 'text-green-500');
+                            woodIcon.title = `Holz: ${tileData.resources.holz}`;
+                            resourcesDiv.appendChild(woodIcon);
+                        }
 
-                    tileContainer.appendChild(resourcesDiv);
+                        if (tileData.resources.gold > 50) {
+                            const goldIcon = document.createElement('i');
+                            goldIcon.classList.add('fas', 'fa-coins', 'text-yellow-500');
+                            goldIcon.title = `Gold: ${tileData.resources.gold}`;
+                            resourcesDiv.appendChild(goldIcon);
+                        }
+
+                        tileContainer.appendChild(resourcesDiv);
+                    });
+
+                    // Append the tile container to the map element
+                    mapElement.appendChild(tileContainer);
                 });
-
-                mapElement.appendChild(tileContainer);
             });
+
         }
 
         renderMap();
