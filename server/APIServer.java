@@ -1,5 +1,6 @@
 package server;
 
+import economy.Gestein;
 import economy.Holz;
 import economy.Inventory;
 
@@ -127,7 +128,7 @@ public class APIServer extends HttpServer {
         this.datenbank.setResourcen(tiles, 0, 0);
         Inventory inventory = this.datenbank.getInventar(token);
         inventory.addItem(new Holz(resourcen[0]));
-        inventory.addItem(new Holz(resourcen[1]));
+        inventory.addItem(new Gestein(resourcen[1]));
         this.inventarAktualisieren(inventory, token);
     }
     private void bauen(int x, int y, String token) {
@@ -154,7 +155,7 @@ public class APIServer extends HttpServer {
         inventarAktualisieren(inventory, token);
     }
     private void inventarAktualisieren(Inventory inventory, String token) {
-        String query = "UPDATE user SET user_inventory = " + inventory.toString() + " WHERE user_token = " + token + ";";
+        String query = "UPDATE user SET user_inventory = '" + inventory.toString() + "' WHERE user_token = '" + token + "';";
         this.datenbank.updateMachen(query);
     }
     private String getHash(String password) {
