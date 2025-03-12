@@ -16,19 +16,19 @@ import java.util.Hashtable;
 public class Test {
 
     public static void main(String[] args) {
-//        APIServer api = new APIServer(8080);
-//        api.start();
-        JSONObject queue = new JSONObject();
-        JSONArray liste = new JSONArray();
-        JSONObject pos = new JSONObject();
-        pos.put("x", 0);
-        pos.put("y", 0);
-        liste.put(pos);
-        liste.put(pos);
-        liste.put(pos);
-
-        queue.put("queue", liste);
-        System.out.println(queue.toString(4));
+        APIServer api = new APIServer(8080);
+        api.start();
+//        JSONObject queue = new JSONObject();
+//        JSONArray liste = new JSONArray();
+//        JSONObject pos = new JSONObject();
+//        pos.put("x", 0);
+//        pos.put("y", 0);
+//        liste.put(pos);
+//        liste.put(pos);
+//        liste.put(pos);
+//
+//        queue.put("queue", liste);
+//        System.out.println(queue.toString(4));
 //        SecureRandom random = new SecureRandom();
 //        System.out.println(random.nextLong());
 //        try {

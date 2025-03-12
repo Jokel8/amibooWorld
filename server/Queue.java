@@ -23,4 +23,9 @@ public class Queue {
         this.startZeit = startZeit;
         this.geschwindigkeit = geschwindigkeit;
     }
+
+    @Override
+    public String toString() {
+        return this.queue.toString(4);
+    }
 }
