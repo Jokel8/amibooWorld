@@ -34,16 +34,12 @@ public class APIServer extends HttpServer {
             StringBuilder antwort = new StringBuilder();
             switch (anfrage) {
                 case "map" -> {
-                    int[][] tiles;
-//                    if (parameter.containsKey("px") && parameter.containsKey("py")) {
-//                        //tiles = this.datenbank.welcheTileSollIchHolen()
-//                    } else {
+                    String tilesString;
                     if (parameter.containsKey("r")) {
-                        tiles = this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), Integer.parseInt(parameter.get("r")));
+                        tilesString = this.datenbank.dbGetTileAndMakeItIntoJson(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), Integer.parseInt(parameter.get("r")));
                     } else {
-                        tiles = this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 4);
+                        tilesString = this.datenbank.dbGetTileAndMakeItIntoJson(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 4);
                     }
-                    String tilesString = this.datenbank.dbGetTileAndMakeItIntoJson(tiles);
                     //http header
                     antwort.append("HTTP/1.1 200 OK\n" +
                             "Content-Type: application/json\n" +

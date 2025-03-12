@@ -95,6 +95,27 @@ public class Datenbank {
         }
     }
 
+    private ResultSet dbGetTilesFast(int x, int y, int radius) {
+        //min max berechenen
+        int xMin = x - radius;
+        int xMax = x + radius;
+        int yMin = y - radius;
+        int yMax = y + radius;
+
+        //query bauen
+        StringBuilder query = new StringBuilder();
+        query.append("SELECT field_type, field_type_name, field_type_is_walkable, field_type_is_swimmable, field_type_is_flyable, field_holz, field_gestein FROM field_type ");
+        query.append("JOIN map ON map.field_type = field_type.field_type_id ");
+        query.append("WHERE field_x BETWEEN ").append(xMin).append(" AND ").append(xMax);
+        query.append(" AND field_y BETWEEN ").append(yMin).append(" AND ").append(yMax).append(";");
+
+        // Use prepared statement (assuming abfragMachen supports it)
+        ResultSet rs = this.abfragMachen(query.toString());
+
+        return rs;
+    }
+
+
     public int[] getResourcen(int[][] tiles) {
         int[] resourcen = new int[2];
         ResultSet rs = this.dbGetTiles(tiles);
@@ -111,9 +132,10 @@ public class Datenbank {
         }
         return resourcen;
     }
-    public String dbGetTileAndMakeItIntoJson(int[][] tiles) {
-        ResultSet rs = this.dbGetTiles(tiles);
-        String json = this.tilesToJson(rs, tiles);
+    public String dbGetTileAndMakeItIntoJson(int x, int y, int radius) {
+        //ResultSet rs = this.dbGetTiles(tiles);
+        ResultSet rs = this.dbGetTilesFast(x, y, radius);
+        String json = this.tilesToJson(rs, radius);
         return json;
     }
 
@@ -139,7 +161,7 @@ public class Datenbank {
         //System.out.println(query);
         return rs;
     }
-    private String tilesToJson(ResultSet rs, int[][] tiles) {
+    private String tilesToJson(ResultSet rs, int radius) {
         if (rs != null) try {
 
             JSONArray map = new JSONArray();
@@ -166,8 +188,8 @@ public class Datenbank {
             }
 
             JSONObject json = new JSONObject();
-            json.put("width", (int) Math.sqrt(tiles.length));
-            json.put("height", (int) Math.sqrt(tiles.length));
+            json.put("width", radius+radius+1);
+            json.put("height", radius+radius+1);
             json.put("map", map);
 
             return json.toString(4);
