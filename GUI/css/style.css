@@ -61,6 +61,11 @@ body {
     padding-bottom: 5%;
     height: 5%;
     border-radius: 15px;
+    background-color: #37b1bc;
+}
+
+.buttonfunctioncontainer1buttons:hover{
+    background-color: #2e7980;
 }
 
 .container {
@@ -212,14 +217,14 @@ body {
 .inner-box.solid {
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
-    background-color: #929292;
+    background-color: #37b1bc;
     border: none;
     color: white;
 }
 
 .inner-box.solid:hover {
     transition: 0.2s;
-    background-color: #b6b6b6;
+    background-color: #2e7980;
     color: white;
 }
 
@@ -233,7 +238,7 @@ body {
 
 #middle {
     border-radius: 0px;
-    background-color: #929292;
+    background-color: #37b1bc;
 }
 
 #bottom {
