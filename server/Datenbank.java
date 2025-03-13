@@ -95,6 +95,61 @@ public class Datenbank {
         }
     }
 
+    private ResultSet dbGetTilesFast(int x, int y, int radius) {
+        //query bauen
+        StringBuilder query = new StringBuilder();
+        //query.append("SELECT field_type, field_type_name, field_type_is_walkable, field_type_is_swimmable, field_type_is_flyable, field_holz, field_gestein ");
+        query.append("SELECT * ");
+        query.append("FROM field_type ");
+        query.append("JOIN map ON map.field_type = field_type.field_type_id ");
+        query.append("WHERE (");
+
+        // X-coordinate conditions with boundary checks and wrapping logic
+        if (x - radius >= 0 && x + radius <= 999) {
+            query.append("map.field_x BETWEEN ").append(x - radius).append(" AND ").append(x + radius);
+        } else {
+            query.append("(");
+            if (x - radius < 0) {
+                query.append("map.field_x BETWEEN ").append(1000 + (x - radius)).append(" AND ").append(1000 - 1);
+                query.append(" OR ");
+            }
+            query.append("map.field_x BETWEEN 0 AND ").append(x + radius);
+            if (x + radius > 999) {
+                query.append(" OR ");
+                query.append("map.field_x BETWEEN 0 AND ").append(x + radius - 1000);
+            }
+            query.append(")");
+        }
+
+        // Y-coordinate conditions with boundary checks and wrapping logic
+        query.append(" AND ");
+        if (y - radius >= 0 && y + radius <= 999) {
+            query.append("map.field_y BETWEEN ").append(y - radius).append(" AND ").append(y + radius);
+        } else {
+            query.append("(");
+            if (y - radius < 0) {
+                query.append("map.field_y BETWEEN ").append(1000 + (y - radius)).append(" AND ").append(1000 - 1);
+                query.append(" OR ");
+            }
+            query.append("map.field_y BETWEEN 0 AND ").append(y + radius);
+            if (y + radius > 999) {
+                query.append(" OR ");
+                query.append("map.field_y BETWEEN 0 AND ").append(y + radius - 1000);
+            }
+            query.append(")");
+        }
+
+        query.append(");");
+
+        //System.out.println(query.toString());
+
+        // Use prepared statement (assuming abfragMachen supports it)
+        ResultSet rs = this.abfragMachen(query.toString());
+
+        return rs;
+    }
+
+
     public int[] getResourcen(int[][] tiles) {
         int[] resourcen = new int[2];
         ResultSet rs = this.dbGetTiles(tiles);
@@ -111,16 +166,17 @@ public class Datenbank {
         }
         return resourcen;
     }
-    public String dbGetTileAndMakeItIntoJson(int[][] tiles) {
-        ResultSet rs = this.dbGetTiles(tiles);
-        String json = this.tilesToJson(rs, tiles);
+    public String dbGetTileAndMakeItIntoJson(int x, int y, int radius) {
+        //ResultSet rs = this.dbGetTiles(tiles);
+        ResultSet rs = this.dbGetTilesFast(x, y, radius);
+        String json = this.tilesToJson(rs, radius);
         return json;
     }
 
-    private ResultSet dbGetTiles(int[][] tiles) {
+    public ResultSet dbGetTiles(int[][] tiles) {
         //sql abfrage erstellen
         StringBuilder query = new StringBuilder();
-        query.append("SELECT field_type, field_type_name, field_type_is_walkable, field_type_is_swimmable, field_type_is_flyable, field_holz, field_gestein FROM field_type JOIN map ON (map.field_type = field_type.field_type_id) WHERE ");
+        query.append("SELECT field_x, field_y, field_type, field_type_name, field_type_is_walkable, field_type_is_swimmable, field_type_is_flyable, field_holz, field_gestein FROM field_type JOIN map ON (map.field_type = field_type.field_type_id) WHERE ");
         for (int i = 0; i < tiles.length; i++) {
 
             int x = tiles[i][0];
@@ -139,7 +195,7 @@ public class Datenbank {
         //System.out.println(query);
         return rs;
     }
-    private String tilesToJson(ResultSet rs, int[][] tiles) {
+    private String tilesToJson(ResultSet rs, int radius) {
         if (rs != null) try {
 
             JSONArray map = new JSONArray();
@@ -158,16 +214,16 @@ public class Datenbank {
                 resources.put("gold", rs.getInt("field_gestein"));
 
                 JSONObject tile = new JSONObject();
-                tile.put("x", tiles[i][0]);
-                tile.put("y", tiles[i][1]);
+                tile.put("x", rs.getInt("field_x"));
+                tile.put("y", rs.getInt("field_y"));
                 tile.put("properties", properties);
                 tile.put("resources", resources);
                 map.put(tile);
             }
 
             JSONObject json = new JSONObject();
-            json.put("width", (int) Math.sqrt(tiles.length));
-            json.put("height", (int) Math.sqrt(tiles.length));
+            json.put("width", radius+radius+1);
+            json.put("height", radius+radius+1);
             json.put("map", map);
 
             return json.toString(4);
@@ -236,13 +292,25 @@ public class Datenbank {
         updateMachen(query.toString());
     }
 
+    public int getKosten(String item) {
+        String query = "SELECT item_value FROM item WHERE item_name = " + item + ";";
+        ResultSet rs = this.abfragMachen(query);
+        if (rs != null) try {
+            rs.next();
+            return rs.getInt("item_value");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return Integer.MAX_VALUE;
+    }
+
     /**
      * inventar aus der datenbank als json
      * @param token usertoken
      * @return json
      */
     public Inventory getInventar(String token) {
-        String query = "SELECT user_inventory FROM user WHERE user_token = " + token + ";";
+        String query = "SELECT user_inventory FROM user WHERE user_token = '" + token + "';";
         ResultSet rs = this.abfragMachen(query);
 
         if (rs != null) try {
@@ -300,7 +368,7 @@ public class Datenbank {
         return queue;
     }
     public String getCharacters() {
-        String query = "SELECT character_name FROM character;";
+        String query = "SELECT character_name FROM `character`;";
         ResultSet rs = this.abfragMachen(query);
         StringBuilder html = new StringBuilder();
 

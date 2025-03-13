@@ -194,13 +194,13 @@
             const lastStep = steps[steps.length - 1];
             const x = lastStep['x'];
             const y = lastStep['y'];
-            fetch('https://v2202410237002289383.megasrv.de/mine?x=' + x + '&y=' + y);
+            fetch('https://v2202410237002289383.megasrv.de/mine?x=' + x + '&y=' + y + "&token=" + token);
         }
         function bauen(type) {
             const lastStep = steps[steps.length - 1];
             const x = lastStep['x'];
             const y = lastStep['y'];
-            fetch('https://v2202410237002289383.megasrv.de/build?x=' + x + '&y=' + y + '&type=' + type);
+            fetch('https://v2202410237002289383.megasrv.de/build?x=' + x + '&y=' + y + "&token=" + token);
         }
     </script>
 </body>
