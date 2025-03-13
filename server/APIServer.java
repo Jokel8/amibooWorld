@@ -77,7 +77,6 @@ public class APIServer extends HttpServer {
                 }
                 case "build" -> {
                     antwort.append("HTTP/1.1 204 No Content\n");
-                    this.datenbank.setFeld(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 0, 0, Integer.parseInt(parameter.get("type")));
                     this.bauen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), parameter.get("token"));
                 }
                 case "strike" -> {
@@ -133,20 +132,20 @@ public class APIServer extends HttpServer {
     }
     private void bauen(int x, int y, String token) {
         //TODO kosten beachten
-        ResultSet rs = this.datenbank.dbGetTiles(new int[][]{{x, y}});
+        ResultSet rs = this.datenbank.dbGetTilesFast(x, y, 0);
         int kosten = this.datenbank.getKosten("haus_bauen");
         Inventory inventory = this.datenbank.getInventar(token);
         if (inventory.getMenge("gold") < kosten) {
             return;
         }
         if (rs != null) try {
-            rs.next();
+            rs.last();
             int type = rs.getInt("field_type");
             if (type < 18) {
-                this.datenbank.setFeld(x, y, 0, 0, 18);
+                this.datenbank.insertFeld(x, y, 0, 0, 18);
                 inventory.setMenge("gold", inventory.getMenge("gold") - kosten);
             } else if (type < 21) {
-                this.datenbank.setFeld(x, y, 0, 0, type + 1);
+                this.datenbank.insertFeld(x, y, 0, 0, type + 1);
                 inventory.setMenge("gold", inventory.getMenge("gold") - kosten);
             }
         } catch (SQLException e) {

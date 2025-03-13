@@ -95,11 +95,11 @@ public class Datenbank {
         }
     }
 
-    private ResultSet dbGetTilesFast(int x, int y, int radius) {
+    public ResultSet dbGetTilesFast(int x, int y, int radius) {
         //query bauen
         StringBuilder query = new StringBuilder();
-        //query.append("SELECT field_type, field_type_name, field_type_is_walkable, field_type_is_swimmable, field_type_is_flyable, field_holz, field_gestein ");
-        query.append("SELECT * ");
+        query.append("SELECT field_x, field_y, field_type, field_type_name, field_type_is_walkable, field_type_is_swimmable, field_type_is_flyable, field_holz, field_gestein ");
+        //query.append("SELECT * ");
         query.append("FROM field_type ");
         query.append("JOIN map ON map.field_type = field_type.field_type_id ");
         query.append("WHERE (");
@@ -139,7 +139,8 @@ public class Datenbank {
             query.append(")");
         }
 
-        query.append(");");
+        query.append(")");
+        query.append("ORDER BY field_type ASC;");
 
         //System.out.println(query.toString());
 
@@ -255,6 +256,10 @@ public class Datenbank {
     }
     public void setFeld(int x, int y, int holz, int gestein, int type) {
         String query = "UPDATE map SET field_holz = " + holz + ", field_gestein = " + gestein + ", field_type = " + type + " WHERE field_x = " + x + " AND field_y = " + y + ";";
+        updateMachen(query);
+    }
+    public void insertFeld(int x, int y, int holz, int gestein, int type) {
+        String query = "INSERT INTO map(field_x, field_y, field_gestein, field_holz, field_type) VALUES("+x+","+y+","+gestein+","+holz+","+type+");";
         updateMachen(query);
     }
     public void setFeld(int[][] tiles, int holz, int gestein, int type) {
