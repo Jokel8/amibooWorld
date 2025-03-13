@@ -12,6 +12,7 @@
             const img = document.createElement('img');
             img.src = `../CMS/getAsset.php?action=getImg&type=item&id=${id}`;
             img.alt = `Charakter ${id}`;
+            img.className = 'imgelement';
 
             const title = document.createElement('div');
             title.className = 'elementTitle';
