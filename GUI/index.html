@@ -57,21 +57,15 @@
                         </tr>
                         <tr>
                             <td><button class="buttonfunctioncontainer1buttons" class="buttondesign"
-                                    onclick="verkaufen()">Items verkaufen</button></td>
-                            <td><button class="buttonfunctioncontainer1buttons" class="buttondesign"
-                                    onclick="verkaufen()">Items verkaufen</button></td>
+                                    onclick="handeln()">Items handeln</button></td>
                         </tr>
                     </table>
                 </div>
             </div>
 
-            <div id="profil" class="functioncontainer">
-                Profil lädt...
-            </div>
+            <div id="profil" class="functioncontainer">Profil lädt...</div>
 
-            <div id="inventar" class="functioncontainer">
-                Fynn was macht dieses Feld?
-            </div>
+            <div id="inventar" class="functioncontainer">Inventar lädt...</div>
         </div>
     </div>
 
@@ -225,11 +219,16 @@
             const y = lastStep['y'];
             fetch('https://v2202410237002289383.megasrv.de/mine?x=' + x + '&y=' + y + "&token=" + token);
         }
+
         function bauen(type) {
             const lastStep = steps[steps.length - 1];
             const x = lastStep['x'];
             const y = lastStep['y'];
             fetch('https://v2202410237002289383.megasrv.de/build?x=' + x + '&y=' + y + "&token=" + token);
+        }
+
+        function handeln() {
+            changeAktionen('inventar');
         }
     </script>
 </body>

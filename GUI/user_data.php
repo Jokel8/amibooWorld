@@ -99,8 +99,12 @@ try {
                 echo json_encode(['success' => true]);
             } else if ($data['get'] == "position") {
                 echo json_encode(['success' => true, 'x' => $userData['user_x'], 'y' => $userData['user_y']]);
+            } else if ($data['get'] == "inventory") {
+                echo json_encode(['success' => true, 'inventory' => $userData['user_inventory']]);
             }
         }
+    } else{
+        echo json_encode(['success' => false, 'message' => 'Ungültige Anfrage']);
     }
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
