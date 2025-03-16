@@ -8,7 +8,8 @@ $user = 'd0421573';
 $pass = 'pZuw7TVdwLCqWUjMUD8o';
 
 // Sicherheits- und Validierungsfunktionen
-function validateInput($input){
+function validateInput($input)
+{
     $input = trim($input);
     $input = stripslashes($input);
     $input = htmlspecialchars($input);
@@ -60,8 +61,8 @@ try {
                 echo json_encode(['success' => false, 'message' => "Dieses Passwort ist leider falsch $password"]);
             } else {
                 $token = bin2hex(random_bytes(20));
-                $stmt = $pdo->prepare('UPDATE user SET user_token = ? WHERE user_name = ?');
-                $stmt->execute([$token, $name]);
+                $stmt = $pdo->prepare('UPDATE user SET user_token = ?, user_login_count = ?, user_last_login = curdate() WHERE user_name = ?');
+                $stmt->execute([$token, $user['user_login_count'] + 1, $name]);
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
                 echo json_encode(['success' => true, 'token' => $token]);
             }
@@ -79,14 +80,24 @@ try {
     } else if (isset($data['action']) && $data['action'] === 'get') {
         $token = validateInput($data['token']);
 
-        if ($data['get'] == "position") {
-            $stmt = $pdo->prepare('SELECT user_x, user_y FROM user WHERE user_token = ?');
-            $stmt->execute([validateInput($token)]);
-            $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = $pdo->prepare('SELECT * FROM user WHERE user_token = ? AND user_last_login = curdate()');
+        $stmt->execute([validateInput($token)]);
+        $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if(!$userData){
+        if (!$userData) {
+            $stmt = $pdo->prepare('SELECT COUNT(*) FROM user WHERE user_token = ?');
+            $stmt->execute([validateInput($token)]);
+            $exists = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if(!$exists) {
+                echo json_encode(['success' => false, 'message' => "Token existiert nicht"]);
+            } else {
                 echo json_encode(['success' => false, 'message' => "Token abgelaufen"]);
-            }else{
+            }
+        } else {
+            if ($data['get'] == "legitimation") {
+                echo json_encode(['success' => true]);
+            } else if ($data['get'] == "position") {
                 echo json_encode(['success' => true, 'x' => $userData['user_x'], 'y' => $userData['user_y']]);
             }
         }

@@ -14,6 +14,7 @@
 
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -27,6 +28,7 @@
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             padding: 40px;
             overflow: hidden;
+            margin-bottom: 10px;
         }
 
         .form-container {
@@ -87,6 +89,10 @@
 
 <body>
     <div class="container">
+        <h2>Warnung:</h2>
+        <p>Aus Sicherheitsgründen wurdest du automatisch abgemeldet. Bitte melde dich erneut an.</p>
+    </div>
+    <div class="container">
         <div class="form-container">
             <div class="login-form">
                 <h2>Anmelden</h2>
@@ -121,6 +127,8 @@
         const loginForm = document.querySelector('.login-form');
         const registerForm = document.querySelector('.register-form');
         const loader = document.getElementById('loader');
+
+
 
         showLogin();
 
