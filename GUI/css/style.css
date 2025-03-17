@@ -18,8 +18,13 @@ body {
 
 .button {
     width: 100%;
-    border-top-left-radius: 35px;
-    border-top-right-radius: 35px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-color: #37b1bc;
+}
+
+.button.active{
+    background-color: #fc5658;
 }
 
 .functioncontainer {
@@ -163,8 +168,8 @@ body {
 
 #joystick {
     position: fixed;
-    left: 0px;
-    bottom: 0px;
+    left: 5px;
+    bottom: 5px;
     background: none;
 }
 
@@ -247,4 +252,24 @@ body {
 
 #right {
     transform: rotate(180deg)
+}
+
+@media (max-width: 1735px){
+    #actionlist{
+        width: 18%
+    }
+    #mapGrid{
+        width: 60%;
+    }
+}
+
+@media (max-width: 1465px){
+    #actionlist{
+        width: 14%
+    }
+}
+@media (max-width: 1300px){
+    #actionlist{
+        width: 14%
+    }
 }
