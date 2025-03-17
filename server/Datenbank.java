@@ -259,6 +259,8 @@ public class Datenbank {
         updateMachen(query);
     }
     public void insertFeld(int x, int y, int holz, int gestein, int type) {
+        String delete = "DELETE FROM map WHERE field_x = "+x+" AND field_y = "+y+" AND field_type >= 100";
+        updateMachen(delete);
         String query = "INSERT INTO map(field_x, field_y, field_gestein, field_holz, field_type) VALUES("+x+","+y+","+gestein+","+holz+","+type+");";
         updateMachen(query);
     }
@@ -298,7 +300,7 @@ public class Datenbank {
     }
 
     public int getKosten(String item) {
-        String query = "SELECT item_value FROM item WHERE item_name = " + item + ";";
+        String query = "SELECT item_value FROM item WHERE item_name = '" + item + "';";
         ResultSet rs = this.abfragMachen(query);
         if (rs != null) try {
             rs.next();
@@ -388,5 +390,15 @@ public class Datenbank {
             throw new RuntimeException(e);
         }
         return html.toString();
+    }
+    public int getCount(String query) {
+        ResultSet rs = this.abfragMachen(query);
+        if (rs != null) try{
+            rs.next();
+            return rs.getInt("total");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
     }
 }

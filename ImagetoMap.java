@@ -46,11 +46,11 @@ public class ImagetoMap {
                     feldtyp = 1;
                     //wuest
                 }
-                else if(hexwert.equals("#0097DD")){
+                else if(hexwert.equals("#0096dc")){
                     feldtyp = 2;
                     //wasser
                 }
-                else if(hexwert.equals("#2F9F47")){
+                else if(hexwert.equals("#93c751")){
                     feldtyp = 3;
                     //gras
                 }
@@ -62,7 +62,7 @@ public class ImagetoMap {
                     feldtyp = 6;
                     //vulkan
                 }
-                else if(hexwert.equals("#004D23")){
+                else if(hexwert.equals("#339e45")){
                     feldtyp = 10;
                     //blumenfeld
                 }
@@ -70,7 +70,7 @@ public class ImagetoMap {
                     feldtyp = 8;
                     //pampa
                 }
-                else if(hexwert.equals("#423C56")){
+                else if(hexwert.equals("#423c56")){
                     feldtyp = 16;
                     //lava
                 }

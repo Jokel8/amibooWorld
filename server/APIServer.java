@@ -51,7 +51,7 @@ public class APIServer extends HttpServer {
                 case "inventory" -> {
                     Inventory inventory = this.datenbank.getInventar(parameter.get("token"));
                     String inv = inventory.listItems();
-                    System.out.println(inv);
+                    //System.out.println(inv);
                     antwort.append("HTTP/1.1 200 OK\n" +
                             "Content-Type: application/json\n" +
                             "Access-Control-Allow-Origin: *\n" +
@@ -141,15 +141,21 @@ public class APIServer extends HttpServer {
         if (inventory.getMenge("gold") < kosten) {
             return;
         }
+        String felder = "SELECT COUNT(*) AS total FROM map WHERE field_x = "+x+" AND field_y = "+y+";";
+        int felderCount = this.datenbank.getCount(felder);
         if (rs != null) try {
-            rs.last();
+            rs.next();
             int type = rs.getInt("field_type");
-            if (type < 18) {
-                this.datenbank.insertFeld(x, y, 0, 0, 18);
+            if (felderCount == 1) {
+                this.datenbank.insertFeld(x, y, 0, 0, 100);
                 inventory.setMenge("gold", inventory.getMenge("gold") - kosten);
-            } else if (type < 21) {
-                this.datenbank.insertFeld(x, y, 0, 0, type + 1);
-                inventory.setMenge("gold", inventory.getMenge("gold") - kosten);
+            } else if (felderCount >= 2) {
+                rs.next();
+                type = rs.getInt("field_type");
+                if (type < 104) {
+                    this.datenbank.insertFeld(x, y, 0, 0, type + 1);
+                    inventory.setMenge("gold", inventory.getMenge("gold") - kosten);
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

@@ -53,7 +53,7 @@
                         </tr>
                         <tr>
                             <td><button class="buttonfunctioncontainer1buttons" class="buttondesign"
-                                    onclick="bauen(21)">Haus bauen</button></td>
+                                    onclick="bauen()">Haus bauen</button></td>
                         </tr>
                         <tr>
                             <td><button class="buttonfunctioncontainer1buttons" class="buttondesign"
@@ -220,13 +220,15 @@
             const lastStep = steps[steps.length - 1];
             const x = lastStep['x'];
             const y = lastStep['y'];
+            console.log(steps[steps.length - 1]);
             fetch('https://v2202410237002289383.megasrv.de/mine?x=' + x + '&y=' + y + "&token=" + token);
         }
 
-        function bauen(type) {
+        function bauen() {
             const lastStep = steps[steps.length - 1];
             const x = lastStep['x'];
             const y = lastStep['y'];
+            console.log(steps[steps.length - 1]);
             fetch('https://v2202410237002289383.megasrv.de/build?x=' + x + '&y=' + y + "&token=" + token);
         }
 
