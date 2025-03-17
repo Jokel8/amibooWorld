@@ -14,6 +14,9 @@ public class ImagetoMap {
         int width = image.getWidth();
         int height = image.getHeight();
 
+        System.out.println(width);
+        System.out.println(height);
+
         if(width != 1000 || height != 1000){
             throw new IllegalArgumentException("Das Bild entspricht nicht der benötigten größe von 1000x1000 Pixeln");
         }
@@ -87,12 +90,19 @@ public class ImagetoMap {
                     //jungle
                 }
                 else {
-                    System.out.println("fehler");
+                    System.out.println("fehler x: " + x+ " y: " + y);
                 }
-
-                insertSQL = "\nINSERT INTO map(field_x, field_y, field_type) VALUES(" + x + ", " + y +", " + feldtyp +");";
+                if(x == 0 && y == 0){
+                    insertSQL = "\nINSERT INTO map(field_x, field_y, field_type) \nVALUES";
+                }
+                else if (x == 999 && y == 999){
+                    insertSQL = "\n(" + x + ", " + y +", " + feldtyp +");";
+                }
+                else{
+                    insertSQL = "\n(" + x + ", " + y +", " + feldtyp +"),";
+                }
                 fileWriter.write(insertSQL);
-                System.out.println(x);
+                //System.out.println(x);
                 //System.out.println(insertSQL);
             }
         }

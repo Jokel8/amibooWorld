@@ -253,3 +253,23 @@ body {
 #right {
     transform: rotate(180deg)
 }
+
+@media (max-width: 1735px){
+    #actionlist{
+        width: 18%
+    }
+    #mapGrid{
+        width: 60%;
+    }
+}
+
+@media (max-width: 1465px){
+    #actionlist{
+        width: 14%
+    }
+}
+@media (max-width: 1300px){
+    #actionlist{
+        width: 14%
+    }
+}
