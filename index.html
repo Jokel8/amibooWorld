@@ -1,10 +1,424 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
+
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amibooworld - Ein magisches Pixelart-Abenteuer</title>
+    <style>
+        :root {
+            --primary: #5e35b1;
+            --secondary: #0097dd;
+            --accent: #ffb300;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: url(GUI/img/cover.png);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            padding: 20px 0;
+            text-align: center;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-family: 'Courier New', monospace;
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--accent);
+            text-shadow: 3px 3px 0px var(--primary);
+            letter-spacing: 2px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent);
+            transition: width 0.3s;
+        }
+
+        .nav a:hover::after {
+            width: 100%;
+        }
+
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            color: var(--secondary);
+            text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .hero p {
+            font-size: 1.8rem;
+            color: #000;
+            margin-bottom: 30px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--accent);
+            color: var(--dark);
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-decoration: none;
+            letter-spacing: 1px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            border: none;
+            font-size: 1.1rem;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .cta-button:active {
+            transform: translateY(-1px);
+        }
+
+        .feature-box {
+            background-color: rgba(30, 30, 60, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 30px;
+            padding-top: 0px;
+            margin: 40px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .feature-box h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            margin-top: 30px;
+            color: var(--secondary);
+        }
+
+        .feature-box p {
+            margin-bottom: 10px;
+        }
+
+        .feature-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(45deg,
+                    rgba(94, 53, 177, 0.05) 25%,
+                    transparent 25%,
+                    transparent 50%,
+                    rgba(94, 53, 177, 0.05) 50%,
+                    rgba(94, 53, 177, 0.05) 75%,
+                    transparent 75%,
+                    transparent);
+            background-size: 20px 20px;
+            z-index: -1;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 60px;
+            position: relative;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--secondary);
+            border-radius: 50%;
+            color: var(--light);
+            text-decoration: none;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .social-icon:hover {
+            transform: scale(1.1);
+            background-color: var(--accent);
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .team-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 2rem;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .nav {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
+
 <body>
-<p>Floppa</p>
+    <div class="container">
+        <header>
+            <div class="logo">AMIBOOWORLD</div>
+            <nav class="nav">
+                <a href="#ueber">Über das Spiel</a>
+                <a href="#features">Features</a>
+                <a href="#team">Team</a>
+                <a href="#kontakt">Kontakt</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="hero" id="ueber">
+
+                <div class="hero-content">
+                    <h1>Willkommen in Amibooworld!</h1>
+                    <p>Das Abschlussprojekt des 12er Info-LK<br>
+                         bei Herrn Schisch im Schuljahr 2024/25.<br>
+                    </p>
+                    <a href="GUI/" class="cta-button">Jetzt spielen</a>
+                </div>
+            </section>
+
+            <section class="feature-box" id="introduction">
+                <h2>Es war ein Mal an einem weit entfernten Ort...</h2>
+                <p>Ein gewaltiger Sturm zieht über das Meer, die Wellen türmen sich bedrohlich auf. Dein Schiff wird von
+                    den tosenden Wassermassen erfasst, Holz splittert, und ehe du reagieren kannst, reißt dich eine
+                    Welle von Deck. Die Welt um dich herum verschwimmt – und dann wird alles schwarz.
+                    Als du die Augen öffnest, liegst du an einem fremden Strand. Die Sonne brennt auf deine Haut, das
+                    salzige Wasser tropft aus deiner Kleidung. Hinter dir erstreckt sich ein dichter Dschungel, vor dir
+                    das weite Meer – von deinem Schiff sind nur Trümmer übrig. Allein, ohne Vorräte und ohne einen Plan,
+                    bleibt dir nur eine Möglichkeit: Überleben.
+                    Doch du bist nicht der Erste, der hier gestrandet ist. Andere Schiffbrüchige haben hier überlebt –
+                    und einige von ihnen haben sich organisiert. Gildenhäuser wurden errichtet, in denen Händler und
+                    Überlebende Ressourcen tauschen und sich gegenseitig unterstützen. Gold, Holz, Stein – alles hat
+                    seinen Wert, und kluge Verhandlungen können über Leben und Tod entscheiden.
+                    Mit nichts als deinen eigenen Händen beginnst du, die Insel zu erkunden, Werkzeuge zu fertigen und
+                    dein eigenes Lager aufzubauen.
+                    Dein Abenteuer beginnt jetzt. Wirst du ein geschickter Händler, ein geschickter Handwerker oder ein
+                    Anführer in dieser neuen Welt? Die Wahl liegt bei dir.</p>
+            </section>
+
+            <section class="feature-box" id="features">
+                <h2>Über das Spiel</h2>
+                <p>Amibooworld ist ein liebevoll gestaltetes 2D-Pixelart-Spiel, bei dem das Gameplay dem von Advanced
+                    Wars
+                    nachempfunden wurde und durch einen Cooldown eine Sucht verhindert wird.</p>
+                <p>Die handgezeichneten Pixel-Landschaften und die atmosphärische Musik erschaffen eine einzigartige
+                    Spielerfahrung, die sowohl Retro-Fans als auch Neueinsteiger in ihren Bann ziehen wird.</p>
+                <p>"Ein magisches 2D-Pixelart-Abenteuer, das deine Kreativität und deinen Entdeckergeist
+                    herausfordert." - Claude</p>
+
+                <div style="margin-top: 30px;">
+                    <h3 style="color: var(--accent); margin-bottom: 15px;">Hauptfeatures:</h3>
+                    <ul style="list-style-type: none; padding-left: 20px;">
+                        <li style="margin-bottom: 10px; position: relative; padding-left: 20px;">
+                            <span style="position: absolute; left: 0; color: var(--accent);">▪</span>
+                            <strong style="color: var(--secondary);">Umfangreiche Pixelwelt:</strong> Erkunde fünf
+                            einzigartige Biome mit handgezeichneten Pixel-Landschaften
+                        </li>
+                        <li style="margin-bottom: 10px; position: relative; padding-left: 20px;">
+                            <span style="position: absolute; left: 0; color: var(--accent);">▪</span>
+                            <strong style="color: var(--secondary);">Fesselnde Geschichte:</strong> Tauche ein in eine
+                            emotionale Erzählung voller überraschender Wendungen
+                        </li>
+                        <li style="margin-bottom: 10px; position: relative; padding-left: 20px;">
+                            <span style="position: absolute; left: 0; color: var(--accent);">▪</span>
+                            <strong style="color: var(--secondary);">Fesselnde Geschichte:</strong> Tauche ein in eine
+                            emotionale Erzählung voller überraschender Wendungen
+                        </li>
+                        <li style="margin-bottom: 10px; position: relative; padding-left: 20px;">
+                            <span style="position: absolute; left: 0; color: var(--accent);">▪</span>
+                            <strong style="color: var(--secondary);">Knifflige Rätsel:</strong> Stelle dich kreativen
+                            Herausforderungen und cleveren Puzzles
+                        </li>
+                        <li style="margin-bottom: 10px; position: relative; padding-left: 20px;">
+                            <span style="position: absolute; left: 0; color: var(--accent);">▪</span>
+                            <strong style="color: var(--secondary);">Retro-Soundtrack:</strong> Genieße einen
+                            nostalgischen Chiptune-Soundtrack, der die Atmosphäre perfekt unterstreicht
+                        </li>
+                        <li style="margin-bottom: 10px; position: relative; padding-left: 20px;">
+                            <span style="position: absolute; left: 0; color: var(--accent);">▪</span>
+                            <strong style="color: var(--secondary);">Sammle und verbessere:</strong> Entdecke versteckte
+                            Gegenstände und verbessere deine Fähigkeiten
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="feature-box" id="team">
+                <h2>Unser Team</h2>
+                <p>Wir sind der Leistungskurs von Herrn Schich – und natürlich der beste von allen! In den letzten vier
+                    Monaten haben wir mit viel Engagement, Kreativität und Teamarbeit an unserem eigenen Survival- und
+                    Handels-RPG gearbeitet. Dabei haben wir nicht nur unsere Programmier- und Design-Skills verbessert,
+                    sondern auch gelernt, wie wichtig Organisation, Kommunikation und gutes Teamwork für die Entwicklung
+                    eines erfolgreichen Spiels sind.</p>
+                <h2>Unsere Arbeitsweise</h2>
+                <p>Um das Projekt effizient umzusetzen, haben wir uns in verschiedene Gruppen und Positionen
+                    aufgeteilt, ähnlich wie in einem echten Entwicklerstudio:</p>
+                <div style="margin-top: 30px;">
+                    <h3 style="color: var(--accent); margin-bottom: 15px;">Arbeitsgruppen:</h3>
+                    <ul style="list-style-type: none; padding-left: 20px;">
+                        <li style="margin-bottom: 10px; position: relative; padding-left: 20px;">
+                            <span style="position: absolute; left: 0; color: var(--accent);">▪</span>
+                            <strong style="color: var(--secondary);">CEO & Management</strong> – Koordination des
+                            Projekts, Zeitplanung und Organisation der Teams
+                        </li>
+                        <li style="margin-bottom: 10px; position: relative; padding-left: 20px;">
+                            <span style="position: absolute; left: 0; color: var(--accent);">▪</span>
+                            <strong style="color: var(--secondary);">Development</strong> – Programmierung, technische
+                            Umsetzung und Spielmechaniken
+                        </li>
+                        <li style="margin-bottom: 10px; position: relative; padding-left: 20px;">
+                            <span style="position: absolute; left: 0; color: var(--accent);">▪</span>
+                            <strong style="color: var(--secondary);">Grafik, UI & Sound</strong> – Erstellung von
+                            Charakteren, Umgebungen, Icons und Benutzeroberfläche
+                        </li>
+                        <li style="margin-bottom: 10px; position: relative; padding-left: 20px;">
+                            <span style="position: absolute; left: 0; color: var(--accent);">▪</span>
+                            <strong style="color: var(--secondary);">Dokumentation</strong> - Protokollierung des
+                            Entwicklungsprozesses, Erstellung von Anleitungen und Präsentationen
+                        </li>
+                        <li style="margin-bottom: 10px; position: relative; padding-left: 20px;">
+                            <span style="position: absolute; left: 0; color: var(--accent);">▪</span>
+                            <strong style="color: var(--secondary);">Hardware</strong> - Implementation eines eigenen
+                            Amiboo-Systems, bei dem man via NFC-Tag eigene Charaktere in das Spiel einlesen kann.
+                        </li>
+                    </ul>
+                </div>
+                <h2>Die Projektphase</h2>
+                <p>Nach vier Monaten harter Arbeit steht unser Spiel! Es erzählt die Geschichte eines Schiffbrüchigen,
+                    der auf einer verlassenen Insel strandet und ums Überleben kämpft. Der Fokus auf Ressourcensammlung,
+                    Handwerk, Handel und Gildenhäusern, in denen Spieler ihre Waren tauschen und sich verbünden können.
+                    Wir sind stolz darauf, was wir gemeinsam erschaffen haben – und hoffen, dass unser Spiel genau so
+                    viel Spaß macht, wie wir beim Entwickeln hatten!
+
+                    Hinter Amibooworld steht ein leidenschaftliches Team von Kreativen, die ihre Liebe zu Pixelart und
+                    klassischen Spielen in dieses Projekt einfließen lassen. Jedes Teammitglied bringt einzigartige
+                    Fähigkeiten und Perspektiven ein, die Amibooworld zu dem machen, was es ist.</p>
+            </section>
+
+            <section class="feature-box" id="kontakt">
+                <h2>Werde Teil der Community</h2>
+                <p>Du möchtest deine eigene Version von Amibooworld hosten? Kein Problem, dafür haben wir extra das
+                    Backend in Java programmiert.
+                </p>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <a href="https://github.com/Jokel8/amibooWorld" class="cta-button">Zum Repository</a>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="social-links">
+                <a href="https://willigis-online.de" class="social-icon" style="background-color: transparent;"><img width="100%" src="GUI/img/Willigis-Logo.png"></a>
+                <a href="https://jonas.fam-klupsch.de" class="social-icon">JK</a>
+            </div>
+            <div class="copyright">
+                © 2025 Amibooworld. Alle Rechte vorbehalten.
+            </div>
+        </footer>
+    </div>
 </body>
+
 </html>
