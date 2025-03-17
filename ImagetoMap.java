@@ -44,30 +44,39 @@ public class ImagetoMap {
                 //System.out.println(hexwert);
                 if(hexwert.equals("#EADB74")){
                     feldtyp = 1;
+                    //wuest
                 }
                 else if(hexwert.equals("#0097DD")){
                     feldtyp = 2;
+                    //wasser
                 }
                 else if(hexwert.equals("#2F9F47")){
                     feldtyp = 3;
+                    //gras
                 }
                 else if(hexwert.equals("#523A2A")){
                     feldtyp = 14;
+                    //berg
                 }
                 else if(hexwert == "070505"){
                     feldtyp = 6;
+                    //vulkan
                 }
                 else if(hexwert == "004D23"){
                     feldtyp = 10;
+                    //blumenfeld
                 }
                 else if(hexwert == "94CB50"){
                     feldtyp = 8;
+                    //pampa
                 }
                 else if(hexwert == "423C56"){
                     feldtyp = 16;
+                    //lava
                 }
                 else if(hexwert == "537C44"){
                     feldtyp = 9;
+                    //schnee
                 }
 
                 insertSQL = "\nINSERT INTO map(field_x, field_y, field_type) VALUES(" + x + ", " + y +", " + feldtyp +");";
