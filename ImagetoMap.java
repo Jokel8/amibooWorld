@@ -42,19 +42,19 @@ public class ImagetoMap {
             for (int y = 0; y < 1000; y++) {
                 String hexwert = hexArray[x][y];
                 //System.out.println(hexwert);
-                if(hexwert.equals("#ddd36e")){
+                if(hexwert.equals("#DDD36E")){
                     feldtyp = 1;
                     //wuest
                 }
-                else if(hexwert.equals("#0096dc")){
+                else if(hexwert.equals("#0096DC")){
                     feldtyp = 2;
                     //wasser
                 }
-                else if(hexwert.equals("#93c751")){
+                else if(hexwert.equals("#93C751")){
                     feldtyp = 3;
                     //gras
                 }
-                else if(hexwert.equals("#6b6b6b")){
+                else if(hexwert.equals("#6B6B6B")){
                     feldtyp = 14;
                     //berg
                 }
@@ -62,29 +62,32 @@ public class ImagetoMap {
                     feldtyp = 6;
                     //vulkan
                 }
-                else if(hexwert.equals("#339e45")){
+                else if(hexwert.equals("#339E45")){
                     feldtyp = 10;
                     //blumenfeld
                 }
-                else if(hexwert.equals("#50392a")){
+                else if(hexwert.equals("#50392A")){
                     feldtyp = 8;
                     //pampa
                 }
-                else if(hexwert.equals("#423c56")){
+                else if(hexwert.equals("#423C56")){
                     feldtyp = 16;
                     //lava
                 }
-                else if(hexwert.equals("#bbf7ff")){
+                else if(hexwert.equals("#BBF7FF")){
                     feldtyp = 9;
                     //schnee
                 }
-                else if(hexwert.equals("#15e3ff")){
+                else if(hexwert.equals("#15E3FF")){
                     feldtyp = 9;
                     //eis
                 }
-                else if(hexwert.equals("#0c4e25")) {
+                else if(hexwert.equals("#0C4E25")) {
                     feldtyp = 4;
                     //jungle
+                }
+                else {
+                    System.out.println("fehler");
                 }
 
                 insertSQL = "\nINSERT INTO map(field_x, field_y, field_type) VALUES(" + x + ", " + y +", " + feldtyp +");";
