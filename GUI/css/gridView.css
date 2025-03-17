@@ -18,17 +18,24 @@
     align-items: center;
 }
 
-.elementTitle{
+.overlay{
     background-color: rgba(240, 248, 255, 0.377);
+    color: black;
     border-radius: 10px;
     padding: 10px;
-    padding-top: 2px;
-    font-size: 3vw;
     position: absolute;
+}
+
+.elementTitle{
+    font-size: 20px;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    display: none;
+}
+
+.elementAmount{
+    top: 0;
+    left: 0;
 }
 
 .imgelement{
@@ -38,4 +45,30 @@
     max-height: 100%;
     min-height: 100%;
     max-width: 100%;
+}
+
+.descriptionBox{
+    display: none;
+    width: 500px;
+    height: 300px;
+    background-color: rgba(71, 71, 71, 0.464);
+    backdrop-filter: blur(10px);
+    color: black;
+    border-radius: 10px;
+    padding: 10px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+
+    button{
+        background-color: #ffffff;
+        border-radius: 10px;
+        font-size: 20px;
+    }
+}
+
+.visible{
+    display: block;
 }

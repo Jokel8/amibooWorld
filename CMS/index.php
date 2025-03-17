@@ -14,7 +14,7 @@
             <input class="nav-item" type="button" name="type" value="Assets Hinzufügen" onclick="toggleButton(this)" />
             <input class="nav-item" type="button" name="type" value="Assets Betrachten" onclick="toggleButton(this)" />
             <input class="nav-item" type="button" name="type" value="Nutzer verwalten" onclick="toggleButton(this)" />
-            <input class="nav-item" type="button" name="type" value="Spiel testen" onclick="toggleButton(this)" />
+            <input class="nav-item" type="button" name="type" value="Spiel testen" onclick="window.location.href = '../GUI/'" />
         </form>
     </div>
 

@@ -1,17 +1,17 @@
 <link rel="stylesheet" href="css/gridView.css">
 <div id="characterArray" class="grid"></div>
 <script>
-    let id = 1;
-    const container = document.getElementById("characterArray");
-
     async function fetchCharacter(name, id) {
         try {
+            const container = document.getElementById("characterArray");
+
             const characterDiv = document.createElement('div');
             characterDiv.className = 'element';
 
             const img = document.createElement('img');
             img.src = `../CMS/getAsset.php?action=getImg&type=character&id=${id}`;
             img.alt = `Charakter ${id}`;
+            img.className = 'imgelement';
 
             const title = document.createElement('div');
             title.className = 'elementTitle';
@@ -35,6 +35,7 @@
         console.log(count + " Elemente gefunden.");
 
         var success = 0;
+        var id = 1;
 
         while (success < count) {
             const response = await fetch(`../CMS/getAsset.php?action=getTitle&type=character&id=${id}`);

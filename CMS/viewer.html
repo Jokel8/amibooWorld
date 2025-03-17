@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Karten Generator</title>
     <link rel="stylesheet" href="cms.css" />
+    <link rel="stylesheet" href="../GUI/css/gridView.css" />
 </head>
 
 <body>
@@ -53,7 +54,7 @@
                     row.innerHTML = `
                 <td>${type.field_type_id}</td>
                 <td>${type.field_type_name}</td>
-                <td><img src="getAsset.php?action=getImg&type=field_type&id=${type.field_type_id}" alt="Bild nicht verfügbar"></td>
+                <td><img class="element" src="getAsset.php?action=getImg&type=field_type&id=${type.field_type_id}" alt="Bild nicht verfügbar"></td>
                 <td>${type.field_type_is_walkable}</td>
                 <td>${type.field_type_is_swimmable}</td>
                 <td>${type.field_type_is_flyable}</td>
@@ -157,6 +158,7 @@
             }
 
             loadHTML('../GUI/characters.html', 'characterList');
+            loadHTML('../GUI/items.html', 'itemList');
 
             async function deleteMap() {
                 if (!confirm('Möchten Sie die gesamte Karte wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
