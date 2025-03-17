@@ -50,8 +50,8 @@
 .descriptionBox{
     display: none;
     width: 500px;
-    height: 300px;
-    background-color: rgba(71, 71, 71, 0.464);
+    height: fit-content;
+    background-color: rgba(157, 157, 157, 0.464);
     backdrop-filter: blur(10px);
     color: black;
     border-radius: 10px;
@@ -66,7 +66,35 @@
         background-color: #ffffff;
         border-radius: 10px;
         font-size: 20px;
+        margin-right: 10px;
     }
+
+    .itemTable {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0;
+    }
+    
+    .itemTable tr {
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .itemTable td {
+        padding: 8px;
+        text-align: left;
+    }
+    
+    .keyCell {
+        font-weight: bold;
+        background-color: #f0f0f053;
+        width: 50%;
+    }
+    
+    .valueCell {
+        text-align: right;
+        color: #ffffff;
+    }
+    
 }
 
 .visible{

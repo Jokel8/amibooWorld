@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="css/gridView.css">
+<link rel="stylesheet" href="css/gridView.css?v=1.0">
 <div id="itemArray" class="grid"></div>
 <div id="itemDescription" class="descriptionBox">
     <h2>Dieses Item verkaufen?</h2>
@@ -61,8 +61,59 @@
         console.log('Noch nicht implementiert');
     }
 
-    function showDescription() {
+    async function showDescription(item_id) {
         itemDescription.classList.add('visible');
+        itemDescription.innerHTML = "";
+
+        const response = await fetch(`../CMS/getAsset.php?action=getInfo&type=item&id=${item_id}`);
+        const data = await response.json();
+
+        const title = document.createElement("h2");
+        title.textContent = data.name;
+        itemDescription.appendChild(title);
+
+        const description = document.createElement("p");
+        description.textContent = data.description;
+        itemDescription.appendChild(description);
+
+        const table = document.createElement("table");
+        table.classList.add("itemTable");
+
+        const properties = {
+            "Wert": data.value,
+            "Schaden-Multiplikator": data.damage_mult,
+            "Gesundheit durch Essen": data.health_eat,
+            "Gewicht": data.weight,
+            "Haltbarkeit": data.durability,
+            "Spaßfaktor": data.fun_factor
+        };
+
+        for (const [key, value] of Object.entries(properties)) {
+            const row = document.createElement("tr");
+
+            const keyCell = document.createElement("td");
+            keyCell.textContent = key;
+            keyCell.classList.add("keyCell");
+
+            const valueCell = document.createElement("td");
+            valueCell.textContent = value;
+            valueCell.classList.add("valueCell");
+
+            row.appendChild(keyCell);
+            row.appendChild(valueCell);
+            table.appendChild(row);
+        }
+        itemDescription.appendChild(table);
+
+        const verkaufen = document.createElement("button");
+        verkaufen.textContent = "Verkaufen";
+        verkaufen.onclick = () => sellItem(item_id);
+        itemDescription.appendChild(verkaufen);
+
+        const abbrechen = document.createElement("button");
+        abbrechen.textContent = "Abbrechen";
+        abbrechen.onclick = () => itemDescription.classList.remove('visible');
+        itemDescription.appendChild(abbrechen);
     }
 
     loadItems();
