@@ -14,21 +14,21 @@
 
         <div id="map" class="container">Karte Lädt...</div>
 
-        <div id="joystick" class="container">Joystick Lädt...</div>
+        <div id="joystick">Joystick Lädt...</div>
         <div id="instructor" class="container">Amiboo World</div>
         <div id="actionlist" class="container">
             <div id="buttoncontainer">
-                <button class="button" onclick="changeAktionen('agieren')"><svg xmlns="http://www.w3.org/2000/svg"
+                <button class="button active" name="navbutton" onclick="changeAktionen('agieren'); this.classList.add('active');"><svg xmlns="http://www.w3.org/2000/svg"
                         height="24px" viewBox="0 -960 960 960" width="24px" fill="#0x0000">
                         <path
                             d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z" />
                     </svg></button>
-                <button class="button" onclick="changeAktionen('profil')"><svg xmlns="http://www.w3.org/2000/svg"
+                <button class="button" name="navbutton" onclick="changeAktionen('profil'); this.classList.add('active');"><svg xmlns="http://www.w3.org/2000/svg"
                         height="24px" viewBox="0 -960 960 960" width="24px" fill="#0x0000">
                         <path
                             d="M218-381q-24 13-51 5.5T126-406q-17-29-6-60t43-42l337-112 36 71-318 168Zm22 261v-227l349-184-17-35 228-114 36 72-276 208v280H240Zm60-440q-58 0-99-41t-41-99q0-58 41-99t99-41q58 0 99 41t41 99q0 58-41 99t-99 41Z" />
                     </svg></button>
-                <button class="button" onclick="changeAktionen('inventar')"><svg xmlns="http://www.w3.org/2000/svg"
+                <button class="button" name="navbutton" onclick="changeAktionen('inventar'); this.classList.add('active');"><svg xmlns="http://www.w3.org/2000/svg"
                         height="24px" viewBox="0 -960 960 960" width="24px" fill="#0x0000">
                         <path
                             d="M200-80q-33 0-56.5-23.5T120-160v-451q-18-11-29-28.5T80-680v-120q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v120q0 23-11 40.5T840-611v451q0 33-23.5 56.5T760-80H200Zm0-520v440h560v-440H200Zm-40-80h640v-120H160v120Zm200 280h240v-80H360v80Zm120 20Z" />
@@ -36,7 +36,7 @@
             </div>
 
             <div id="agieren" class="functioncontainer active">
-                <h1>Agieren</h1>
+                <h1>Aktionen</h1>
                 <div class="buttonfunctioncontainer1" style="overflow-x: auto;">
                     <table class="tableb">
                         <tr>
@@ -53,23 +53,19 @@
                         </tr>
                         <tr>
                             <td><button class="buttonfunctioncontainer1buttons" class="buttondesign"
-                                        onclick="bauen(21)">Haus bauen</button></td>
+                                    onclick="bauen(21)">Haus bauen</button></td>
                         </tr>
                         <tr>
                             <td><button class="buttonfunctioncontainer1buttons" class="buttondesign"
-                                        onclick="verkaufen()">Items verkaufen</button></td>
+                                    onclick="handeln()">Items handeln</button></td>
                         </tr>
                     </table>
                 </div>
             </div>
 
-            <div id="profil" class="functioncontainer">
-                Profil lädt...
-            </div>
+            <div id="profil" class="functioncontainer">Profil lädt...</div>
 
-            <div id="inventar" class="functioncontainer">
-                Fynn was macht dieses Feld?
-            </div>
+            <div id="inventar" class="functioncontainer">Inventar lädt...</div>
         </div>
     </div>
 
@@ -83,15 +79,41 @@
         const token = getQueryParam('token');
 
         if (!token) {
-            // Weiterleiten, falls "token" nicht gesetzt ist
             window.location.href = 'login.html';
             document.body.innerHTML = '<h1>Zugriff verweigert: Melde dich zuerst an!</h1><a href="login.html">Zur Anmeldung</a>';
         } else {
+            fetch('user_data.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'get',
+                    token: token,
+                    get: "legitimation"
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log("Token gültig");
+                    } else {
+                        console.log('Automatisch abgemeldet: ' + data.message);
+                        window.location.href = 'login.html?m=2';
+                    }
+                })
+                .catch(error => {
+                    console.error('Fehler:', error);
+                });
+
             function changeAktionen(name) {
                 document.getElementById('agieren').classList.remove('active');
                 document.getElementById('profil').classList.remove('active');
                 document.getElementById('inventar').classList.remove('active');
                 document.getElementById(name).classList.add('active');
+                document.getElementsByName('navbutton').forEach(element => {
+                    element.classList.remove('active');
+                });
             }
 
 
@@ -115,7 +137,7 @@
             loadHTML('map.html', 'map');
             loadHTML('joystick.html', 'joystick');
             loadHTML('account.html', 'profil');
-            loadHTML('items.html', 'inventar');
+            loadHTML('inventory.html', 'inventar');
         }
 
         async function loadHTML(url, targetElementId) {
@@ -171,7 +193,7 @@
             const x = lastStep['x'];
             const y = lastStep['y'];
             console.log(steps[steps.length - 1]);
-            
+
             fetch('user_data.php', {
                 method: 'POST',
                 headers: {
@@ -200,11 +222,16 @@
             const y = lastStep['y'];
             fetch('https://v2202410237002289383.megasrv.de/mine?x=' + x + '&y=' + y + "&token=" + token);
         }
+
         function bauen(type) {
             const lastStep = steps[steps.length - 1];
             const x = lastStep['x'];
             const y = lastStep['y'];
             fetch('https://v2202410237002289383.megasrv.de/build?x=' + x + '&y=' + y + "&token=" + token);
+        }
+
+        function handeln() {
+            changeAktionen('inventar');
         }
     </script>
 </body>

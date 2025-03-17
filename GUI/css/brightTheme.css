@@ -9,4 +9,5 @@ body{
 
 .container{
     background-color: #2727277c;
+    backdrop-filter: blur(4px);
 }
