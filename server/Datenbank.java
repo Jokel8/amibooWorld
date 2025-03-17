@@ -373,7 +373,7 @@ public class Datenbank {
         return queue;
     }
     public void setCharacter(String username) {
-        String query = "SELECT"
+        //String query = "SELECT"
     }
     public String getCharacters() {
         String query = "SELECT character_name FROM `character`;";
