@@ -42,7 +42,7 @@ public class ImagetoMap {
             for (int y = 0; y < 1000; y++) {
                 String hexwert = hexArray[x][y];
                 //System.out.println(hexwert);
-                if(hexwert.equals("#EADB74")){
+                if(hexwert.equals("#ddd36e")){
                     feldtyp = 1;
                     //wuest
                 }
@@ -54,29 +54,37 @@ public class ImagetoMap {
                     feldtyp = 3;
                     //gras
                 }
-                else if(hexwert.equals("#523A2A")){
+                else if(hexwert.equals("#6b6b6b")){
                     feldtyp = 14;
                     //berg
                 }
-                else if(hexwert == "070505"){
+                else if(hexwert.equals("#070505")){
                     feldtyp = 6;
                     //vulkan
                 }
-                else if(hexwert == "004D23"){
+                else if(hexwert.equals("#004D23")){
                     feldtyp = 10;
                     //blumenfeld
                 }
-                else if(hexwert == "94CB50"){
+                else if(hexwert.equals("#50392a")){
                     feldtyp = 8;
                     //pampa
                 }
-                else if(hexwert == "423C56"){
+                else if(hexwert.equals("#423C56")){
                     feldtyp = 16;
                     //lava
                 }
-                else if(hexwert == "537C44"){
+                else if(hexwert.equals("#bbf7ff")){
                     feldtyp = 9;
                     //schnee
+                }
+                else if(hexwert.equals("#15e3ff")){
+                    feldtyp = 9;
+                    //eis
+                }
+                else if(hexwert.equals("#0c4e25")) {
+                    feldtyp = 4;
+                    //jungle
                 }
 
                 insertSQL = "\nINSERT INTO map(field_x, field_y, field_type) VALUES(" + x + ", " + y +", " + feldtyp +");";

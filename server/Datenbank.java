@@ -372,6 +372,9 @@ public class Datenbank {
         Queue queue = new Queue(queueS, start, velocity);
         return queue;
     }
+    public void setCharacter(String username) {
+        String query = "SELECT"
+    }
     public String getCharacters() {
         String query = "SELECT character_name FROM `character`;";
         ResultSet rs = this.abfragMachen(query);

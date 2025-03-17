@@ -95,6 +95,9 @@ public class APIServer extends HttpServer {
                             "Content-Length: " + html.length() + "\n\n");
                     antwort.append(html);
                 }
+                case "setcharacter" -> {
+                    String username = parameter.get("username");
+                }
                 default -> {
                     antwort.append("HTTP/1.1 404 Not Found\n");
                 }
