@@ -391,6 +391,27 @@ public class Datenbank {
         }
         return html.toString();
     }
+    public boolean setCharacters(String token, String key) {
+        //nach charcter suchen
+        String query = "SELECT COUNT(amiibo_character_id) AS erfolg, amiibo_character_id FROM amiibo WHERE amiibo_eingeloest = 0 AND amiibo_key = '" + key + "';";
+        ResultSet rs = this.abfragMachen(query);
+        if (rs != null) try {
+            rs.next();
+            if (rs.getInt("erfolg") == 1) {
+                int character = rs.getInt("amiibo_character_id");
+                //charcter aktualisieren
+                query = "UPDATE user SET user_character = " + character + " WHERE user_token = '" + token + "';";
+                this.updateMachen(query);
+                //auf eingeloest setztem
+                query = "UPDATE amiibo SET amiibo_eingeloest = 1 WHERE amiibo_key = '" + key + "';";
+                this.updateMachen(query);
+                return true;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
     public int getCount(String query) {
         ResultSet rs = this.abfragMachen(query);
         if (rs != null) try{

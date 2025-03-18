@@ -48,6 +48,7 @@ try {
         // Login-Prozess
         $name = validateInput($data['name']);
         $password = validateInput($data['password']);
+        $key = validateInput($data['key']);
 
         // Benutzer in Datenbank suchen
         $stmt = $pdo->prepare('SELECT * FROM user WHERE user_name = ?');
@@ -64,7 +65,7 @@ try {
                 $stmt = $pdo->prepare('UPDATE user SET user_token = ?, user_login_count = ?, user_last_login = curdate() WHERE user_name = ?');
                 $stmt->execute([$token, $user['user_login_count'] + 1, $name]);
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
-                echo json_encode(['success' => true, 'token' => $token]);
+                echo json_encode(['success' => true, 'token' => $token, 'key' => $key]);
             }
         }
     } else if (isset($data['action']) && $data['action'] === 'update') {

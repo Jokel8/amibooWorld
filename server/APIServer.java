@@ -1,10 +1,10 @@
 package server;
 
-import economy.Gestein;
-import economy.Holz;
+import economy.resourcen.Gestein;
+import economy.resourcen.Gold;
+import economy.resourcen.Holz;
 import economy.Inventory;
 
-import javax.xml.datatype.Duration;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,15 +16,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Random;
 
 public class APIServer extends HttpServer {
     private Datenbank datenbank;
+    private Random random;
+    private double goldChance;
 
     public APIServer(int port) {
         super(port);
         this.datenbank = new Datenbank();
         this.datenbank.verbinden();
+        this.random = new Random();
+        this.goldChance = 0.75;
     }
 
     @Override
@@ -96,8 +100,11 @@ public class APIServer extends HttpServer {
                     antwort.append(html);
                 }
                 case "setcharacter" -> {
-                    String username = parameter.get("username");
+                    String token = parameter.get("token");
+                    String key = parameter.get("key");
+                    antwort.append(this.setCharacter(token, key));
                 }
+
                 default -> {
                     antwort.append("HTTP/1.1 404 Not Found\n");
                 }
@@ -131,6 +138,9 @@ public class APIServer extends HttpServer {
         Inventory inventory = this.datenbank.getInventar(token);
         inventory.addItem(new Holz(resourcen[0]));
         inventory.addItem(new Gestein(resourcen[1]));
+        if (this.random.nextDouble() <= goldChance) {
+            inventory.addItem(new Gold(1));
+        }
         this.inventarAktualisieren(inventory, token);
     }
     private void bauen(int x, int y, String token) {
@@ -165,6 +175,17 @@ public class APIServer extends HttpServer {
     private void inventarAktualisieren(Inventory inventory, String token) {
         String query = "UPDATE user SET user_inventory = '" + inventory.toString() + "' WHERE user_token = '" + token + "';";
         this.datenbank.updateMachen(query);
+    }
+    private String setCharacter(String token, String key) {
+        String antwort;
+        if (this.datenbank.setCharacters(token, key)) {
+            antwort = "HTTP/1.1 204 No Content\n" +
+                    "Content-Type: application/json\n" +
+                    "Access-Control-Allow-Origin: *\n";
+        } else {
+            antwort = "HTTP/1.1 500 Internal Server Error\n";
+        }
+        return antwort;
     }
     private String getHash(String password) {
         try {
