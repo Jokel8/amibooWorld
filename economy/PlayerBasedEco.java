@@ -1,6 +1,6 @@
 package economy;
 
-import server.Datenbank;
+import economy.resourcen.Holz;
 
 /**
  * This class demonstrates a simple player-based economy where a player can purchase items (weapons)

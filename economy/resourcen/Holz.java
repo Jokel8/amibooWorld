@@ -1,4 +1,8 @@
-package economy;
+package economy.resourcen;
+
+import economy.Category;
+import economy.Item;
+import economy.Rarity;
 
 public class Holz extends Item {
     public Holz(int menge){

@@ -1,10 +1,10 @@
 package server;
 
-import economy.Gestein;
-import economy.Holz;
+import economy.resourcen.Gestein;
+import economy.resourcen.Gold;
+import economy.resourcen.Holz;
 import economy.Inventory;
 
-import javax.xml.datatype.Duration;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,15 +16,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Random;
 
 public class APIServer extends HttpServer {
     private Datenbank datenbank;
+    private Random random;
+    private double goldChance;
 
     public APIServer(int port) {
         super(port);
         this.datenbank = new Datenbank();
         this.datenbank.verbinden();
+        this.random = new Random();
+        this.goldChance = 0.7;
     }
 
     @Override
@@ -131,6 +135,9 @@ public class APIServer extends HttpServer {
         Inventory inventory = this.datenbank.getInventar(token);
         inventory.addItem(new Holz(resourcen[0]));
         inventory.addItem(new Gestein(resourcen[1]));
+        if (this.random.nextDouble() <= goldChance) {
+            inventory.addItem(new Gold(1));
+        }
         this.inventarAktualisieren(inventory, token);
     }
     private void bauen(int x, int y, String token) {
