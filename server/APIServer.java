@@ -28,7 +28,7 @@ public class APIServer extends HttpServer {
         this.datenbank = new Datenbank();
         this.datenbank.verbinden();
         this.random = new Random();
-        this.goldChance = 0.7;
+        this.goldChance = 0.75;
     }
 
     @Override
