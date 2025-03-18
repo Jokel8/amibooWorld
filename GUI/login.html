@@ -128,7 +128,10 @@
         const registerForm = document.querySelector('.register-form');
         const loader = document.getElementById('loader');
 
-
+        const url_string = window.location.href;
+        const url = new URL(url_string);
+        const key = url.searchParams.get("key");
+        console.log(key);
 
         showLogin();
 
@@ -183,16 +186,19 @@
                 body: JSON.stringify({
                     action: 'login',
                     name: name,
-                    password: password
+                    password: password,
+                    key: key
                 })
             })
                 .then(response => response.json())
-                .then(data => {
+                .then(async data => {
                     hideLoader();
                     if (data.success) {
+                        if (data.key !== '') {
+                            await fetch('https://v2202410237002289383.megasrv.de/setcharacter?token=' + data.token + '&key=' + data.key);
+                        }
+                        console.log(data.key);
                         window.location.href = 'index.html?token=' + data.token;
-                        //der API muss erst mitgeteilt werden, dass ein spieler online ist!!!!!!!!!!!!!!!!!!!!!!!!!
-                        fetch('https://v2202410237002289383.megasrv.de/login?token=' + data.token);
                     } else {
                         alert('Login fehlgeschlagen. ' + data.message);
                     }

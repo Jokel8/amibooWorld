@@ -100,8 +100,11 @@ public class APIServer extends HttpServer {
                     antwort.append(html);
                 }
                 case "setcharacter" -> {
-                    String username = parameter.get("username");
+                    String token = parameter.get("token");
+                    String key = parameter.get("key");
+                    antwort.append(this.setCharacter(token, key));
                 }
+
                 default -> {
                     antwort.append("HTTP/1.1 404 Not Found\n");
                 }
@@ -172,6 +175,17 @@ public class APIServer extends HttpServer {
     private void inventarAktualisieren(Inventory inventory, String token) {
         String query = "UPDATE user SET user_inventory = '" + inventory.toString() + "' WHERE user_token = '" + token + "';";
         this.datenbank.updateMachen(query);
+    }
+    private String setCharacter(String token, String key) {
+        String antwort;
+        if (this.datenbank.setCharacters(token, key)) {
+            antwort = "HTTP/1.1 204 No Content\n" +
+                    "Content-Type: application/json\n" +
+                    "Access-Control-Allow-Origin: *\n";
+        } else {
+            antwort = "HTTP/1.1 500 Internal Server Error\n";
+        }
+        return antwort;
     }
     private String getHash(String password) {
         try {
