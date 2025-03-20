@@ -4,6 +4,8 @@ import economy.resourcen.Gestein;
 import economy.resourcen.Gold;
 import economy.resourcen.Holz;
 import economy.Inventory;
+import org.json.HTTP;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -53,7 +55,8 @@ public class APIServer extends HttpServer {
                     antwort.append(tilesString);
                 }
                 case "inventory" -> {
-                    Inventory inventory = this.datenbank.getInventar(parameter.get("token"));
+                    int id = this.datenbank.getID(parameter.get("token"));
+                    Inventory inventory = this.datenbank.getInventar(id);
                     String inv = inventory.listItems();
                     //System.out.println(inv);
                     antwort.append("HTTP/1.1 200 OK\n" +
@@ -76,19 +79,24 @@ public class APIServer extends HttpServer {
 //                    antwort.append("HTTP/1.1 204 No Content\n");
 //                }
                 case "mine" -> {
-                    this.abbauen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 0, parameter.get("token"));
+                    int id = this.datenbank.getID(parameter.get("token"));
+                    this.abbauen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 0, id);
                     antwort.append("HTTP/1.1 204 No Content\n");
                 }
                 case "build" -> {
+                    int id = this.datenbank.getID(parameter.get("token"));
                     antwort.append("HTTP/1.1 204 No Content\n");
-                    this.bauen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), parameter.get("token"));
+                    this.bauen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), id);
                 }
                 case "strike" -> {
                     antwort.append("HTTP/1.1 204 No Content\n");
                     this.datenbank.setFeld(this.datenbank.welcheTileSollIchHolen(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 1), 0, 0, 6);
                 }
-                case "queue" -> {
-                    queueSpeichern(in, parameter.get("token"));
+                case "startqueue" -> {
+                    int id = this.datenbank.getID(parameter.get("token"));
+                    String queueS = this.datenbank.getQueue(id);
+                    Queue queue = new Queue(queueS, this, id);
+                    queue.startQueue();
                     antwort.append("HTTP/1.1 204 No Content\n");
                 }
                 case "characters" -> {
@@ -100,9 +108,9 @@ public class APIServer extends HttpServer {
                     antwort.append(html);
                 }
                 case "setcharacter" -> {
-                    String token = parameter.get("token");
+                    int id = this.datenbank.getID(parameter.get("token"));
                     String key = parameter.get("key");
-                    antwort.append(this.setCharacter(token, key));
+                    antwort.append(this.setCharacter(id, key));
                 }
 
                 default -> {
@@ -117,37 +125,40 @@ public class APIServer extends HttpServer {
         }
 
     }
-    private void queueSpeichern(BufferedReader in, String token) {
-        //TODO fixen
-        StringBuilder queue = new StringBuilder();
-        List<String> lines = in.lines().toList();
-        for (int i = 0; i < lines.size(); i++) {
-            queue.append(lines.get(i));
-        }
-        String[] headerbody = queue.toString().split("\\R\\R", 2);
-        if (headerbody.length == 2) {
-            this.datenbank.updateMachen("UPDATE user SET user_queue = '" + headerbody[1] + "' WHERE user_token = " + token + ";");
-            this.datenbank.updateMachen("UPDATE user SET user_queue_start = " + (long)(System.currentTimeMillis() / 1000) + " WHERE user_token = " + token + ";");
-        }
-        //this.spieler.setQueue(token, new Queue(headerbody[1], System.currentTimeMillis() / 1000L, 0.1));
-    }
-    private void abbauen(int x, int y, int radius, String token) {
+//    private void queueSpeichern(BufferedReader in, String token) {
+//        //TODO fixen
+//        StringBuilder queue = new StringBuilder();
+//        List<String> lines = in.lines().toList();
+//        for (int i = 0; i < lines.size(); i++) {
+//            queue.append(lines.get(i));
+//        }
+//        JSONObject http = HTTP.toJSONObject(queue.toString());
+//        System.out.println(http.toString(4));
+//        String[] headerbody = queue.toString().split("\\R\\R", 2);
+//        if (headerbody.length == 2) {
+//            this.datenbank.updateMachen("UPDATE user SET user_queue = '" + headerbody[1] + "' WHERE user_token = " + token + ";");
+//            this.datenbank.updateMachen("UPDATE user SET user_queue_start = " + (long)(System.currentTimeMillis() / 1000) + " WHERE user_token = " + token + ";");
+//        }
+//        //this.spieler.setQueue(token, new Queue(headerbody[1], System.currentTimeMillis() / 1000L, 0.1));
+//    }
+
+    public void abbauen(int x, int y, int radius, int id) {
         int[][] tiles = datenbank.welcheTileSollIchHolen(x, y, radius);
         int[] resourcen = datenbank.getResourcen(tiles);
         this.datenbank.setResourcen(tiles, 0, 0);
-        Inventory inventory = this.datenbank.getInventar(token);
+        Inventory inventory = this.datenbank.getInventar(id);
         inventory.addItem(new Holz(resourcen[0]));
         inventory.addItem(new Gestein(resourcen[1]));
         if (this.random.nextDouble() <= goldChance) {
             inventory.addItem(new Gold(1));
         }
-        this.inventarAktualisieren(inventory, token);
+        this.inventarAktualisieren(inventory, id);
     }
-    private void bauen(int x, int y, String token) {
+    public void bauen(int x, int y, int id) {
         //TODO kosten beachten
         ResultSet rs = this.datenbank.dbGetTilesFast(x, y, 0);
         int kosten = this.datenbank.getKosten("haus_bauen");
-        Inventory inventory = this.datenbank.getInventar(token);
+        Inventory inventory = this.datenbank.getInventar(id);
         if (inventory.getMenge("gold") < kosten) {
             return;
         }
@@ -170,15 +181,15 @@ public class APIServer extends HttpServer {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        inventarAktualisieren(inventory, token);
+        inventarAktualisieren(inventory, id);
     }
-    private void inventarAktualisieren(Inventory inventory, String token) {
-        String query = "UPDATE user SET user_inventory = '" + inventory.toString() + "' WHERE user_token = '" + token + "';";
+    private void inventarAktualisieren(Inventory inventory, int id) {
+        String query = "UPDATE user SET user_inventory = '" + inventory.toString() + "' WHERE user_id = " + id + ";";
         this.datenbank.updateMachen(query);
     }
-    private String setCharacter(String token, String key) {
+    private String setCharacter(int id, String key) {
         String antwort;
-        if (this.datenbank.setCharacters(token, key)) {
+        if (this.datenbank.setCharacters(id, key)) {
             antwort = "HTTP/1.1 204 No Content\n" +
                     "Content-Type: application/json\n" +
                     "Access-Control-Allow-Origin: *\n";
