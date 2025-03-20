@@ -34,6 +34,14 @@ public class Queue {
                 case "mine" -> {
                     this.server.abbauen(x, y, 0, this.id);
                 }
+                case "build" -> {
+                    this.server.bauen(x, y, this.id);
+                }
+            }
+            try {
+                Thread.sleep(action.getInt("time"));
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
     }
