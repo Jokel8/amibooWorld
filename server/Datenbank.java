@@ -6,7 +6,6 @@ import economy.Item;
 import economy.Rarity;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.sql.*;
 
@@ -313,11 +312,11 @@ public class Datenbank {
 
     /**
      * inventar aus der datenbank als json
-     * @param token usertoken
+     * @param id userid
      * @return json
      */
-    public Inventory getInventar(String token) {
-        String query = "SELECT user_inventory FROM user WHERE user_token = '" + token + "';";
+    public Inventory getInventar(int id) {
+        String query = "SELECT user_inventory FROM user WHERE user_id = " + id + ";";
         ResultSet rs = this.abfragMachen(query);
 
         if (rs != null) try {
@@ -357,22 +356,17 @@ public class Datenbank {
             }
         }
     }
-    public Queue getQueue(String token) {
-        String query = "SELECT user_queue, user_queue_start, user_velocity FROM user WHERE user_token = " + token + ";";
+    public String getQueue(int id) {
+        String query = "SELECT user_queue FROM user WHERE user_id = " + id + ";";
         String queueS = "";
-        long start = 0;
-        double velocity = 0;
         ResultSet rs = this.abfragMachen(query);
         if (rs != null) try {
             rs.next();
             queueS = rs.getString("user_queue");
-            start = rs.getLong("user_queue_start");
-            velocity = rs.getDouble("user_velocity");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        Queue queue = new Queue(queueS, start, velocity);
-        return queue;
+        return queueS;
     }
     public void setCharacter(String username) {
         //String query = "SELECT"
@@ -391,7 +385,7 @@ public class Datenbank {
         }
         return html.toString();
     }
-    public boolean setCharacters(String token, String key) {
+    public boolean setCharacters(int id, String key) {
         //nach charcter suchen
         String query = "SELECT COUNT(amiibo_character_id) AS erfolg, amiibo_character_id FROM amiibo WHERE amiibo_eingeloest = 0 AND amiibo_key = '" + key + "';";
         ResultSet rs = this.abfragMachen(query);
@@ -400,7 +394,7 @@ public class Datenbank {
             if (rs.getInt("erfolg") == 1) {
                 int character = rs.getInt("amiibo_character_id");
                 //charcter aktualisieren
-                query = "UPDATE user SET user_character = " + character + " WHERE user_token = '" + token + "';";
+                query = "UPDATE user SET user_character = " + character + " WHERE user_id = " + id + ";";
                 this.updateMachen(query);
                 //auf eingeloest setztem
                 query = "UPDATE amiibo SET amiibo_eingeloest = 1 WHERE amiibo_key = '" + key + "';";
@@ -421,5 +415,16 @@ public class Datenbank {
             throw new RuntimeException(e);
         }
         return 0;
+    }
+    public int getID(String token) {
+        int id = -1;
+        String query = "SELECT user_id FROM user WHERE user_token = '" + token + "';";
+        ResultSet rs = this.abfragMachen(query);
+        if (rs != null) try {
+            id = rs.getInt("user_id");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return id;
     }
 }
