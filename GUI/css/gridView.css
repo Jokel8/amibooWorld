@@ -100,3 +100,15 @@
 .visible{
     display: block;
 }
+
+@media (max-width: 750px){
+    .element{
+        max-height: 100px;
+    }
+    .imgelement{
+        width: fit-content;
+    }
+    .grid{
+        display: block;
+    }
+}

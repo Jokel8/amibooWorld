@@ -9,9 +9,17 @@
     <link id="themeStylesheet" rel="stylesheet" href="css/brightTheme.css">
 </head>
 
+<script>
+    // Ereignisse hinzufügen
+    window.addEventListener("load", () => {
+        lockOrientation();
+        checkOrientation();
+    });
+    window.addEventListener("resize", checkOrientation);
+</script>
+
 <body>
     <div class="content">
-
         <div id="map" class="container">Karte Lädt...</div>
 
         <div id="joystick">Joystick Lädt...</div>
@@ -67,6 +75,10 @@
 
             <div id="inventar" class="functioncontainer">Inventar lädt...</div>
         </div>
+    </div>
+
+    <div id="warning">
+        <p>📱 Bitte drehen Sie Ihr Handy zum Spielen ins Querformat.</p>
     </div>
 
     <script>
@@ -235,6 +247,37 @@
         function handeln() {
             changeAktionen('inventar');
         }
+    </script>
+    <script>
+        async function lockOrientation() {
+    if (screen.orientation && screen.orientation.lock) {
+        try {
+            await screen.orientation.lock("landscape");
+            console.log("Querformat gesperrt!");
+        } catch (error) {
+            console.error("Fehler beim Sperren der Ausrichtung:", error);
+            showWarning();
+        }
+    } else {
+        console.warn("Die Orientation API wird nicht unterstützt.");
+        showWarning();
+    }
+}
+
+function showWarning() {
+    document.getElementById("content").style.display = "none";
+    document.getElementById("warning").style.display = "flex";
+}
+
+// Prüfen, ob das Gerät bereits im Querformat ist
+function checkOrientation() {
+    if (window.innerHeight > window.innerWidth) {
+        showWarning();
+    } else {
+        document.getElementById("content").style.display = "block";
+        document.getElementById("warning").style.display = "none";
+    }
+}
     </script>
 </body>
 
