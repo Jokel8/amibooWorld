@@ -28,6 +28,7 @@
         var originY;
 
         var crosshair;
+        var character;
         var mapElement;
         let crosshairX;
         let crosshairY;
@@ -126,11 +127,21 @@
 
             mapElement = document.getElementById('mapGrid');
             mapElement.innerHTML = '<div id="crosshair"></div>';
+            mapElement.innerHTML += '<div id="character"></div>';
             document.removeEventListener('keydown', eventListener)
             crosshair = document.getElementById('crosshair');
             crosshairX = middle;
             crosshairY = middle;
             updateCrosshair();
+
+            character = document.getElementById('character');
+            let character_id;
+            fetch('https://v2202410237002289383.megasrv.de/character?token=' + token).then(async data => {
+                    console.log(data);
+                    character_id = data;
+                });
+            character.style.backgroundImage = 'url(../CMS/getAsset.php?action=getImg&type=character&id=' + character_id + ')';
+
             document.addEventListener('keydown', eventListener);
 
 

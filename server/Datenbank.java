@@ -432,6 +432,7 @@ public class Datenbank {
         String query = "SELECT user_id FROM user WHERE user_token = '" + token + "';";
         ResultSet rs = this.abfragMachen(query);
         if (rs != null) try {
+            rs.next();
             id = rs.getInt("user_id");
         } catch (SQLException e) {
             throw new RuntimeException(e);
