@@ -13,8 +13,8 @@
         Y: <input id="y-info" type="text" readonly="readonly" value="0">
     </div>
 
-    Wenn die Map nicht reagiert, drücke Sie ein Mal an
-    
+    <p style="display: none;">Wenn die Map nicht reagiert, drücke Sie ein Mal an</p>
+
     <div id="mapGrid">
     </div>
 
@@ -45,9 +45,9 @@
 
         function updateCrosshair() {
             crosshair.style.transform = `translate(${crosshairX * 102}px, ${crosshairY * 102}px)`;
-            steps.push({ x: absoluteX, y: absoluteY});
+            steps.push({ x: absoluteX, y: absoluteY });
             console.log(`Moved to: (${absoluteX}, ${absoluteY})`);
-            
+
             document.getElementById("x-info").value = absoluteX;
             document.getElementById("y-info").value = absoluteY;
         }
@@ -135,8 +135,23 @@
 
 
             // Setze Grid-Eigenschaften
-            mapElement.style.gridTemplateColumns = `repeat(${width}, 100px)`;
-            mapElement.style.gridTemplateRows = `repeat(${height}, 100px)`;
+            if(window.innerWidth < 750){
+                mapElement.style.gridTemplateColumns = `repeat(${width}, 29px)`;
+                mapElement.style.gridTemplateRows = `repeat(${height}, 29px)`;
+            }
+            else if(window.innerWidth < 950){
+                mapElement.style.gridTemplateColumns = `repeat(${width}, 38px)`;
+                mapElement.style.gridTemplateRows = `repeat(${height}, 38px)`;
+            }
+            else if(window.innerWidth < 1375){
+                mapElement.style.gridTemplateColumns = `repeat(${width}, 75px)`;
+                mapElement.style.gridTemplateRows = `repeat(${height}, 75px)`;
+            }
+            else{
+                mapElement.style.gridTemplateColumns = `repeat(${width}, 100px)`;
+                mapElement.style.gridTemplateRows = `repeat(${height}, 100px)`;
+            }
+
 
             const layers = [];
 
