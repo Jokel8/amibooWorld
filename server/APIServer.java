@@ -112,7 +112,15 @@ public class APIServer extends HttpServer {
                     String key = parameter.get("key");
                     antwort.append(this.setCharacter(id, key));
                 }
-
+                case "character" -> {
+                    int id = this.datenbank.getID(parameter.get("token"));
+                    String charcter = "" + this.datenbank.getCharacter(id);
+                    antwort.append("HTTP/1.1 200 OK\n" +
+                            "Content-Type: application/json\n" +
+                            "Access-Control-Allow-Origin: *\n" +
+                            "Content-Length: " + charcter.length() + "\n\n");
+                    antwort.append(charcter);
+                }
                 default -> {
                     antwort.append("HTTP/1.1 404 Not Found\n");
                 }

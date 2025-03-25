@@ -385,6 +385,17 @@ public class Datenbank {
         }
         return html.toString();
     }
+    public int getCharacter(int id) {
+        String query = "SELECT user_character FROM user WHERE user_id = " + id + ";";
+        ResultSet rs = this.abfragMachen(query);
+        if (rs != null) try {
+            rs.next();
+            return rs.getInt("user_character");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return -1;
+    }
     public boolean setCharacters(int id, String key) {
         //nach charcter suchen
         String query = "SELECT COUNT(amiibo_character_id) AS erfolg, amiibo_character_id FROM amiibo WHERE amiibo_eingeloest = 0 AND amiibo_key = '" + key + "';";
