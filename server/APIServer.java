@@ -142,6 +142,10 @@ public class APIServer extends HttpServer {
 //        //this.spieler.setQueue(token, new Queue(headerbody[1], System.currentTimeMillis() / 1000L, 0.1));
 //    }
 
+    public void bewegen(int x, int y, int id) {
+        String query = "UPDATE user SET x = " + x + ", y = " + y + " WHERE user_id = " + id;
+        this.datenbank.updateMachen(query);
+    }
     public void abbauen(int x, int y, int radius, int id) {
         int[][] tiles = datenbank.welcheTileSollIchHolen(x, y, radius);
         int[] resourcen = datenbank.getResourcen(tiles);
