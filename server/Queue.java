@@ -30,6 +30,7 @@ public class Queue {
             JSONObject action = actions.getJSONObject(i);
             int x = action.getInt("x");
             int y = action.getInt("y");
+            this.server.bewegen(x, y, this.id);
             switch (action.getString("action")) {
                 case "mine" -> {
                     this.server.abbauen(x, y, 0, this.id);

@@ -157,6 +157,13 @@ body {
     pointer-events: none;
     background-image: url(../img/crosshair.svg);
 }
+#character {
+    z-index: 9999;
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    pointer-events: none;
+}
 
 
 #actionlist {
