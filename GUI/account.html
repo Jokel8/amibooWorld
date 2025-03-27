@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet", href="css/account.css">
+    <link rel="stylesheet" href="css/account.css">
 </head>
+
 <body>
     <div class="profile-section">
         <h1>Willkommen</h1>
         <h2>Max Mustermann</h2>
         <div class="profile-pic">
-            <img src="../CMS/getAsset.php?action=getImg&type=character&id=100" alt="Profile">
+            <img id="character-image" src="../CMS/getAsset.php?action=getImg&type=character&id=100" alt="Profile">
             <div class="upload-overlay">wechseln</div>
         </div>
     </div>
@@ -37,13 +39,32 @@
         <button class="btn btn-danger">Account löschen</button>
     </div>
     <script>
-        getCharacters();
-        async function getCharacters() {
-            const response = await fetch('https://v2202410237002289383.megasrv.de/characters');
-            const htmlContent = await response.text();
-            const targetElement = document.getElementById('characters');
-            targetElement.innerHTML = htmlContent;
+        async function loadCharacter(token) {
+            await fetch('user_data.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'get',
+                    token: token,
+                    get: "character"
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById("character-image").src = "../CMS/getAsset.php?action=getImg&type=character&id=" + data.character;
+                    } else {
+                        console.log('Abfrage fehlgeschlagen. ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fehler:', error);
+                });
         }
+        loadCharacter(token);
     </script>
 </body>
+
 </html>

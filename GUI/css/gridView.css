@@ -6,7 +6,7 @@
 
 .element{
     width: 100%;
-    max-height: 120px;
+    aspect-ratio: 1 / 1;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -16,26 +16,26 @@
     text-align: center;
     position: relative;
     align-items: center;
-}
 
-.overlay{
-    background-color: rgba(240, 248, 255, 0.377);
-    color: black;
-    border-radius: 10px;
-    padding: 10px;
-    position: absolute;
-}
-
-.elementTitle{
-    font-size: 20px;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.elementAmount{
-    top: 0;
-    left: 0;
+    .overlay{
+        background-color: rgba(240, 248, 255, 0.377);
+        color: black;
+        border-radius: 10px;
+        padding: 10px;
+        position: absolute;
+    }
+    
+    .elementTitle{
+        font-size: 20px;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .elementAmount{
+        top: 0;
+        left: 0;
+    }
 }
 
 .imgelement{
@@ -56,10 +56,10 @@
     color: black;
     border-radius: 10px;
     padding: 10px;
-    position: fixed;
-    top: 50%;
+    position: absolute;
     left: 50%;
-    transform: translate(-50%, -50%);
+    top: 50%;
+    transform: translate(-100%, -100%);
     z-index: 10000;
 
     button{
@@ -81,7 +81,7 @@
     
     .itemTable td {
         padding: 8px;
-        text-align: left;
+        
     }
     
     .keyCell {
@@ -91,7 +91,6 @@
     }
     
     .valueCell {
-        text-align: right;
         color: #ffffff;
     }
     
@@ -99,17 +98,4 @@
 
 .visible{
     display: block;
-}
-
-@media (max-width: 750px){
-    .element{
-        margin-left: 5px;
-        margin-right: 5px;
-        display: inline;
-        flex-direction: row;
-        width: 50%;
-    }
-    .descriptionBox{
-        
-    }
 }

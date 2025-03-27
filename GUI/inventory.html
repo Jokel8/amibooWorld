@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="css/gridView.css?v=1.0">
+
 <div id="itemArray" class="grid"></div>
 <div id="itemDescription" class="descriptionBox">
     <h2>Dieses Item verkaufen?</h2>
@@ -7,6 +7,14 @@
 </div>
 
 <script>
+    //CSS: Mit auto-reload:
+    //statt <link rel="stylesheet" href="css/gridView.css">
+    let timestamp = Date.now();
+    let link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = `css/gridView.css?t=${timestamp}`;
+    document.head.appendChild(link);
+
     async function fetchItems(item_id, item_amount) {
         try {
             const item_path = `../CMS/getAsset.php?action=getImg&type=item&id=${item_id}`;

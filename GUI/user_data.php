@@ -102,10 +102,12 @@ try {
                 echo json_encode(['success' => true, 'x' => $userData['user_x'], 'y' => $userData['user_y']]);
             } else if ($data['get'] == "inventory") {
                 echo json_encode(['success' => true, 'inventory' => $userData['user_inventory']]);
+            } else if ($data['get'] == "character") {
+                echo json_encode(['success' => true, 'character' => $userData['user_character']]);
             }
         }
     } else{
-        echo json_encode(['success' => false, 'message' => 'Ungültige Anfrage']);
+        echo json_encode(['success' => false, 'message' => 'Fehlerhafte Anfrage']);
     }
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);

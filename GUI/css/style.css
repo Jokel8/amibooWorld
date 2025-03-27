@@ -4,6 +4,7 @@ body {
     margin: 0%;
     overflow: hidden;
     margin: 0;
+    position: relative;
 }
 
 #gesamtaction {
@@ -167,7 +168,7 @@ body {
 
 
 #actionlist {
-    width: 400px;
+    width: 30%;
     height: 100%;
     position: fixed;
     right: 0px;
@@ -190,20 +191,15 @@ body {
 }
 
 .square-box {
-    width: 200px;
-    /* Breite der Box */
-    height: 200px;
-    /* Höhe der Box (gleich der Breite) */
+    width: 20vw;
+    height: 20vw;
     background-color: oppasity;
-    /* Farbe der Box */
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
     gap: 0;
-    /* Kein Abstand zwischen den inneren Boxen */
     border: 2px solid oppasity;
     border-radius: 10px;
-    /* Abgerundete Ecken */
 }
 
 .inner-box {
@@ -262,40 +258,7 @@ body {
     transform: rotate(180deg)
 }
 
-@media (max-width: 1375px){
-    #actionlist{
-        width: 30%
-    }
-    .square-box{
-        width: 250px;
-        height: 250px;
-    }
-    #map{
-        height: 100%;
-        width: 1200px;
-        margin-left: 0%;
-        position: fixed;
-    }
-    #mapGrid{
-        margin-left: -7%;
-        width: 57.5%;
-        margin-bottom: 15%;
-        padding: 5px;
-        height: auto;
-    }
-    #mapInformation{
-        width: 20%;
-        height: fit-content;
-        font-size: medium;
-    }
-    #x-info{
-        height: fit-content;
-        font-size: medium;
-    }
-    #y-info{
-        height: fit-content;
-        font-size: medium;
-    }
+@media (max-width: 1100px){
     h1{
         margin-top: 0%;
         font-size: x-large;
@@ -305,98 +268,6 @@ body {
     }
     #instructor.container{
         width: 15%;
-    }
-}
-
-
-@media (max-width: 950px){
-    #actionlist{
-        width: 25%
-    }
-    .square-box{
-        width: 140px;
-        height: 140px;
-    }
-    #map{
-        height: 100%;
-        width: 800px;
-        margin-left: 0%;
-        position: fixed;
-    }
-    #mapGrid{
-        margin-left: 15%;
-        width: 44.8%;
-        margin-bottom: 2%;
-        padding: 5px;
-        height: auto;
-    }
-    #mapInformation{
-        width: 20%;
-        height: fit-content;
-        font-size: x-small;
-        margin-bottom: 3%;
-    }
-    #x-info{
-        height: fit-content;
-        font-size: x-small;
-    }
-    #y-info{
-        height: fit-content;
-        font-size: x-small;
-    }
-    h1{
-        margin-top: 0%;
-        font-size: x-large;
-    }
-    .tableb{
-        margin-top: 0%;
-    }
-}
-
-@media(max-width: 865px){
-    #mapGrid{
-        margin-left: -7%;
-    }
-}
-
-@media (max-width: 750px){
-    .square-box{
-        width: 140px;
-        height: 140px;
-    }
-    #map{
-        height: 100%;
-        width: 600px;
-        margin-left: 0%;
-        position: fixed;
-    }
-    #mapGrid{
-        margin-left: 18%;
-        width: 46%;
-        margin-bottom: 2%;
-        padding: 5px;
-        height: fit-content;
-    }
-    #mapInformation{
-        width: 20%;
-        font-size: xx-small;
-        margin-bottom: 8%;
-        height: 2%;
-    }
-    #x-info{
-        height: fit-content;
-        font-size: xx-small;
-    }
-    #y-info{
-        height: fit-content;
-        font-size: xx-small;
-    }
-    h1{
-        margin-top: 0%;
-        font-size: large;
-    }
-    .tableb{
-        margin-top: 0%;
     }
 }
 
