@@ -205,11 +205,59 @@ body {
 }
 
 #instructor {
-    width: 500px;
-    height: 50px;
+    width: 25%;
+    height: fit-content;
     position: fixed;
     left: 0px;
     top: 0px;
+    color: white;
+
+    h1{
+        text-align: center;
+    }
+
+    p{
+        text-align: center;
+    }
+
+    button{
+        min-width: fit-content;
+        background-color: #37b1bc;
+        border-radius: 5px;
+    }
+    button:hover{
+        background-color: #ff4444;
+    }
+    #zuruckBut{
+        margin-left: 15%;
+        margin-right: 5%;
+        margin-bottom: 2%;
+        width: 30%;
+    }
+    #weiterBut{
+        width: 30%;
+    }
+
+    #nurweiterBut{
+        margin-left: 30%;
+        width: 35%;
+        display: none;
+    }
+
+    #amiibo{
+        color: #ff4444;
+        display: inline;
+    }
+
+    #world{
+        color: #37b1bc;
+        display: inline;
+    }
+
+}
+
+#uberschrift{
+    color: #ff4444;
 }
 
 .square-box {
@@ -293,10 +341,6 @@ body {
 
     .tableb {
         margin-top: 0%;
-    }
-
-    #instructor.container {
-        width: 15%;
     }
 }
 
