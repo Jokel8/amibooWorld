@@ -59,7 +59,7 @@ try {
             echo json_encode(['success' => false, 'message' => 'Dieser Nutzer exisistiert leider nicht']);
         } else {
             if ($password != $user['user_password']) {
-                echo json_encode(['success' => false, 'message' => "Dieses Passwort ist leider falsch $password"]);
+                echo json_encode(['success' => false, 'message' => "Dieses Passwort ist leider falsch"]);
             } else {
                 $token = bin2hex(random_bytes(20));
                 $stmt = $pdo->prepare('UPDATE user SET user_token = ?, user_login_count = ?, user_last_login = curdate() WHERE user_name = ?');

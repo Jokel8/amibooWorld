@@ -41,6 +41,9 @@
     background: white;
     border-radius: 15px;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     margin-bottom: 20px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     color: #666;
@@ -104,7 +107,6 @@ select {
     background: white;
     color: #FF5252;
     border: 1px solid #FF5252;
-    margin-top: 30px;
     position: relative;
     overflow: hidden;
 }
@@ -172,4 +174,28 @@ input:checked + .slider {
 
 input:checked + .slider:before {
     transform: translateX(26px);
+}
+
+::-webkit-scrollbar {
+    width: 20px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #37b1bc; /* Hellblau */
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #2196F3; /* Dunkleres Blau beim Hover */
+}
+
+/* Für Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #37b1bc transparent;
 }

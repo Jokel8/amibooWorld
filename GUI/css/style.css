@@ -24,16 +24,19 @@ body {
     background-color: #37b1bc;
 }
 
-.button.active{
+.button.active {
     background-color: #fc5658;
 }
 
 .functioncontainer {
     display: none;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 93%;
     color: white;
     text-align: center;
     padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 .functioncontainer {
@@ -70,7 +73,7 @@ body {
     background-color: #37b1bc;
 }
 
-.buttonfunctioncontainer1buttons:hover{
+.buttonfunctioncontainer1buttons:hover {
     background-color: #2e7980;
 }
 
@@ -90,7 +93,7 @@ body {
     justify-content: center;
 }
 
-#mapInformation{
+#mapInformation {
     margin: 20px;
     display: flex;
     gap: 10px;
@@ -113,6 +116,7 @@ body {
     position: relative;
     cursor: default;
 }
+
 .tile-layer {
     position: absolute;
     width: 100%;
@@ -122,6 +126,7 @@ body {
     align-items: center;
     background-size: cover;
 }
+
 .resources {
     position: absolute;
     top: 2px;
@@ -129,20 +134,25 @@ body {
     display: flex;
     gap: 2px;
 }
+
 .resources i {
     font-size: 12px;
 }
+
 .walkable {
     cursor: pointer;
 }
+
 .walkable:hover {
     z-index: 9998;
     outline: 2px solid yellow;
     transform: scale(1.1);
 }
+
 .not-walkable {
     cursor: not-allowed;
 }
+
 .not-walkable::before {
     content: '✖';
     color: red;
@@ -158,6 +168,7 @@ body {
     pointer-events: none;
     background-image: url(../img/crosshair.svg);
 }
+
 #character {
     z-index: 9999;
     height: 100px;
@@ -258,15 +269,17 @@ body {
     transform: rotate(180deg)
 }
 
-@media (max-width: 1100px){
-    h1{
+@media (max-width: 1100px) {
+    h1 {
         margin-top: 0%;
         font-size: x-large;
     }
-    .tableb{
+
+    .tableb {
         margin-top: 0%;
     }
-    #instructor.container{
+
+    #instructor.container {
         width: 15%;
     }
 }
@@ -276,16 +289,19 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: fit-content;
+    height: 100%;
+    overflow: hidden;
     background-color: #ff4444;
     color: white;
-    font-size: 24px;
+    font-size: 7vw;
+    text-align: center;
     font-weight: bold;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
+    padding: 10px;
+    padding-top: 100px;
 }
+
 #content {
     display: block;
     padding: 20px;
