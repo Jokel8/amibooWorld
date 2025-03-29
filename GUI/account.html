@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/account.css">
+    <link rel="stylesheet" href="css/account.css?v=1">
 </head>
 
 <body>
@@ -25,19 +25,40 @@
                 <option>Nicht verfügbar</option>
             </select>
         </div>
+
         <div class="setting-item">
             <span class="setting-label">Sprache</span>
             <select>
-                <option>🇩🇪 Deutsch</option>
+                <option>Deutsch</option>
+                <option>Englisch</option>
             </select>
+        </div>
+
+        <div class="setting-item">
+            <span class="setting-label">Modus</span>
+            <select>
+                <option>Darkmode</option>
+                <option>Brightmode</option>
+                <option>Googymode</option>
+            </select>
+        </div>
+
+        <div class="setting-item">
+            <span class="setting-label">Audio</span>
+            <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+            </label>
         </div>
     </div>
 
     <div class="settings-group">
         <div class="settings-header">Sicherheit</div>
         <button class="btn btn-primary">Passwort ändern</button>
+        <button class="btn btn-primary">Logout</button>
         <button class="btn btn-danger">Account löschen</button>
     </div>
+
     <script>
         async function loadCharacter(token) {
             await fetch('user_data.php', {

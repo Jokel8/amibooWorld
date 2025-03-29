@@ -16,6 +16,7 @@
     <script>
         var width;
         var height;
+        var blockSize;
         var middle;
         const steps = [];
 
@@ -40,7 +41,7 @@
         }
 
         function updateCrosshair() {
-            crosshair.style.transform = `translate(${crosshairX * 102}px, ${crosshairY * 102}px)`;
+            crosshair.style.transform = `translate(${crosshairX * (blockSize + 2)}px, ${crosshairY * (blockSize + 2)}px)`;
             steps.push({ x: absoluteX, y: absoluteY });
             console.log(`Moved to: (${absoluteX}, ${absoluteY})`);
         }
@@ -73,12 +74,44 @@
                     crosshairX++; // Nach rechts bewegen
                     absoluteX++;
                 }
+            } else if(event.key === 'a'){
+                changeAktionen('agieren');
+            } else if(event.key === 'p'){
+                changeAktionen('profil');
+            } else if(event.key === 'i'){
+                changeAktionen('inventar');
             }
 
             if (prevX !== crosshairX || prevY !== crosshairY) {
-                darkenTile(prevX, prevY);
+                darkenTile(prevX + 1, prevY);
                 updateCrosshair();
             }
+        }
+
+        async function loadCharacter(token) {
+            await fetch('user_data.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'get',
+                    token: token,
+                    get: "character"
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log("Character:" + data.character);
+                        document.getElementById("character").src = "../CMS/getAsset.php?action=getImg&type=character&id=" + data.character;
+                    } else {
+                        console.log('Abfrage fehlgeschlagen. ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fehler:', error);
+                });
         }
 
         async function renderMap() {
@@ -117,52 +150,44 @@
             width = mapData.width;
             middle = (width - 1) / 2;
 
+            if (window.innerWidth < 750) {
+                blockSize = 25;
+            } else if (window.innerWidth < 865) {
+                blockSize = 38;
+            } else if (window.innerWidth < 1100) {
+                blockSize = 55;
+            } else if (window.innerWidth < 1375) {
+                blockSize = 65;
+            } else {
+                blockSize = 100;
+            }
+
             mapElement = document.getElementById('mapGrid');
-            mapElement.innerHTML = '<div id="crosshair"></div>';
-            mapElement.innerHTML += '<div id="character"></div>';
-            document.removeEventListener('keydown', eventListener)
-            crosshair = document.getElementById('crosshair');
+            mapElement.innerHTML = ""; // Lösche den alten Inhalt des Elements
+
+            //Character:
+            character = document.createElement('img');
+            character.id = 'character';
+            character.style.width = `${blockSize}px`;
+            character.style.height = `${blockSize}px`;
+            character.style.transform = `translate(${middle * (blockSize + 2)}px, ${middle * (blockSize + 2)}px)`;
+            mapElement.appendChild(character);
+            loadCharacter(token);
+
+            crosshair = document.createElement('div');
+            crosshair.id = 'crosshair';
+            crosshair.style.width = `${blockSize}px`;
+            crosshair.style.height = `${blockSize}px`;
+            mapElement.appendChild(crosshair);
             crosshairX = middle;
             crosshairY = middle;
             updateCrosshair();
 
-            character = document.getElementById('character');
-            let character_id;
-            fetch('https://v2202410237002289383.megasrv.de/character?token=' + token).then(async data => {
-                    console.log(data);
-                    character_id = data;
-                });
-            character.style.backgroundImage = 'url(../CMS/getAsset.php?action=getImg&type=character&id=' + character_id + ')';
+            mapElement.style.gridTemplateColumns = `repeat(${width}, ${blockSize}px)`;
+            mapElement.style.gridTemplateRows = `repeat(${height}, ${blockSize}px)`;
 
+            document.removeEventListener('keydown', eventListener)
             document.addEventListener('keydown', eventListener);
-
-
-            // Setze Grid-Eigenschaften
-            if(window.innerWidth < 750){
-                mapElement.style.gridTemplateColumns = `repeat(${width}, 29px)`;
-                mapElement.style.gridTemplateRows = `repeat(${height}, 29px)`;
-            }
-            else if(window.innerWidth < 865){
-                mapElement.style.gridTemplateColumns = `repeat(${width}, 37px)`;
-                mapElement.style.gridTemplateRows = `repeat(${height}, 37px)`;
-            }
-            else if(window.innerWidth < 950){
-                mapElement.style.gridTemplateColumns = `repeat(${width}, 38px)`;
-                mapElement.style.gridTemplateRows = `repeat(${height}, 38px)`;
-            }
-            else if(window.innerWidth < 1100){
-                mapElement.style.gridTemplateColumns = `repeat(${width}, 55px)`;
-                mapElement.style.gridTemplateRows = `repeat(${height}, 55px)`;
-            }
-            else if(window.innerWidth < 1375){
-                mapElement.style.gridTemplateColumns = `repeat(${width}, 65px)`;
-                mapElement.style.gridTemplateRows = `repeat(${height}, 65px)`;
-            }
-            else{
-                mapElement.style.gridTemplateColumns = `repeat(${width}, 100px)`;
-                mapElement.style.gridTemplateRows = `repeat(${height}, 100px)`;
-            }
-
 
             const layers = [];
 

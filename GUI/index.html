@@ -10,15 +10,6 @@
     <link rel="icon" href="img/favicon.ico">
 </head>
 
-<script>
-    // Ereignisse hinzufügen
-    window.addEventListener("load", () => {
-        lockOrientation();
-        checkOrientation();
-    });
-    window.addEventListener("resize", checkOrientation);
-</script>
-
 <body>
     <div class="content">
         <div id="map" class="container">Karte Lädt...</div>
@@ -27,18 +18,21 @@
         <div id="instructor" class="container">Amiboo World</div>
         <div id="actionlist" class="container">
             <div id="buttoncontainer">
-                <button class="button active" name="navbutton" id="agierenNavButton" onclick="changeAktionen('agieren')"><svg xmlns="http://www.w3.org/2000/svg"
-                        height="24px" viewBox="0 -960 960 960" width="24px" fill="#0x0000">
+                <button class="button active" name="navbutton" id="agierenNavButton"
+                    onclick="changeAktionen('agieren')"><svg xmlns="http://www.w3.org/2000/svg" height="24px"
+                        viewBox="0 -960 960 960" width="24px" fill="#0x0000">
                         <path
                             d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z" />
                     </svg></button>
-                <button class="button" name="navbutton" id="profilNavButton" onclick="changeAktionen('profil')"><svg xmlns="http://www.w3.org/2000/svg"
-                        height="24px" viewBox="0 -960 960 960" width="24px" fill="#0x0000">
+                <button class="button" name="navbutton" id="profilNavButton" onclick="changeAktionen('profil')"><svg
+                        xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                        fill="#0x0000">
                         <path
                             d="M218-381q-24 13-51 5.5T126-406q-17-29-6-60t43-42l337-112 36 71-318 168Zm22 261v-227l349-184-17-35 228-114 36 72-276 208v280H240Zm60-440q-58 0-99-41t-41-99q0-58 41-99t99-41q58 0 99 41t41 99q0 58-41 99t-99 41Z" />
                     </svg></button>
-                <button class="button" name="navbutton" id="inventarNavButton" onclick="changeAktionen('inventar')"><svg xmlns="http://www.w3.org/2000/svg"
-                        height="24px" viewBox="0 -960 960 960" width="24px" fill="#0x0000">
+                <button class="button" name="navbutton" id="inventarNavButton" onclick="changeAktionen('inventar')"><svg
+                        xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                        fill="#0x0000">
                         <path
                             d="M200-80q-33 0-56.5-23.5T120-160v-451q-18-11-29-28.5T80-680v-120q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v120q0 23-11 40.5T840-611v451q0 33-23.5 56.5T760-80H200Zm0-520v440h560v-440H200Zm-40-80h640v-120H160v120Zm200 280h240v-80H360v80Zm120 20Z" />
                     </svg></button>
@@ -79,7 +73,7 @@
     </div>
 
     <div id="warning">
-        <p>📱 Bitte drehen Sie Ihr Handy zum Spielen ins Querformat.</p>
+        <p><img width="100%" src="img/orientation.png"><br> Bitte drehen Sie Ihr Handy zum Spielen ins Querformat.</p>
     </div>
 
     <script>
@@ -253,34 +247,31 @@
     </script>
     <script>
         async function lockOrientation() {
-    if (screen.orientation && screen.orientation.lock) {
-        try {
-            await screen.orientation.lock("landscape");
-            console.log("Querformat gesperrt!");
-        } catch (error) {
-            console.error("Fehler beim Sperren der Ausrichtung:", error);
-            showWarning();
+            try {
+                if (screen.orientation && screen.orientation.lock) {
+                    await screen.orientation.lock("landscape");
+                    console.log("Querformat gesperrt!");
+                }
+            } catch (error) {
+            }
         }
-    } else {
-        console.warn("Die Orientation API wird nicht unterstützt.");
-        showWarning();
-    }
-}
 
-function showWarning() {
-    document.getElementById("content").style.display = "none";
-    document.getElementById("warning").style.display = "flex";
-}
-
-// Prüfen, ob das Gerät bereits im Querformat ist
-function checkOrientation() {
-    if (window.innerHeight > window.innerWidth) {
-        showWarning();
-    } else {
-        document.getElementById("content").style.display = "block";
-        document.getElementById("warning").style.display = "none";
-    }
-}
+        // Prüfen, ob das Gerät bereits im Querformat ist
+        function checkOrientation() {
+            if (window.innerHeight > window.innerWidth) {
+                document.getElementsByClassName("content")[0].style.display = "none";
+                document.getElementById("warning").style.display = "flex";
+            } else {
+                document.getElementsByClassName("content")[0].style.display = "block";
+                document.getElementById("warning").style.display = "none";
+            }
+        }
+        
+        window.addEventListener("load", () => {
+            lockOrientation();
+            checkOrientation();
+        });
+        window.addEventListener("resize", checkOrientation);
     </script>
 </body>
 
