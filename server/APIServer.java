@@ -1,5 +1,6 @@
 package server;
 
+import economy.Item;
 import economy.resourcen.Gestein;
 import economy.resourcen.Gold;
 import economy.resourcen.Holz;
@@ -121,6 +122,10 @@ public class APIServer extends HttpServer {
                             "Content-Length: " + charcter.length() + "\n\n");
                     antwort.append(charcter);
                 }
+                case "trade" -> {
+
+
+                }
                 default -> {
                     antwort.append("HTTP/1.1 404 Not Found\n");
                 }
@@ -150,10 +155,47 @@ public class APIServer extends HttpServer {
 //        //this.spieler.setQueue(token, new Queue(headerbody[1], System.currentTimeMillis() / 1000L, 0.1));
 //    }
 
+
+    // Vorerst nur dem Server verkaufen
+    public void handel(int kaeufer_id, int verkaeufer_id, String Itemname, int menge) {
+        Inventory inv = this.datenbank.getInventar(kaeufer_id);
+        Inventory inv2 = this.datenbank.getInventar(verkaeufer_id);
+        int kostenItem = datenbank.getKosten(Itemname);
+        int kostenGold = datenbank.getKosten("gold");
+        kaeufer_id = -1;
+        int verkaufsObjekt = 0;
+
+
+        if (menge > inv.getMenge(Itemname)) {
+            verkaufsObjekt = inv.getMenge(Itemname);
+        } else {
+            verkaufsObjekt = menge;
+        }
+
+
+        int kosten = kostenItem * verkaufsObjekt;
+
+        int totalGold = kosten / kostenGold;
+
+
+        int goldServer = inv.getMenge("gold");
+        goldServer -= totalGold;
+
+        int totalItem = kosten / (totalGold * kostenGold);
+        verkaufsObjekt = totalItem;
+        inv.setMenge("gold", goldServer);
+        inv2.getMenge("gold");
+        inv2.setMenge("gold", inv2.getMenge("gold")+totalGold);
+        inv2.setMenge(Itemname,(inv2.getMenge(Itemname)-totalItem));
+
+    }
+
+
     public void bewegen(int x, int y, int id) {
         String query = "UPDATE user SET x = " + x + ", y = " + y + " WHERE user_id = " + id;
         this.datenbank.updateMachen(query);
     }
+
     public void abbauen(int x, int y, int radius, int id) {
         int[][] tiles = datenbank.welcheTileSollIchHolen(x, y, radius);
         int[] resourcen = datenbank.getResourcen(tiles);
@@ -166,6 +208,7 @@ public class APIServer extends HttpServer {
         }
         this.inventarAktualisieren(inventory, id);
     }
+
     public void bauen(int x, int y, int id) {
         //TODO kosten beachten
         ResultSet rs = this.datenbank.dbGetTilesFast(x, y, 0);
@@ -174,7 +217,7 @@ public class APIServer extends HttpServer {
         if (inventory.getMenge("gold") < kosten) {
             return;
         }
-        String felder = "SELECT COUNT(*) AS total FROM map WHERE field_x = "+x+" AND field_y = "+y+";";
+        String felder = "SELECT COUNT(*) AS total FROM map WHERE field_x = " + x + " AND field_y = " + y + ";";
         int felderCount = this.datenbank.getCount(felder);
         if (rs != null) try {
             rs.next();
@@ -195,10 +238,12 @@ public class APIServer extends HttpServer {
         }
         inventarAktualisieren(inventory, id);
     }
+
     private void inventarAktualisieren(Inventory inventory, int id) {
         String query = "UPDATE user SET user_inventory = '" + inventory.toString() + "' WHERE user_id = " + id + ";";
         this.datenbank.updateMachen(query);
     }
+
     private String setCharacter(int id, String key) {
         String antwort;
         if (this.datenbank.setCharacters(id, key)) {
@@ -210,6 +255,7 @@ public class APIServer extends HttpServer {
         }
         return antwort;
     }
+
     private String getHash(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-1");
