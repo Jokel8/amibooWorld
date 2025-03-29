@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class ImagetoMap {
 
-    public static String[][] hexArray = new String[1000][1000];
+    public static String[][] hexArray = new String[1000][1000]; //1000 x 1000 großen Array erstellen um jedes Feld der Map zu representieren
     public static void getImage(String pfad) throws IOException {
         File inputFile = new File(pfad);
         BufferedImage image = ImageIO.read(inputFile);
@@ -17,7 +17,7 @@ public class ImagetoMap {
         System.out.println(width);
         System.out.println(height);
 
-        if(width != 1000 || height != 1000){
+        if(width != 1000 || height != 1000){ //Prüfen ob das Bild den richtigen Maßen entspricht
             throw new IllegalArgumentException("Das Bild entspricht nicht der benötigten größe von 1000x1000 Pixeln");
         }
 
@@ -36,7 +36,7 @@ public class ImagetoMap {
 
     }
 
-    public static void loadImage() throws ClassNotFoundException, SQLException, IOException {
+    public static void loadImage() throws ClassNotFoundException, SQLException, IOException { //Jeder im Array gespeicherter Wert wird ausgelesen und es wird geprüft ob dieser einem bestimmten Wert entspricht falls ja wird ihm ein feldtyp Wert zugewiesen
         File file = new File("C:/Users/fynnh/OneDrive/Dokumente/SQL_Abfragen/Abfrage1.sql");
         FileWriter fileWriter = new FileWriter(file);
         String insertSQL = "";
@@ -92,8 +92,9 @@ public class ImagetoMap {
                 else {
                     System.out.println("fehler x: " + x+ " y: " + y);
                 }
+                //Nach dem überprüfen wird der SQL-Befehl vorbereitet wobei bei 0,0 der Befehl initialisiert wird und Values hinzugefügt werden. Bei allen anderen werten werden nur neue Values hinzugefügt
                 if(x == 0 && y == 0){
-                    insertSQL = "\nINSERT INTO map(field_x, field_y, field_type) \nVALUES";
+                    insertSQL = "\nINSERT INTO map(field_x, field_y, field_type) \nVALUES\n(\" + x + \", \" + y +\", \" + feldtyp +\");";
                 }
                 else if (x == 999 && y == 999){
                     insertSQL = "\n(" + x + ", " + y +", " + feldtyp +");";
@@ -101,7 +102,7 @@ public class ImagetoMap {
                 else{
                     insertSQL = "\n(" + x + ", " + y +", " + feldtyp +"),";
                 }
-                fileWriter.write(insertSQL);
+                fileWriter.write(insertSQL); //Der Befehl wird dann in eine Datei geschrieben. Diese Datei kann in Heidi-SQL einfach ausgeführt werden mit einer hohen Effizienz
                 //System.out.println(x);
                 //System.out.println(insertSQL);
             }
@@ -113,7 +114,7 @@ public class ImagetoMap {
         Scanner scanner = new Scanner(System.in);
         String eingabe = scanner.nextLine();
 
-        getImage(eingabe);
+        getImage(eingabe); //Der Dateipfad des Bildes das Hochgeladen werden soll wird eingegeben
         loadImage();
         System.out.println("Finished");
     }
