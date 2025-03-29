@@ -330,3 +330,23 @@ body {
 #raus:hover{
     background-color: #ff4444;
 }
+
+.progress-container {
+    display: none;
+    width: 20%;
+    background-color: #37b1bc;
+    border-radius: 10px;
+    overflow: hidden;
+    position: absolute;
+    margin-top: 3%;
+    margin-left: 1%;
+}
+.progress-bar {
+    height: 30px;
+    width: 0%;
+    background-color: #ff4444;
+    text-align: center;
+    line-height: 30px;
+    color: white;
+    font-weight: bold;
+}

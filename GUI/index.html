@@ -16,6 +16,9 @@
 
         <div id="joystick">Joystick Lädt...</div>
         <div id="instructor" class="container">Amiboo World</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar">0%</div>
+        </div>
         <div id="reinraus">
             <button id="rein" onclick="rein()"><img src="/amibooWorld/GUI/img/Buttonrein.png"></button>
             <button id="raus" onclick="raus()"><img src="/amibooWorld/GUI/img/Buttonraus.png"></button>
@@ -288,6 +291,25 @@
             document.getElementById("rein").style.display = "block";
             document.getElementById("actionlist").style.display = "inline";
             document.getElementById("reinraus").style.marginLeft = "calc(69.4% - 10vh)"
+        }
+
+        function startProgress(duration) {
+            let progressBar = document.getElementById("progress-bar");
+            let startTime = Date.now();
+            let endTime = startTime + duration * 1000;
+
+            function updateProgress() {
+                let now = Date.now();
+                let elapsed = now - startTime;
+                let progress = Math.min((elapsed / (duration * 1000)) * 100, 100);
+                progressBar.style.width = progress + "%";
+                progressBar.textContent = Math.round(progress) + "%";
+                
+                if (now < endTime) {
+                    requestAnimationFrame(updateProgress);
+                }
+            }
+            requestAnimationFrame(updateProgress);
         }
     </script>
 </body>
