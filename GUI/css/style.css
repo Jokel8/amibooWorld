@@ -306,3 +306,27 @@ body {
     display: block;
     padding: 20px;
 }
+
+#reinraus {
+    position: absolute;
+    margin-left: calc(69.38% - 10vh);
+}
+
+#rein{
+    background-color: #37b1bc;
+}
+#rein:hover{
+    background-color: #ff4444;
+}
+
+#reinraus img{
+    width: 10vh;
+    height: 10vh;
+}
+#raus{
+    display: none;
+    background-color: #37b1bc;
+}
+#raus:hover{
+    background-color: #ff4444;
+}

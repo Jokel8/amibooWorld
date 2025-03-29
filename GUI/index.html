@@ -16,6 +16,10 @@
 
         <div id="joystick">Joystick Lädt...</div>
         <div id="instructor" class="container">Amiboo World</div>
+        <div id="reinraus">
+            <button id="rein" onclick="rein()"><img src="/amibooWorld/GUI/img/Buttonrein.png"></button>
+            <button id="raus" onclick="raus()"><img src="/amibooWorld/GUI/img/Buttonraus.png"></button>
+        </div>
         <div id="actionlist" class="container">
             <div id="buttoncontainer">
                 <button class="button active" name="navbutton" id="agierenNavButton"
@@ -272,6 +276,19 @@
             checkOrientation();
         });
         window.addEventListener("resize", checkOrientation);
+
+        function rein(){
+            document.getElementById("rein").style.display = "none";
+            document.getElementById("raus").style.display = "block";
+            document.getElementById("actionlist").style.display = "none";
+            document.getElementById("reinraus").style.marginLeft = "calc(99.4% - 10vh)";
+        }
+        function raus(){
+            document.getElementById("raus").style.display = "none";
+            document.getElementById("rein").style.display = "block";
+            document.getElementById("actionlist").style.display = "inline";
+            document.getElementById("reinraus").style.marginLeft = "calc(69.4% - 10vh)"
+        }
     </script>
 </body>
 
