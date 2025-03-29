@@ -63,10 +63,14 @@
     z-index: 10000;
 
     button{
-        background-color: #ffffff;
+        background-color: #37b1bc;
         border-radius: 10px;
         font-size: 20px;
         margin-right: 10px;
+    }
+
+    button:hover{
+        background-color: #ff4444;
     }
 
     .itemTable {
@@ -86,12 +90,12 @@
     
     .keyCell {
         font-weight: bold;
-        background-color: #f0f0f053;
+        background-color: #37b1bc;
         width: 50%;
     }
     
     .valueCell {
-        color: #ffffff;
+        background-color: #ff4444;
     }
     
 }
