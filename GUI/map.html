@@ -42,7 +42,7 @@
 
         function updateCrosshair() {
             crosshair.style.transform = `translate(${crosshairX * (blockSize + 2)}px, ${crosshairY * (blockSize + 2)}px)`;
-            steps.push({ x: absoluteX, y: absoluteY, time: 2000});
+            steps.push({ x: absoluteX, y: absoluteY, time: 2000, 'action': "walk"});
             console.log(`Moved to: (${absoluteX}, ${absoluteY})`);
         }
 

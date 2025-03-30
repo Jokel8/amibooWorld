@@ -201,7 +201,7 @@ public class APIServer extends HttpServer {
 
 
     public void bewegen(int x, int y, int id) {
-        String query = "UPDATE user SET x = " + x + ", y = " + y + " WHERE user_id = " + id;
+        String query = "UPDATE user SET user_x = " + x + ", user_y = " + y + " WHERE user_id = " + id;
         this.datenbank.updateMachen(query);
     }
 
