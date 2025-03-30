@@ -439,4 +439,16 @@ public class Datenbank {
         }
         return id;
     }
+    public int getIDbyName(String name) {
+        int id = -1;
+        String query = "SELECT user_id FROM user WHERE user_name = '" + name + "';";
+        ResultSet rs = this.abfragMachen(query);
+        if (rs != null) try {
+            rs.next();
+            id = rs.getInt("user_id");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return id;
+    }
 }

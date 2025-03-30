@@ -70,6 +70,9 @@ public class Inventory {
         for (int i = 0; i < items.size(); i++) {
             if (items.get(i).getName().equals(item)) {
                 items.get(i).menge = menge;
+                if (menge <= 0) {
+                    this.items.remove(i);
+                }
             }
         }
     }

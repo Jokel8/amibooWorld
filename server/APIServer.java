@@ -1,12 +1,9 @@
 package server;
 
-import economy.Item;
-import economy.resourcen.Gestein;
+import economy.resourcen.Stein;
 import economy.resourcen.Gold;
 import economy.resourcen.Holz;
 import economy.Inventory;
-import org.json.HTTP;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,7 +15,6 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 
 public class APIServer extends HttpServer {
@@ -123,8 +119,14 @@ public class APIServer extends HttpServer {
                     antwort.append(charcter);
                 }
                 case "trade" -> {
-
-
+                    int id = this.datenbank.getID(parameter.get("token"));
+                    int kaeufer = this.datenbank.getIDbyName(parameter.get("buyer"));
+                    String item = parameter.get("item");
+                    int menge = Integer.parseInt(parameter.get("menge"));
+                    this.handel(kaeufer, id, item, menge);
+                    antwort.append("HTTP/1.1 204 No Content\n" +
+                            "Content-Type: application/json\n" +
+                            "Access-Control-Allow-Origin: *\n");
                 }
                 default -> {
                     antwort.append("HTTP/1.1 404 Not Found\n");
@@ -163,31 +165,38 @@ public class APIServer extends HttpServer {
         int kostenItem = datenbank.getKosten(Itemname);
         int kostenGold = datenbank.getKosten("gold");
         kaeufer_id = -1;
-        int verkaufsObjekt = 0;
+        int verkaufsObjekt;
 
+        System.out.println(menge);
 
-        if (menge > inv.getMenge(Itemname)) {
-            verkaufsObjekt = inv.getMenge(Itemname);
+        if (menge > inv2.getMenge(Itemname)) {
+            verkaufsObjekt = inv2.getMenge(Itemname);
         } else {
             verkaufsObjekt = menge;
         }
+        System.out.println(verkaufsObjekt);
 
 
         int kosten = kostenItem * verkaufsObjekt;
+        System.out.println(kosten);
 
         int totalGold = kosten / kostenGold;
+        System.out.println(totalGold);
 
 
         int goldServer = inv.getMenge("gold");
         goldServer -= totalGold;
 
-        int totalItem = kosten / (totalGold * kostenGold);
-        verkaufsObjekt = totalItem;
+        int totalItem = kosten / kostenItem;
+        System.out.println(totalItem);
         inv.setMenge("gold", goldServer);
         inv2.getMenge("gold");
-        inv2.setMenge("gold", inv2.getMenge("gold")+totalGold);
+        inv2.setMenge("gold", inv2.getMenge("gold") + totalGold);
         inv2.setMenge(Itemname,(inv2.getMenge(Itemname)-totalItem));
 
+
+        inventarAktualisieren(inv, kaeufer_id);
+        inventarAktualisieren(inv2, verkaeufer_id);
     }
 
 
@@ -202,7 +211,7 @@ public class APIServer extends HttpServer {
         this.datenbank.setResourcen(tiles, 0, 0);
         Inventory inventory = this.datenbank.getInventar(id);
         inventory.addItem(new Holz(resourcen[0]));
-        inventory.addItem(new Gestein(resourcen[1]));
+        inventory.addItem(new Stein(resourcen[1]));
         if (this.random.nextDouble() <= goldChance) {
             inventory.addItem(new Gold(1));
         }
