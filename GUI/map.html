@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Map Renderer</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=1">
 </head>
 
 <body>
@@ -46,6 +46,56 @@
             console.log(`Moved to: (${absoluteX}, ${absoluteY})`);
         }
 
+        async function updateActions() {
+            await fetch('user_data.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'get',
+                    token: token,
+                    get: "thingsAtPosition",
+                    x: absoluteX,
+                    y: absoluteY
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log(data);
+                        if (data.users) {
+                            document.getElementById('buttonAngreifen').classList.remove('deactivated');
+                        } else {
+                            document.getElementById('buttonAngreifen').classList.add('deactivated');
+                        }
+
+                        var onBuilding = false;
+                        for (let field of data.fields) {
+                            if (field.field_type > 99) {
+                                onBuilding = field.field_type;
+                            }
+                        }
+
+                        const buttonBauen = document.getElementById('buttonBauen');
+                        if (!onBuilding) {
+                            buttonBauen.classList.remove('deactivated');
+                            buttonBauen.innerHTML = "Haus bauen";
+                        } else {
+                            if(onBuilding === 104) {
+                                buttonBauen.classList.add('deactivated');
+                            }
+                            buttonBauen.innerHTML = "Haus erweitern";
+                        }
+                    } else {
+                        console.log('Abfrage fehlgeschlagen. ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fehler:', error);
+                });
+        }
+
         function eventListener(event) {
             const prevX = crosshairX;
             const prevY = crosshairY;
@@ -74,17 +124,18 @@
                     crosshairX++; // Nach rechts bewegen
                     absoluteX++;
                 }
-            } else if(event.key === 'o'){
+            } else if (event.key === 'o') {
                 changeAktionen('agieren');
-            } else if(event.key === 'p'){
+            } else if (event.key === 'p') {
                 changeAktionen('profil');
-            } else if(event.key === 'i'){
+            } else if (event.key === 'i') {
                 changeAktionen('inventar');
             }
 
             if (prevX !== crosshairX || prevY !== crosshairY) {
                 darkenTile(prevX + 1, prevY);
                 updateCrosshair();
+                updateActions();
             }
         }
 
@@ -205,15 +256,13 @@
 
             // Fill the 2D array with tiles from the mapData
             mapData.map.forEach((tile) => {
-                // We reverse the y index to ensure that (0, 0) is the bottom-left corner
                 const invertedY = maxY - tile.y;
                 layers[invertedY][tile.x].push(tile);
             });
 
-            // Render the Layers
             layers.forEach((row, y) => {
                 row.forEach((tileLayers, x) => {
-                    if (tileLayers.length === 0) return; // Skip empty cells
+                    if (tileLayers.length === 0) return;
 
                     const tileContainer = document.createElement('div');
                     tileContainer.classList.add('tile');
@@ -239,16 +288,16 @@
                         const resourcesDiv = document.createElement('div');
                         resourcesDiv.classList.add('resources');
 
-                        if (tileData.resources.holz > 50) {
+                        if (tileData.resources.holz > 0) {
                             const woodIcon = document.createElement('i');
-                            woodIcon.classList.add('fas', 'fa-tree', 'text-green-500');
+                            woodIcon.classList.add('tree', 'text-green-500');
                             woodIcon.title = `Holz: ${tileData.resources.holz}`;
                             resourcesDiv.appendChild(woodIcon);
                         }
 
-                        if (tileData.resources.gold > 50) {
+                        if (tileData.resources.gold > 0) {
                             const goldIcon = document.createElement('i');
-                            goldIcon.classList.add('fas', 'fa-coins', 'text-yellow-500');
+                            goldIcon.classList.add('gold', 'text-yellow-500');
                             goldIcon.title = `Gold: ${tileData.resources.gold}`;
                             resourcesDiv.appendChild(goldIcon);
                         }
@@ -256,7 +305,6 @@
                         tileContainer.appendChild(resourcesDiv);
                     });
 
-                    // Append the tile container to the map element
                     mapElement.appendChild(tileContainer);
                 });
             });

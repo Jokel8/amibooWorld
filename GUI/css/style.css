@@ -88,6 +88,19 @@ body {
     background-color: #2e7980;
 }
 
+.deactivated, .deactivated:hover {
+    background-color: #333;
+    cursor: not-allowed;
+}
+
+.info-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 10px;
+}
+
 .container {
     border-radius: 10px;
 }
@@ -138,16 +151,26 @@ body {
     background-size: cover;
 }
 
-.resources {
+.tile:hover .resources {
     position: absolute;
     top: 2px;
     right: 2px;
     display: flex;
-    gap: 2px;
-}
+    gap: 5px;
 
-.resources i {
-    font-size: 12px;
+    i {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        background-size: cover;
+    }
+
+    .gold{
+        background-image: url(../img/stone.jfif);
+    }
+    .tree{
+        background-image: url(../img/wood.jfif);
+    }
 }
 
 .walkable {

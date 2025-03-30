@@ -45,7 +45,7 @@ try {
             echo json_encode(['success' => false, 'message' => 'Registrierung fehlgeschlagen']);
         }
 
-    // Login-Prozess
+        // Login-Prozess
     } else if ((isset($data['action']) && $data['action'] === 'login')) {
         $name = validateInput($data['name']);
         $password = validateInput($data['password']);
@@ -69,7 +69,7 @@ try {
                 echo json_encode(['success' => true, 'token' => $token, 'key' => $key]);
             }
         }
-    // Update
+        // Update
     } else if (isset($data['action']) && $data['action'] === 'update') {
         $token = validateInput($data['token']);
 
@@ -81,44 +81,63 @@ try {
             echo json_encode(['success' => true]);
         }
 
-    //Get
+        //Get
     } else if (isset($data['action']) && $data['action'] === 'get') {
-        $token = validateInput($data['token']);
+        if ($data['get'] == "thingsAtPosition") {
+            $x = validateInput($data['x']);
+            $y = validateInput($data['y']);
 
-        $stmt = $pdo->prepare('SELECT * FROM user WHERE user_token = ? AND user_last_login = curdate()');
-        $stmt->execute([validateInput($token)]);
-        $userData = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$userData) {
-            $stmt = $pdo->prepare('SELECT COUNT(*) FROM user WHERE user_token = ?');
-            $stmt->execute([validateInput($token)]);
-            $exists = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if (!$exists) {
-                echo json_encode(['success' => false, 'message' => "Token existiert nicht"]);
-            } else {
-                echo json_encode(['success' => false, 'message' => "Token abgelaufen"]);
+            $stmt = $pdo->prepare('SELECT user_id FROM user WHERE user_x = ? AND user_y = ?');
+            $stmt->execute([$x, $y]);
+            $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if (!$users) {
+                $users = false;
             }
+
+            $stmt = $pdo->prepare('SELECT field_id, field_type FROM map WHERE field_x = ? AND field_y = ?');
+            $stmt->execute([$x, $y]);
+            $fields = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            echo json_encode(['success' => true, 'users' => $users, 'fields' => $fields]);
         } else {
-            if ($data['get'] == "legitimation") {
-                echo json_encode(['success' => true]);
-            } else if ($data['get'] == "position") {
-                echo json_encode(['success' => true, 'x' => $userData['user_x'], 'y' => $userData['user_y']]);
-            } else if ($data['get'] == "inventory") {
-                echo json_encode(['success' => true, 'inventory' => $userData['user_inventory']]);
-            } else if ($data['get'] == "character") {
-                echo json_encode(['success' => true, 'character' => $userData['user_character']]);
+            $token = validateInput($data['token']);
+
+            $stmt = $pdo->prepare('SELECT * FROM user WHERE user_token = ? AND user_last_login = curdate()');
+            $stmt->execute([validateInput($token)]);
+            $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$userData) {
+                $stmt = $pdo->prepare('SELECT COUNT(*) FROM user WHERE user_token = ?');
+                $stmt->execute([validateInput($token)]);
+                $exists = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if (!$exists) {
+                    echo json_encode(['success' => false, 'message' => "Token existiert nicht"]);
+                } else {
+                    echo json_encode(['success' => false, 'message' => "Token abgelaufen"]);
+                }
+            } else {
+                if ($data['get'] == "legitimation") {
+                    echo json_encode(['success' => true]);
+                } else if ($data['get'] == "position") {
+                    echo json_encode(['success' => true, 'x' => $userData['user_x'], 'y' => $userData['user_y']]);
+                } else if ($data['get'] == "inventory") {
+                    echo json_encode(['success' => true, 'inventory' => $userData['user_inventory']]);
+                } else if ($data['get'] == "character") {
+                    echo json_encode(['success' => true, 'character' => $userData['user_character']]);
+                } else if ($data['get'] == "info") {
+                    echo json_encode(['success' => true, 'name' => $userData['user_name'], 'score' => $userData['user_score'], 'logins' => $userData['user_login_count']]);
+                }
             }
         }
 
-    //Delete
-    }else if (isset($data['action']) && $data['action'] === 'delete') {
+        //Delete
+    } else if (isset($data['action']) && $data['action'] === 'delete') {
         $token = validateInput($data['token']);
 
         $stmt = $pdo->prepare('DELETE FROM user WHERE user_token = ?');
         $stmt->execute([validateInput($token)]);
         echo json_encode(['success' => true]);
-        
     } else {
         echo json_encode(['success' => false, 'message' => 'Fehlerhafte Anfrage']);
     }

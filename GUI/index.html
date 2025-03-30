@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?">
     <link id="themeStylesheet" rel="stylesheet" href="css/brightTheme.css">
     <link rel="icon" href="img/favicon.ico">
 </head>
@@ -48,28 +48,11 @@
             <div id="agieren" class="functioncontainer active">
                 <h1 id="uberschrift">Aktionen</h1>
                 <div class="buttonfunctioncontainer1" style="overflow-x: auto;">
-                    <table class="tableb">
-                        <tr>
-                            <td><button class="buttonfunctioncontainer1buttons" class="buttondesign"
-                                    onclick="wait()">Hier hingehen</button></td>
-                        </tr>
-                        <tr>
-                            <td><button class="buttonfunctioncontainer1buttons" class="buttondesign"
-                                    onclick="abbauen()">Abbauen</button></td>
-                        </tr>
-                        <tr>
-                            <td><button class="buttonfunctioncontainer1buttons" class="buttondesign"
-                                    onclick="">Angreifen</button></td>
-                        </tr>
-                        <tr>
-                            <td><button class="buttonfunctioncontainer1buttons" class="buttondesign"
-                                    onclick="bauen()">Haus bauen</button></td>
-                        </tr>
-                        <tr>
-                            <td><button class="buttonfunctioncontainer1buttons" class="buttondesign"
-                                    onclick="handeln()">Items handeln</button></td>
-                        </tr>
-                    </table>
+                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonLaufen" onclick="wait()">Hier hingehen</button>
+                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonAbbauen" onclick="abbauen()">Abbauen</button>
+                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonAngreifen" onclick="">Angreifen</button>
+                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonBauen" onclick="bauen()">Haus bauen</button>
+                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonHandeln" onclick="handeln()">Items handeln</button>
                 </div>
             </div>
 

@@ -10,10 +10,16 @@
 <body>
     <div class="profile-section">
         <h1>Willkommen</h1>
-        <h2>Max Mustermann</h2>
+        <h2 id="username">Max Mustermann</h2>
         <div class="profile-pic">
             <img id="character-image" src="../CMS/getAsset.php?action=getImg&type=character&id=100" alt="Profile">
             <div class="upload-overlay">wechseln</div>
+        </div>
+        <div class="info-container">
+            <div class="info-item">Score:</div>
+            <div class="info-item" id="userscore">0</div>
+            <div class="info-item">Logins</div>
+            <div class="info-item" id="userlogins"></div>
         </div>
     </div>
 
@@ -64,7 +70,7 @@
     </audio>
 
     <script>
-        async function loadCharacter(token) {
+        async function loadUserData(token) {
             await fetch('user_data.php', {
                 method: 'POST',
                 headers: {
@@ -87,8 +93,32 @@
                 .catch(error => {
                     console.error('Fehler:', error);
                 });
+            await fetch('user_data.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'get',
+                    token: token,
+                    get: "info"
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById("username").innerHTML = data.name;
+                        document.getElementById("userscore").innerHTML = data.score;
+                        document.getElementById("userlogins").innerHTML = data.logins;
+                    } else {
+                        console.log('Abfrage fehlgeschlagen. ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fehler:', error);
+                });
         }
-        loadCharacter(token);
+        loadUserData(token);
 
         function setCookie(name, value, days) {
             let expires = "";
