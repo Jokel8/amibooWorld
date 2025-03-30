@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="css/style.css?">
-    <link id="themeStylesheet" rel="stylesheet" href="css/brightTheme.css">
     <link rel="icon" href="img/favicon.ico">
 </head>
 
@@ -48,11 +47,16 @@
             <div id="agieren" class="functioncontainer active">
                 <h1 id="uberschrift">Operationen</h1>
                 <div class="buttonfunctioncontainer1" style="overflow-x: auto;">
-                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonLaufen" onclick="wait()">Hier hingehen</button>
-                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonAbbauen" onclick="abbauen()">Abbauen</button>
-                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonAngreifen" onclick="">Angreifen</button>
-                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonBauen" onclick="bauen()">Haus bauen</button>
-                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonHandeln" onclick="handeln()">Items handeln</button>
+                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonLaufen"
+                        onclick="wait()">[1] Hier hingehen</button>
+                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonAbbauen"
+                        onclick="abbauen()">[2] Abbauen</button>
+                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonAngreifen"
+                        onclick="angreifen()">[3] Angreifen</button>
+                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonBauen"
+                        onclick="bauen()">[4] Haus bauen</button>
+                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonHandeln"
+                        onclick="handeln()">[5] Items handeln</button>
                 </div>
             </div>
 
@@ -64,6 +68,12 @@
 
     <div id="warning">
         <p><img width="100%" src="img/orientation.png"><br> Bitte drehen Sie Ihr Handy zum Spielen ins Querformat.</p>
+    </div>
+
+    <div id="itemDescription" class="descriptionBox">
+        <h2>Dieses Item verkaufen?</h2>
+        <button onclick="itemDescription.classList.remove('visible')">Abbrechen</button>
+        <button onclick="sellItem()">Verkaufen</button>
     </div>
 
     <script>
@@ -187,7 +197,7 @@
     </script>
 
     <script>
-        function sendQueue(steps){
+        function sendQueue(steps) {
             console.log(steps);
 
             fetch('user_data.php', {
@@ -213,18 +223,38 @@
 
         //Actionbuttons:
         function wait() {
-            steps.push({ 'end': "wait"});
+            steps.push({ 'action': "walk", "time": 2000 });
             sendQueue(steps);
         }
 
         function abbauen() {
-            steps.push({ 'end': "mine"});
-            sendQueue(steps);
+            const button = document.getElementById("buttonAbbauen");
+            if (button.classList.contains("deactivated")) {
+                alert("Auf diesem Feld sind keine Rohstoffe mehr.");
+            } else {
+                steps.push({ 'action': "mine", "time": 5000 });
+                sendQueue(steps);
+            }
+        }
+
+        function angreifen() {
+            const button = document.getElementById("buttonAngreifen");
+            if (button.classList.contains("deactivated")) {
+                alert("Auf diesem Feld ist kein Gegner.");
+            } else {
+                steps.push({ 'action': "attack", "time": 1000 });
+                sendQueue(steps);
+            }
         }
 
         function bauen() {
-            steps.push({ 'end': "build"});
-            sendQueue(steps);
+            const button = document.getElementById("buttonBauen");
+            if (button.classList.contains("deactivated")) {
+                alert("Dieses Haus ist bereits auf dem maximalen Level.");
+            } else {
+                steps.push({ 'action': "build", "time": 30000 });
+                sendQueue(steps);
+            }
         }
 
         function handeln() {

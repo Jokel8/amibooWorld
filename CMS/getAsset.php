@@ -62,7 +62,7 @@ if ($_GET['action'] == 'getTitle') {
 
     if ($element) {
         header("Content-Type: text/plain");
-        echo json_encode(["title" => $element["{$table}_name"]]);
+        echo $element["{$table}_name"];
     } else {
         echo json_encode(["ID Error" => "Das angeforderte Element ist unter dieser id nicht verfügbar"]);
         http_response_code(204);

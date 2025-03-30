@@ -42,8 +42,7 @@
             const response = await fetch(`../CMS/getAsset.php?action=getTitle&type=item&id=${id}`);
 
             if (response.ok && response.status != 204) {
-                const data = await response.json();
-                const name = data.title;
+                const name = await response.text();
                 await fetchItems(name, id);
                 success++;
             }

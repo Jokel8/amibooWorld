@@ -83,6 +83,7 @@ h2{
 }
 
 .buttonfunctioncontainer1buttons {
+    font-size: 20px;
     width: 100%;
     margin-top: 10%;
     padding-top: 5%;
@@ -277,11 +278,13 @@ h2{
     }
 
     #amiibo {
+        font-size: 40px;
         color: #ff4444;
         display: inline;
     }
 
     #world {
+        font-size: 40px;
         color: #37b1bc;
         display: inline;
     }

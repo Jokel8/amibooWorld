@@ -42,12 +42,11 @@
         </div>
 
         <div class="setting-item">
-            <span class="setting-label">Modus</span>
-            <select>
-                <option>Darkmode</option>
-                <option>Brightmode</option>
-                <option>Googymode</option>
-            </select>
+            <span class="setting-label">Darkmode</span>
+            <label class="toggle-switch">
+                <input id="darkmode-switch" type="checkbox" checked>
+                <span class="slider"></span>
+            </label>
         </div>
 
         <div class="setting-item">
@@ -166,6 +165,46 @@
                 audio.pause();
                 audio.currentTime = 0;
                 setCookie("audioEnabled", "false", 30);
+            }
+        });
+
+        const darkmodeSwitch = document.getElementById("darkmode-switch");
+        darkmodeEnabled = getCookie("darkmodeEnabled");
+
+        if (darkmodeEnabled === "true") {
+            console.log("Darkmode enabled");
+            const darkmode = document.createElement('link');
+            darkmode.rel = 'stylesheet';
+            darkmode.href = "css/darkmode.css";
+            document.head.appendChild(darkmode);
+        }else{
+            const brightmode = document.createElement('link');
+            brightmode.rel = 'stylesheet';
+            brightmode.href = "css/brightmode.css";
+            document.head.appendChild(brightmode);
+            darkmodeSwitch.checked = false;
+        }
+
+        darkmodeSwitch.addEventListener("change", () => {
+            if (darkmodeSwitch.checked) {
+                console.log("Darkmode enabled");
+                const brightmode = document.querySelector(`link[href="css/brightmode.css"]`);
+                brightmode.parentNode.removeChild(brightmode);
+
+                const darkmode = document.createElement('link');
+                darkmode.rel = 'stylesheet';
+                darkmode.href = "css/darkmode.css";
+                document.head.appendChild(darkmode);
+                setCookie("darkmodeEnabled", "true", 30);
+            } else{
+                const darkmode = document.querySelector(`link[href="css/darkmode.css"]`);
+                darkmode.parentNode.removeChild(darkmode);
+
+                const brightmode = document.createElement('link');
+                brightmode.rel = 'stylesheet';
+                brightmode.href = "css/brightmode.css";
+                document.head.appendChild(brightmode);
+                setCookie("darkmodeEnabled", "false", 30);
             }
         });
 

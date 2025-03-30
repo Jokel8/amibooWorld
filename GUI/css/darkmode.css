@@ -1,7 +1,3 @@
-#buttonc, #buttona, #buttonb{
-    background-color: red;
-}
-
 body{
     background: rgb(51,51,51);
     background: linear-gradient(81deg, rgba(51,51,51,1) 0%, rgb(29, 29, 29) 16%, rgb(36, 36, 36) 67%, rgb(29, 29, 29) 100%); 
@@ -9,4 +5,12 @@ body{
 
 .container{
     background-color: #dfdfdf3a;
+}
+
+.settings-group, .profile-pic, .descriptionBox, .buttonfunctioncontainer1buttons{
+    background: #202728 !important;
+}
+
+* {
+    color: white;
 }

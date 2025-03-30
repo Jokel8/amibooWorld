@@ -1,11 +1,6 @@
 
 <h1>Inventar</h1>
 <div id="itemArray" class="grid"></div>
-<div id="itemDescription" class="descriptionBox">
-    <h2>Dieses Item verkaufen?</h2>
-    <button onclick="itemDescription.classList.remove('visible')">Abbrechen</button>
-    <button onclick="sellItem()">Verkaufen</button>
-</div>
 
 <script>
     //CSS: Mit auto-reload:
@@ -16,7 +11,7 @@
     link.href = `css/gridView.css?t=${timestamp}`;
     document.head.appendChild(link);
 
-    async function fetchItems(item_id, item_amount, name, description) {
+    async function fetchItems(item_id, item_amount) {
         try {
             const item_path = `../CMS/getAsset.php?action=getImg&type=item&id=${item_id}`;
             const response = await fetch(`../CMS/getAsset.php?action=getTitle&type=item&id=${item_id}`);
@@ -26,7 +21,7 @@
 
             const itemDiv = document.createElement('div');
             itemDiv.className = 'element';
-            itemDiv.onclick = () => showDescription(item_id, name);
+            itemDiv.onclick = () => showDescription(item_id);
 
             const img = document.createElement('img');
             img.src = item_path;
@@ -35,7 +30,7 @@
 
             const title = document.createElement('div');
             title.className = 'overlay elementTitle';
-            title.textContent = description;
+            title.textContent = item_name;
 
             const amount = document.createElement('div');
             amount.className = 'overlay elementAmount';
@@ -69,17 +64,16 @@
 
         while (inventoryData.length > 0) {
             const item = inventoryData.pop();
-            await fetchItems(item.item_id, item.menge, item.name, item.description);
+            await fetchItems(item.item_id, item.menge);
         }
     }
 
     function sellItem(name) {
         itemDescription.classList.remove('visible')
-        console.log('Noch nicht implementiert');
         fetch('https://v2202410237002289383.megasrv.de/trade?token=' + token + '&buyer=SERVER' + '&item=' + name + '&menge=10');
     }
 
-    async function showDescription(item_id, name) {
+    async function showDescription(item_id) {
         itemDescription.classList.add('visible');
         itemDescription.innerHTML = "";
 
@@ -125,7 +119,7 @@
 
         const verkaufen = document.createElement("button");
         verkaufen.textContent = "Verkaufen";
-        verkaufen.onclick = () => sellItem(name);
+        verkaufen.onclick = () => sellItem(data.name);
         itemDescription.appendChild(verkaufen);
 
         const abbrechen = document.createElement("button");
