@@ -39,6 +39,14 @@ body {
     background-color: #fc5658;
 }
 
+h1{
+    color: #FF4444;
+}
+h2{
+    color: #37b1bc;
+}
+
+
 .functioncontainer {
     display: none;
     overflow-x: hidden;

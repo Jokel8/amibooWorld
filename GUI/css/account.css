@@ -10,13 +10,6 @@
     transition: transform 0.3s;
 }
 
-.profile-section h1{
-    color: #FF4444;
-}
-.profile-section h2{
-    color: #37b1bc;
-}
-
 .profile-pic:hover {
     transform: scale(1.05);
 }

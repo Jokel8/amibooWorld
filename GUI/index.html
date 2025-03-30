@@ -46,7 +46,7 @@
             </div>
 
             <div id="agieren" class="functioncontainer active">
-                <h1 id="uberschrift">Aktionen</h1>
+                <h1 id="uberschrift">Operationen</h1>
                 <div class="buttonfunctioncontainer1" style="overflow-x: auto;">
                     <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonLaufen" onclick="wait()">Hier hingehen</button>
                     <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonAbbauen" onclick="abbauen()">Abbauen</button>
@@ -187,12 +187,8 @@
     </script>
 
     <script>
-        //Actionbuttons:
-        function wait() {
-            const lastStep = steps[steps.length - 1];
-            const x = lastStep['x'];
-            const y = lastStep['y'];
-            console.log(steps[steps.length - 1]);
+        function sendQueue(steps){
+            console.log(steps);
 
             fetch('user_data.php', {
                 method: 'POST',
@@ -202,9 +198,8 @@
                 body: JSON.stringify({
                     action: 'update',
                     token: token,
-                    update: "position",
-                    x: x,
-                    y: y
+                    update: "queue",
+                    queue: steps
                 })
             })
                 .then(response => response.json())
@@ -216,20 +211,20 @@
                 });
         }
 
+        //Actionbuttons:
+        function wait() {
+            steps.push({ 'end': "wait"});
+            sendQueue(steps);
+        }
+
         function abbauen() {
-            const lastStep = steps[steps.length - 1];
-            const x = lastStep['x'];
-            const y = lastStep['y'];
-            console.log(steps[steps.length - 1]);
-            fetch('https://v2202410237002289383.megasrv.de/mine?x=' + x + '&y=' + y + "&token=" + token);
+            steps.push({ 'end': "mine"});
+            sendQueue(steps);
         }
 
         function bauen() {
-            const lastStep = steps[steps.length - 1];
-            const x = lastStep['x'];
-            const y = lastStep['y'];
-            console.log(steps[steps.length - 1]);
-            fetch('https://v2202410237002289383.megasrv.de/build?x=' + x + '&y=' + y + "&token=" + token);
+            steps.push({ 'end': "build"});
+            sendQueue(steps);
         }
 
         function handeln() {

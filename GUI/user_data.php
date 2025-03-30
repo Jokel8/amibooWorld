@@ -79,6 +79,12 @@ try {
             $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
             echo json_encode(['success' => true]);
+        } else if ($data['update'] == "queue") {
+            $stmt = $pdo->prepare('UPDATE user SET user_queue = ? WHERE user_token = ?');
+            $stmt->execute([json_encode($data['queue']), validateInput($token)]);
+            $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            echo json_encode(['success' => true]);
         }
 
         //Get
