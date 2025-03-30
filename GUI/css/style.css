@@ -1,11 +1,11 @@
-@font-face{
+@font-face {
     font-family: 'Pixelschrift';
     src: url('/amibooWorld/GUI/fonts/PixelifySans-VariableFont_wght.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
-*{
+* {
     font-family: Pixelschrift;
 }
 
@@ -212,51 +212,52 @@ body {
     top: 0px;
     color: white;
 
-    h1{
+    h1 {
         text-align: center;
     }
 
-    p{
+    p {
         text-align: center;
     }
 
-    button{
+    button {
         min-width: fit-content;
         background-color: #37b1bc;
         border-radius: 5px;
     }
-    button:hover{
+
+    button:hover {
         background-color: #ff4444;
     }
-    #zuruckBut{
-        margin-left: 15%;
-        margin-right: 5%;
-        margin-bottom: 2%;
-        width: 30%;
+
+    #manualButtons{
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 10px;
     }
-    #weiterBut{
+
+    #prev {
         width: 30%;
     }
 
-    #nurweiterBut{
-        margin-left: 30%;
-        width: 35%;
-        display: none;
+    #next {
+        width: 30%;
     }
 
-    #amiibo{
+    #amiibo {
         color: #ff4444;
         display: inline;
     }
 
-    #world{
+    #world {
         color: #37b1bc;
         display: inline;
     }
 
 }
 
-#uberschrift{
+#uberschrift {
     color: #ff4444;
 }
 
@@ -307,7 +308,7 @@ body {
     color: white;
 }
 
-#svgjoy{
+#svgjoy {
     width: 7vh;
     height: 7vh;
 }
@@ -372,22 +373,25 @@ body {
     margin-left: calc(69.38% - 10vh);
 }
 
-#rein{
+#rein {
     background-color: #37b1bc;
 }
-#rein:hover{
+
+#rein:hover {
     background-color: #ff4444;
 }
 
-#reinraus img{
+#reinraus img {
     width: 10vh;
     height: 10vh;
 }
-#raus{
+
+#raus {
     display: none;
     background-color: #37b1bc;
 }
-#raus:hover{
+
+#raus:hover {
     background-color: #ff4444;
 }
 
@@ -401,6 +405,7 @@ body {
     margin-top: 3%;
     margin-left: 1%;
 }
+
 .progress-bar {
     height: 30px;
     width: 0%;

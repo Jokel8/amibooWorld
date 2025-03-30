@@ -22,8 +22,8 @@ try {
 
     $data = json_decode(file_get_contents('php://input'), true);
 
+    // Registrierungsprozess
     if (isset($data['action']) && $data['action'] === 'register') {
-        // Registrierungsprozess
         $name = validateInput($data['name']);
         $password = $data['password'];
 
@@ -44,8 +44,9 @@ try {
         } else {
             echo json_encode(['success' => false, 'message' => 'Registrierung fehlgeschlagen']);
         }
+
+    // Login-Prozess
     } else if ((isset($data['action']) && $data['action'] === 'login')) {
-        // Login-Prozess
         $name = validateInput($data['name']);
         $password = validateInput($data['password']);
         $key = validateInput($data['key']);
@@ -68,6 +69,7 @@ try {
                 echo json_encode(['success' => true, 'token' => $token, 'key' => $key]);
             }
         }
+    // Update
     } else if (isset($data['action']) && $data['action'] === 'update') {
         $token = validateInput($data['token']);
 
@@ -78,6 +80,8 @@ try {
 
             echo json_encode(['success' => true]);
         }
+
+    //Get
     } else if (isset($data['action']) && $data['action'] === 'get') {
         $token = validateInput($data['token']);
 
@@ -90,7 +94,7 @@ try {
             $stmt->execute([validateInput($token)]);
             $exists = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if(!$exists) {
+            if (!$exists) {
                 echo json_encode(['success' => false, 'message' => "Token existiert nicht"]);
             } else {
                 echo json_encode(['success' => false, 'message' => "Token abgelaufen"]);
@@ -106,7 +110,16 @@ try {
                 echo json_encode(['success' => true, 'character' => $userData['user_character']]);
             }
         }
-    } else{
+
+    //Delete
+    }else if (isset($data['action']) && $data['action'] === 'delete') {
+        $token = validateInput($data['token']);
+
+        $stmt = $pdo->prepare('DELETE FROM user WHERE user_token = ?');
+        $stmt->execute([validateInput($token)]);
+        echo json_encode(['success' => true]);
+        
+    } else {
         echo json_encode(['success' => false, 'message' => 'Fehlerhafte Anfrage']);
     }
 } catch (PDOException $e) {

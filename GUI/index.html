@@ -15,13 +15,7 @@
         <div id="map" class="container">Karte Lädt...</div>
 
         <div id="joystick">Joystick Lädt...</div>
-        <div id="instructor" class="container">
-            <h1><div id="amiibo">Amiibo</div><div id="world">world</div></h1>
-            <p>Hier erzählen wir etwas davon wie du dieses Spiel spielen kannst</p>
-            <button id="zuruckBut">Zurück</button>
-            <button id="weiterBut">Weiter</button>
-            <button id="nurweiterBut">Weiter</button>
-        </div>
+        <div id="instructor" class="container">Instructor Lädt..</div>
         <div class="progress-container">
             <div class="progress-bar" id="progress-bar">0%</div>
         </div>
@@ -160,6 +154,7 @@
             loadHTML(`joystick.html?t=${timestamp}`, 'joystick');
             loadHTML(`account.html?t=${timestamp}`, 'profil');
             loadHTML(`inventory.html?t=${timestamp}`, 'inventar');
+            loadHTML(`instructor.html?t=${timestamp}`, 'instructor');
         }
 
         async function loadHTML(url, targetElementId) {
@@ -279,20 +274,20 @@
                 document.getElementById("warning").style.display = "none";
             }
         }
-        
+
         window.addEventListener("load", () => {
             lockOrientation();
             checkOrientation();
         });
         window.addEventListener("resize", checkOrientation);
 
-        function rein(){
+        function rein() {
             document.getElementById("rein").style.display = "none";
             document.getElementById("raus").style.display = "block";
             document.getElementById("actionlist").style.display = "none";
             document.getElementById("reinraus").style.marginLeft = "calc(99.4% - 10vh)";
         }
-        function raus(){
+        function raus() {
             document.getElementById("raus").style.display = "none";
             document.getElementById("rein").style.display = "block";
             document.getElementById("actionlist").style.display = "inline";
@@ -310,7 +305,7 @@
                 let progress = Math.min((elapsed / (duration * 1000)) * 100, 100);
                 progressBar.style.width = progress + "%";
                 progressBar.textContent = Math.round(progress) + "%";
-                
+
                 if (now < endTime) {
                     requestAnimationFrame(updateProgress);
                 }

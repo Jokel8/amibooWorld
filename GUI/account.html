@@ -46,7 +46,7 @@
         <div class="setting-item">
             <span class="setting-label">Audio</span>
             <label class="toggle-switch">
-                <input type="checkbox" checked>
+                <input id="audio-switch" type="checkbox" checked>
                 <span class="slider"></span>
             </label>
         </div>
@@ -55,9 +55,13 @@
     <div class="settings-group">
         <div class="settings-header">Sicherheit</div>
         <button class="btn btn-primary">Passwort ändern</button>
-        <button class="btn btn-primary">Logout</button>
-        <button class="btn btn-danger">Account löschen</button>
+        <button class="btn btn-primary" onclick="window.location.href = '?'">Logout</button>
+        <button class="btn btn-danger" onclick="performDelete()">Account löschen</button>
     </div>
+
+    <audio loop>
+        <source src="audio/SunsetQuest.mp3" type="audio/mpeg">
+    </audio>
 
     <script>
         async function loadCharacter(token) {
@@ -85,6 +89,81 @@
                 });
         }
         loadCharacter(token);
+
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                let date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + value + "; path=/" + expires;
+        }
+
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        const audio = document.querySelector("audio");
+        const audioSwitch = document.getElementById("audio-switch");
+        console.log(audioSwitch);
+
+        const audioEnabled = getCookie("audioEnabled");
+        if (audioEnabled === "false") {
+            audioSwitch.checked = false;
+        }
+
+        document.addEventListener("click", () => {
+            if (audioEnabled === "true") {
+                audio.play();
+            }
+        }, { once: true });
+
+        audioSwitch.addEventListener("change", () => {
+            if (audioSwitch.checked) {
+                console.log("Audio enabled");
+                audio.play();
+                setCookie("audioEnabled", "true", 30);
+            } else {
+                audio.pause();
+                audio.currentTime = 0;
+                setCookie("audioEnabled", "false", 30);
+            }
+        });
+
+        function performDelete() {
+            if (confirm("Möchten Sie wirklich Ihren Account löschen?")) {
+                fetch('user_data.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'delete',
+                        token: token
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Account erfolgreich gelöscht.");
+                            window.location.href = "?";
+                        } else {
+                            console.log('Abfrage fehlgeschlagen. ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fehler:', error);
+                    });
+            }
+        }
     </script>
 </body>
 

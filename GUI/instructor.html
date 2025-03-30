@@ -1,0 +1,87 @@
+<div>
+    <h1>
+        <div id="amiibo">Amiibo</div>
+        <div id="world">world</div>
+    </h1>
+    <p id="textBox">Hier erzählen wir etwas davon wie du dieses Spiel spielen kannst</p>
+    <div id="manualButtons">
+        <button id="prev">Zurück</button>
+        <button id="next">Weiter</button>
+    </div>
+</div>
+
+<script>
+    // Aktueller Index (aus Cookie oder Startwert 0)
+    let currentIndex = parseInt(getCookie("textIndex")) || 0;
+    let textData = [];
+
+    const textBox = document.getElementById("textBox");
+    const prevButton = document.getElementById("prev");
+    const nextButton = document.getElementById("next");
+    loadTextData();
+
+    async function loadTextData() {
+        try {
+            const response = await fetch("manual.json");
+            textData = await response.json();
+            updateText();
+        } catch (error) {
+            console.error("Fehler beim Laden der JSON-Datei:", error);
+        }
+    }
+
+    function setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + value + expires + "; path=/";
+    }
+
+    // Funktion zum Abrufen eines Cookies
+    function getCookie(name) {
+        const cookies = document.cookie.split('; ');
+        for (let cookie of cookies) {
+            let [key, value] = cookie.split('=');
+            if (key === name) return value;
+        }
+        return null;
+    }
+
+    function updateText() {
+        if (textData.length > 0) {
+            textBox.innerHTML = textData[currentIndex];
+            setCookie("textIndex", currentIndex, 7);
+        }
+
+        if (currentIndex === 0) {
+            prevButton.style.display = "none";
+            nextButton.innerHTML = "Tutorial starten";
+        } else if (currentIndex === textData.length - 1) {
+            nextButton.style.display = "none";
+        } else {
+            nextButton.innerHTML = "Weiter";
+            nextButton.style.display = "inline-block";
+            prevButton.style.display = "inline-block";
+        }
+    }
+
+    prevButton.addEventListener("click", () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateText();
+        }
+    });
+
+    nextButton.addEventListener("click", () => {
+        if (currentIndex < textData.length - 1) {
+            currentIndex++;
+            updateText();
+        } else {
+            currentIndex = 0;
+            updateText();
+        }
+    });
+</script>
