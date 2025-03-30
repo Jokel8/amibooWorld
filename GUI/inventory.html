@@ -52,7 +52,7 @@
         const response = await fetch('https://v2202410237002289383.megasrv.de/inventory?token=' + token);
         var inventoryData = await response.json();
         inventoryData = inventoryData.items;
-        console.log("Inventar: " + inventoryData);
+        //console.log("Inventar: " + inventoryData);
 
         if(inventoryData.length == 0) {
             const container = document.getElementById("itemArray");

@@ -11,3 +11,7 @@ body{
 .settings-group, .profile-pic, .descriptionBox{
     background: #d8f1f3;
 }
+
+.icon{
+    fill: white !important;
+}

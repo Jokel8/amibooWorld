@@ -63,7 +63,6 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        console.log(data);
                         if (data.users) {
                             document.getElementById('buttonAngreifen').classList.remove('deactivated');
                         } else {
@@ -80,12 +79,12 @@
                         const buttonBauen = document.getElementById('buttonBauen');
                         if (!onBuilding) {
                             buttonBauen.classList.remove('deactivated');
-                            buttonBauen.innerHTML = "Haus bauen";
+                            buttonBauen.innerHTML = "[4] Haus bauen";
                         } else {
                             if(onBuilding === 104) {
                                 buttonBauen.classList.add('deactivated');
                             }
-                            buttonBauen.innerHTML = "Haus erweitern";
+                            buttonBauen.innerHTML = "[4] Haus erweitern";
                         }
                     } else {
                         console.log('Abfrage fehlgeschlagen. ' + data.message);
@@ -283,7 +282,7 @@
 
                         tileLayer.style.backgroundImage = 'url(../CMS/getAsset.php?action=getImg&type=field_type&id=' + tileData.properties.value + ')';
                         tileLayer.style.zIndex = index;
-                        tileLayer.textContent = tileData.properties.value;
+                        //tileLayer.textContent = tileData.properties.value;
 
                         // Cursor und Interaktivität basierend auf Begehbarkeit
                         if (tileData.properties.is_walkable) {
