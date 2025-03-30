@@ -187,7 +187,7 @@ public class APIServer extends HttpServer {
         int goldServer = inv.getMenge("gold");
         goldServer -= totalGold;
 
-        int totalItem = kosten / kostenItem;
+        int totalItem = (totalGold * kostenGold) / kostenItem;
         System.out.println(totalItem);
         inv.setMenge("gold", goldServer);
         inv2.getMenge("gold");
