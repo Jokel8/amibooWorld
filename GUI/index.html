@@ -49,7 +49,7 @@
                 <h1 id="uberschrift">Operationen</h1>
                 <div class="buttonfunctioncontainer1" style="overflow-x: auto;">
                     <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonLaufen"
-                        onclick="wait()">[1] Hier hingehen</button>
+                        onclick="wait()">[1] Hier warten</button>
                     <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonAbbauen"
                         onclick="abbauen()">[2] Abbauen</button>
                     <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonAngreifen"
@@ -244,9 +244,9 @@
         }
 
         //Actionbuttons:
-        function wait() {
-            steps.push({ 'action': "walk", "time": 2000 });
-            sendQueue(steps);
+        async function wait() {
+            await sendQueue(steps);
+            await fetch('https://v2202410237002289383.megasrv.de/startqueue?token=' + token);
         }
 
         function abbauen() {
@@ -254,8 +254,7 @@
             if (button.classList.contains("deactivated")) {
                 alert("Auf diesem Feld sind keine Rohstoffe mehr.");
             } else {
-                steps.push({ 'action': "mine", "time": 5000 });
-                sendQueue(steps);
+                steps.push({  x: absoluteX, y: absoluteY, 'action': "mine", "time": 5000 });
             }
         }
 
@@ -264,8 +263,7 @@
             if (button.classList.contains("deactivated")) {
                 alert("Auf diesem Feld ist kein Gegner.");
             } else {
-                steps.push({ 'action': "attack", "time": 1000 });
-                sendQueue(steps);
+                steps.push({  x: absoluteX, y: absoluteY, 'action': "attack", "time": 1000 });
             }
         }
 
@@ -274,8 +272,7 @@
             if (button.classList.contains("deactivated")) {
                 alert("Dieses Haus ist bereits auf dem maximalen Level.");
             } else {
-                steps.push({ 'action': "build", "time": 30000 });
-                sendQueue(steps);
+                steps.push({ x: absoluteX, y: absoluteY, 'action': "build", "time": 30000 });
             }
         }
 
