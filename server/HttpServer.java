@@ -37,7 +37,7 @@ public abstract class HttpServer {
 
     public HttpServer(int port) {
         this.port = port;
-        this.regex = "GET /[a-z]*((\\?[a-z]+=([a-z]|[0-9])+)(&[a-z]+=([a-z]|[0-9])+)*)?\\sHTTP/1\\.1";
+        this.regex = "GET /[a-z]*((\\?[a-z]+=([a-z]|[0-9]|[A-Z])+)(&[a-z]+=([a-z]|[0-9]|[A-Z])+)*)?\\sHTTP/1\\.1";
         this.pattern = Pattern.compile(regex);
     }
 
