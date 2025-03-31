@@ -29,7 +29,7 @@
         var height;
         var blockSize;
         var middle;
-        const steps = [];
+        let steps = [];
 
         var originX;
         var originY;
@@ -56,7 +56,7 @@
 
         function updateCrosshair() {
             crosshair.style.transform = `translate(${crosshairX * (blockSize + 2)}px, ${crosshairY * (blockSize + 2)}px)`;
-            steps.push({ x: absoluteX, y: absoluteY, time: 2000, 'action': "walk" });
+            steps.push({ x: absoluteX, y: absoluteY, time: 500, 'action': "walk"});
             console.log(`Moved to: (${absoluteX}, ${absoluteY})`);
         }
 
@@ -216,7 +216,7 @@
 
             const response = await fetch('https://v2202410237002289383.megasrv.de/map?x=' + originX + '&y=' + originY + '&r=4');
             const mapData = await response.json();
-            console.log(mapData)
+            console.log(mapData);
 
             height = mapData.height;
             width = mapData.width;

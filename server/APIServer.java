@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class APIServer extends HttpServer {
-    private Datenbank datenbank;
+    public Datenbank datenbank;
     private Random random;
     private double goldChance;
 
@@ -50,6 +50,20 @@ public class APIServer extends HttpServer {
                             "Access-Control-Allow-Origin: *\n" +
                             "Content-Length: " + tilesString.length() + "\n\n");
                     antwort.append(tilesString);
+                }
+                case "users" -> {
+                    String userString;
+                    if (parameter.containsKey("r")) {
+                        userString = this.datenbank.dbGetUsersAndMakeItIntoJson(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), Integer.parseInt(parameter.get("r")));
+                    } else {
+                        userString = this.datenbank.dbGetUsersAndMakeItIntoJson(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 4);
+                    }
+                    //http header
+                    antwort.append("HTTP/1.1 200 OK\n" +
+                            "Content-Type: application/json\n" +
+                            "Access-Control-Allow-Origin: *\n" +
+                            "Content-Length: " + userString.length() + "\n\n");
+                    antwort.append(userString);
                 }
                 case "inventory" -> {
                     int id = this.datenbank.getID(parameter.get("token"));
@@ -93,7 +107,7 @@ public class APIServer extends HttpServer {
                     int id = this.datenbank.getID(parameter.get("token"));
                     String queueS = this.datenbank.getQueue(id);
                     Queue queue = new Queue(queueS, this, id);
-                    queue.startQueue();
+                    if (this.datenbank.getAction(id).equals("ready")) queue.startQueue();
                     antwort.append("HTTP/1.1 204 No Content\n");
                 }
                 case "characters" -> {
@@ -128,6 +142,10 @@ public class APIServer extends HttpServer {
                             "Content-Type: application/json\n" +
                             "Access-Control-Allow-Origin: *\n");
                 }
+                case "eat" -> {
+                    int id = this.datenbank.getID(parameter.get("token"));
+
+                }
                 default -> {
                     antwort.append("HTTP/1.1 404 Not Found\n");
                 }
@@ -156,6 +174,10 @@ public class APIServer extends HttpServer {
 //        }
 //        //this.spieler.setQueue(token, new Queue(headerbody[1], System.currentTimeMillis() / 1000L, 0.1));
 //    }
+
+    public void essen(int id, int itemID) {
+
+    }
 
 
     // Vorerst nur dem Server verkaufen
