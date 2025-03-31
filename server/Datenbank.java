@@ -94,6 +94,58 @@ public class Datenbank {
         }
     }
 
+    public ResultSet dbGetUserFast(int x, int y, int radius) {
+        //query bauen
+        StringBuilder query = new StringBuilder();
+        query.append("SELECT user_x, user_y, user_action, user_action_time, user_character, user_name FROM user ");
+        query.append("WHERE (");
+
+        // X-coordinate conditions with boundary checks and wrapping logic
+        if (x - radius >= 0 && x + radius <= 999) {
+            query.append("user.user_x BETWEEN ").append(x - radius).append(" AND ").append(x + radius);
+        } else {
+            query.append("(");
+            if (x - radius < 0) {
+                query.append("user.user_x BETWEEN ").append(1000 + (x - radius)).append(" AND ").append(1000 - 1);
+                query.append(" OR ");
+            }
+            query.append("user.user_x BETWEEN 0 AND ").append(x + radius);
+            if (x + radius > 999) {
+                query.append(" OR ");
+                query.append("user.user_x BETWEEN 0 AND ").append(x + radius - 1000);
+            }
+            query.append(")");
+        }
+
+        // Y-coordinate conditions with boundary checks and wrapping logic
+        query.append(" AND ");
+        if (y - radius >= 0 && y + radius <= 999) {
+            query.append("user.user_y BETWEEN ").append(y - radius).append(" AND ").append(y + radius);
+        } else {
+            query.append("(");
+            if (y - radius < 0) {
+                query.append("user.user_y BETWEEN ").append(1000 + (y - radius)).append(" AND ").append(1000 - 1);
+                query.append(" OR ");
+            }
+            query.append("user.user_y BETWEEN 0 AND ").append(y + radius);
+            if (y + radius > 999) {
+                query.append(" OR ");
+                query.append("user.user_y BETWEEN 0 AND ").append(y + radius - 1000);
+            }
+            query.append(")");
+        }
+
+        query.append(")");
+        query.append(";");
+
+        //System.out.println(query.toString());
+
+        // Use prepared statement (assuming abfragMachen supports it)
+        ResultSet rs = this.abfragMachen(query.toString());
+
+        return rs;
+    }
+
     public ResultSet dbGetTilesFast(int x, int y, int radius) {
         //query bauen
         StringBuilder query = new StringBuilder();
@@ -172,6 +224,11 @@ public class Datenbank {
         String json = this.tilesToJson(rs, radius);
         return json;
     }
+    public String dbGetUsersAndMakeItIntoJson(int x, int y, int radius) {
+        ResultSet rs = this.dbGetUserFast(x, y, radius);
+        String json = this.usersToJson(rs, radius);
+        return json;
+    }
 
     public ResultSet dbGetTiles(int[][] tiles) {
         //sql abfrage erstellen
@@ -233,6 +290,36 @@ public class Datenbank {
             return "{\n\t\"fehler\": true\n}";
         }
     }
+
+    private String usersToJson(ResultSet rs, int radius) {
+        if (rs != null) try {
+
+            JSONArray users = new JSONArray();
+            //        query.append("SELECT user_x, user_y, user_action, user_action_time, user_character, user_name FROM user ");
+            //tiles in json umwandeln
+            for (int i = 0; rs.next(); i++) {
+                JSONObject user = new JSONObject();
+                user.put("x", rs.getInt("user_x"));
+                user.put("y", rs.getInt("user_y"));
+                user.put("action", rs.getString("user_action"));
+                user.put("action_time", rs.getInt("user_action_time"));
+                user.put("username", rs.getString("user_name"));
+                user.put("character", rs.getInt("user_character"));
+
+                users.put(user);
+            }
+
+            JSONObject json = new JSONObject();
+            json.put("users", users);
+
+            return json.toString(4);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } else {
+            return "{\n\t\"fehler\": true\n}";
+        }
+    }
+
     public long getToken(String username, String password) {
         String query = "SELECT user_token FROM user WHERE user_name = '" + username + "' AND user_password = '" + password + "'";
         ResultSet rs = this.abfragMachen(query);
@@ -370,6 +457,10 @@ public class Datenbank {
     }
     public void setCharacter(String username) {
         //String query = "SELECT"
+    }
+    public void resetQueue(int id) {
+        String query = "UPDATE user SET user_queue = '{\"queue\":[]}' WHERE user_id = " + id;
+        this.updateMachen(query);
     }
     public String getCharacters() {
         String query = "SELECT character_name FROM `character`;";

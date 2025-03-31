@@ -204,7 +204,7 @@
 
             const response = await fetch('https://v2202410237002289383.megasrv.de/map?x=' + originX + '&y=' + originY + '&r=4');
             const mapData = await response.json();
-            console.log(mapData)
+            console.log(mapData);
 
             height = mapData.height;
             width = mapData.width;

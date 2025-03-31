@@ -64,6 +64,7 @@ public class Queue {
                 this.server.datenbank.setAction(laufRichtung, action.getInt("time"), this.id);
             } else {
                 this.server.datenbank.setAction("ready", 0, this.id);
+                this.server.datenbank.resetQueue(this.id);
             }
         }
     }

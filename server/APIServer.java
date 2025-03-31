@@ -51,6 +51,20 @@ public class APIServer extends HttpServer {
                             "Content-Length: " + tilesString.length() + "\n\n");
                     antwort.append(tilesString);
                 }
+                case "users" -> {
+                    String userString;
+                    if (parameter.containsKey("r")) {
+                        userString = this.datenbank.dbGetUsersAndMakeItIntoJson(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), Integer.parseInt(parameter.get("r")));
+                    } else {
+                        userString = this.datenbank.dbGetUsersAndMakeItIntoJson(Integer.parseInt(parameter.get("x")), Integer.parseInt(parameter.get("y")), 4);
+                    }
+                    //http header
+                    antwort.append("HTTP/1.1 200 OK\n" +
+                            "Content-Type: application/json\n" +
+                            "Access-Control-Allow-Origin: *\n" +
+                            "Content-Length: " + userString.length() + "\n\n");
+                    antwort.append(userString);
+                }
                 case "inventory" -> {
                     int id = this.datenbank.getID(parameter.get("token"));
                     Inventory inventory = this.datenbank.getInventar(id);
