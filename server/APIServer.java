@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class APIServer extends HttpServer {
-    private Datenbank datenbank;
+    public Datenbank datenbank;
     private Random random;
     private double goldChance;
 
@@ -93,7 +93,7 @@ public class APIServer extends HttpServer {
                     int id = this.datenbank.getID(parameter.get("token"));
                     String queueS = this.datenbank.getQueue(id);
                     Queue queue = new Queue(queueS, this, id);
-                    queue.startQueue();
+                    if (this.datenbank.getAction(id).equals("ready")) queue.startQueue();
                     antwort.append("HTTP/1.1 204 No Content\n");
                 }
                 case "characters" -> {

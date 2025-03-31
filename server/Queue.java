@@ -22,12 +22,18 @@ public class Queue {
         this.queue = new JSONObject(queue);
         this.server = server;
         this.id = id;
-
     }
     public void startQueue() {
         JSONArray actions = queue.getJSONArray("queue");
         for (int i = 0; i < actions.length(); i++) {
             JSONObject action = actions.getJSONObject(i);
+
+            try {
+                Thread.sleep(action.getInt("time"));
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
             int x = action.getInt("x");
             int y = action.getInt("y");
 
@@ -42,10 +48,22 @@ public class Queue {
                     this.server.bewegen(x, y, this.id);
                 }
             }
-            try {
-                Thread.sleep(action.getInt("time"));
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+
+            if (i < actions.length() - 1) {
+                int x_next = actions.getJSONObject(i + 1).getInt("x");
+                int y_next = actions.getJSONObject(i + 1).getInt("y");
+                String thisAction = action.getString("action");
+                String laufRichtung = "";
+                if (thisAction.equals("walk")) {
+                    if (x_next < x) laufRichtung = "left";
+                    if (x_next > x) laufRichtung = "right";
+                    if (y_next < y) laufRichtung = "down";
+                    if (y_next > y) laufRichtung = "up";
+                    if (y_next == y && x_next == x) laufRichtung = thisAction;
+                }
+                this.server.datenbank.setAction(laufRichtung, action.getInt("time"), this.id);
+            } else {
+                this.server.datenbank.setAction("ready", 0, this.id);
             }
         }
     }

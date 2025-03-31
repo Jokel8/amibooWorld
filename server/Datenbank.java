@@ -451,4 +451,20 @@ public class Datenbank {
         }
         return id;
     }
+    public String getAction(int id) {
+        String query = "SELECT user_action FROM user WHERE user_id = " + id;
+        ResultSet rs = this.abfragMachen(query);
+
+        if (rs != null) try {
+            rs.next();
+            return rs.getString("user_action");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+    public void setAction(String action, int time, int id) {
+        String query = "UPDATE user SET user_action = " + action + ", user_action_time = " + time + "WHERE user_id = " + id;
+        this.updateMachen(query);
+    }
 }
