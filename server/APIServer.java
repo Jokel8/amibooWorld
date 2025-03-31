@@ -142,6 +142,10 @@ public class APIServer extends HttpServer {
                             "Content-Type: application/json\n" +
                             "Access-Control-Allow-Origin: *\n");
                 }
+                case "eat" -> {
+                    int id = this.datenbank.getID(parameter.get("token"));
+
+                }
                 default -> {
                     antwort.append("HTTP/1.1 404 Not Found\n");
                 }
@@ -170,6 +174,10 @@ public class APIServer extends HttpServer {
 //        }
 //        //this.spieler.setQueue(token, new Queue(headerbody[1], System.currentTimeMillis() / 1000L, 0.1));
 //    }
+
+    public void essen(int id, int itemID) {
+
+    }
 
 
     // Vorerst nur dem Server verkaufen
