@@ -11,7 +11,7 @@
     link.href = `css/gridView.css?t=${timestamp}`;
     document.head.appendChild(link);
 
-    async function fetchItems(item_id, item_amount) {
+    async function fetchItems(item_id, item_amount, name, description) {
         try {
             const item_path = `../CMS/getAsset.php?action=getImg&type=item&id=${item_id}`;
             const response = await fetch(`../CMS/getAsset.php?action=getTitle&type=item&id=${item_id}`);
@@ -21,7 +21,7 @@
 
             const itemDiv = document.createElement('div');
             itemDiv.className = 'element';
-            itemDiv.onclick = () => showDescription(item_id);
+            itemDiv.onclick = () => showDescription(item_id, name);
 
             const img = document.createElement('img');
             img.src = item_path;
@@ -30,7 +30,7 @@
 
             const title = document.createElement('div');
             title.className = 'overlay elementTitle';
-            title.textContent = item_name;
+            title.textContent = description;
 
             const amount = document.createElement('div');
             amount.className = 'overlay elementAmount';
@@ -64,7 +64,7 @@
 
         while (inventoryData.length > 0) {
             const item = inventoryData.pop();
-            await fetchItems(item.item_id, item.menge);
+            await fetchItems(item.item_id, item.menge, item.name, item.description);
         }
     }
 
@@ -73,7 +73,7 @@
         fetch('https://v2202410237002289383.megasrv.de/trade?token=' + token + '&buyer=SERVER' + '&item=' + name + '&menge=10');
     }
 
-    async function showDescription(item_id) {
+    async function showDescription(item_id, name) {
         itemDescription.classList.add('visible');
         itemDescription.innerHTML = "";
 
@@ -119,7 +119,7 @@
 
         const verkaufen = document.createElement("button");
         verkaufen.textContent = "Verkaufen";
-        verkaufen.onclick = () => sellItem(data.name);
+        verkaufen.onclick = () => sellItem(name);
         itemDescription.appendChild(verkaufen);
 
         const abbrechen = document.createElement("button");
