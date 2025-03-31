@@ -15,7 +15,8 @@
         try {
             const item_path = `../CMS/getAsset.php?action=getImg&type=item&id=${item_id}`;
             const response = await fetch(`../CMS/getAsset.php?action=getTitle&type=item&id=${item_id}`);
-            const item_name = await response.text();
+            var item_name = await response.text();
+            item_name = item_name.charAt(0).toUpperCase() + item_name.slice(1)
 
             const container = document.getElementById("itemArray");
 
@@ -70,7 +71,12 @@
 
     function sellItem(name) {
         itemDescription.classList.remove('visible')
-        fetch('https://v2202410237002289383.megasrv.de/trade?token=' + token + '&buyer=SERVER' + '&item=' + name + '&menge=10');
+        fetch('https://v2202410237002289383.megasrv.de/trade?token=' + token + '&buyer=SERVER&item=' + name + '&menge=10');
+    }
+
+    function eatItem(id) {
+        itemDescription.classList.remove('visible')
+        fetch('https://v2202410237002289383.megasrv.de/eat?token=' + token + '&item=' + id);
     }
 
     async function showDescription(item_id) {
@@ -81,7 +87,7 @@
         const data = await response.json();
 
         const title = document.createElement("h2");
-        title.textContent = data.name;
+        title.textContent = data.name.toUpperCase();
         itemDescription.appendChild(title);
 
         const description = document.createElement("p");
@@ -121,6 +127,11 @@
         verkaufen.textContent = "Verkaufen";
         verkaufen.onclick = () => sellItem(data.name);
         itemDescription.appendChild(verkaufen);
+
+        const essen = document.createElement("button");
+        essen.textContent = "Essen";
+        essen.onclick = () => eatItem(data.name);
+        itemDescription.appendChild(essen);
 
         const abbrechen = document.createElement("button");
         abbrechen.textContent = "Abbrechen";

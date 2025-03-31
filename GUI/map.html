@@ -5,6 +5,17 @@
     <meta charset="UTF-8">
     <title>Map Renderer</title>
     <link rel="stylesheet" href="css/style.css?v=1">
+    <style id="Moves">
+        @keyframes move {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(0, 0);
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -22,9 +33,9 @@
 
         var originX;
         var originY;
+        var userId;
 
         var crosshair;
-        var character;
         var mapElement;
         let crosshairX;
         let crosshairY;
@@ -32,9 +43,12 @@
         let absoluteX;
         let absoluteY;
 
+        let savedUsers = new Map();
+        var ready;
+
         function darkenTile(x, y) {
             const tiles = mapElement.children;
-            const index = y * width + x + 1;
+            const index = y * width + x;
             if (tiles[index]) {
                 tiles[index].style.filter = 'brightness(50%)';
             }
@@ -42,7 +56,7 @@
 
         function updateCrosshair() {
             crosshair.style.transform = `translate(${crosshairX * (blockSize + 2)}px, ${crosshairY * (blockSize + 2)}px)`;
-            steps.push({ x: absoluteX, y: absoluteY, time: 2000, 'action': "walk"});
+            steps.push({ x: absoluteX, y: absoluteY, time: 2000, 'action': "walk" });
             console.log(`Moved to: (${absoluteX}, ${absoluteY})`);
         }
 
@@ -81,7 +95,7 @@
                             buttonBauen.classList.remove('deactivated');
                             buttonBauen.innerHTML = "[4] Haus bauen";
                         } else {
-                            if(onBuilding === 104) {
+                            if (onBuilding === 104) {
                                 buttonBauen.classList.add('deactivated');
                             }
                             buttonBauen.innerHTML = "[4] Haus erweitern";
@@ -96,83 +110,80 @@
         }
 
         function eventListener(event) {
-            const prevX = crosshairX;
-            const prevY = crosshairY;
+            if (ready) {
+                const prevX = crosshairX;
+                const prevY = crosshairY;
 
-            if (event.key === 'w' && crosshairY > 0) {
-                const targetTile = mapElement.children[(crosshairY - 1) * width + crosshairX + 1];
-                if (targetTile && targetTile.classList.contains('walkable')) {
-                    crosshairY--; // Nach oben bewegen
-                    absoluteY++;
-                }
-            } else if (event.key === 's' && crosshairY < height - 1) {
-                const targetTile = mapElement.children[(crosshairY + 1) * width + crosshairX + 1];
-                if (targetTile && targetTile.classList.contains('walkable')) {
-                    crosshairY++; // Nach unten bewegen
-                    absoluteY--;
-                }
-            } else if (event.key === 'a' && crosshairX > 0) {
-                const targetTile = mapElement.children[crosshairY * width + (crosshairX - 1) + 1];
-                if (targetTile && targetTile.classList.contains('walkable')) {
-                    crosshairX--; // Nach links bewegen
-                    absoluteX--;
-                }
-            } else if (event.key === 'd' && crosshairX < width - 1) {
-                const targetTile = mapElement.children[crosshairY * width + (crosshairX + 1) + 1];
-                if (targetTile && targetTile.classList.contains('walkable')) {
-                    crosshairX++; // Nach rechts bewegen
-                    absoluteX++;
-                }
-            } else if (event.key === 'o') {
-                changeAktionen('agieren');
-            } else if (event.key === 'p') {
-                changeAktionen('profil');
-            } else if (event.key === 'i') {
-                changeAktionen('inventar');
-            } else if (event.key === '1') {
-                wait();
-            } else if (event.key === '2') {
-                abbauen();
-            } else if (event.key === '3') {
-                angreifen();
-            } else if (event.key === '4') {
-                bauen();
-            } else if (event.key === '5') {
-                changeAktionen('agieren');
-            }
-
-            if (prevX !== crosshairX || prevY !== crosshairY) {
-                darkenTile(prevX + 1, prevY);
-                updateCrosshair();
-                updateActions();
-            }
-        }
-
-        async function loadCharacter(token) {
-            await fetch('user_data.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    action: 'get',
-                    token: token,
-                    get: "character"
-                })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        console.log("Character:" + data.character);
-                        document.getElementById("character").src = "../CMS/getAsset.php?action=getImg&type=character&id=" + data.character;
-                    } else {
-                        console.log('Abfrage fehlgeschlagen. ' + data.message);
+                if (event.key === 'w' && crosshairY > 0) {
+                    const targetTile = mapElement.children[(crosshairY - 1) * width + crosshairX + 1];
+                    if (targetTile && targetTile.classList.contains('walkable')) {
+                        crosshairY--; // Nach oben bewegen
+                        absoluteY++;
                     }
-                })
-                .catch(error => {
-                    console.error('Fehler:', error);
-                });
+                } else if (event.key === 's' && crosshairY < height - 1) {
+                    const targetTile = mapElement.children[(crosshairY + 1) * width + crosshairX + 1];
+                    if (targetTile && targetTile.classList.contains('walkable')) {
+                        crosshairY++; // Nach unten bewegen
+                        absoluteY--;
+                    }
+                } else if (event.key === 'a' && crosshairX > 0) {
+                    const targetTile = mapElement.children[crosshairY * width + (crosshairX - 1) + 1];
+                    if (targetTile && targetTile.classList.contains('walkable')) {
+                        crosshairX--; // Nach links bewegen
+                        absoluteX--;
+                    }
+                } else if (event.key === 'd' && crosshairX < width - 1) {
+                    const targetTile = mapElement.children[crosshairY * width + (crosshairX + 1) + 1];
+                    if (targetTile && targetTile.classList.contains('walkable')) {
+                        crosshairX++; // Nach rechts bewegen
+                        absoluteX++;
+                    }
+                } else if (event.key === 'o') {
+                    changeAktionen('agieren');
+                } else if (event.key === 'p') {
+                    changeAktionen('profil');
+                } else if (event.key === 'i') {
+                    changeAktionen('inventar');
+                } else if (event.key === 'Enter') {
+                    wait();
+                } else if (event.key === '1') {
+                    abbauen();
+                } else if (event.key === '2') {
+                    angreifen();
+                } else if (event.key === '3') {
+                    bauen();
+                } else if (event.key === '4') {
+                    changeAktionen('agieren');
+                }
+
+                if (prevX !== crosshairX || prevY !== crosshairY) {
+                    darkenTile(prevX + 1, prevY);
+                    updateCrosshair();
+                    updateActions();
+                }
+            } else {
+                alert("Bitte warten Sie, bis alle Aktionen ausgeführt worden sind.");
+            }
         }
+
+        function setMove(x1, y1, x2, y2, time,) {
+            tileContainer = document.createElement('div');
+            const styleSheet = document.getElementById("Moves");
+            const animationName = `move_${x1}_${y1}_${x2}_${y2}`;
+            styleSheet.innerHTML += `
+                @keyframes ${animationName} {
+                    0% { transform: translate(${x1}px, ${y1}px); }
+                    100% { transform: translate(${x2}px, ${y2}px); }
+                }
+            `;
+
+            document.head.appendChild(styleSheet);
+            tileContainer.style.animation = `${animationName} ${time}ms linear forwards`;
+            tileContainer.style.transform = "transform: translate(${x2}px, ${y2}px)";
+            return tileContainer;
+        }
+
+
 
         async function renderMap() {
             await fetch('user_data.php', {
@@ -191,6 +202,7 @@
                     if (data.success) {
                         originX = data.x;
                         originY = data.y;
+                        userId = data.id;
                         absoluteX = originX;
                         absoluteY = originY;
                         //console.log(data.x, "-", data.y);
@@ -224,15 +236,9 @@
 
             mapElement = document.getElementById('mapGrid');
             mapElement.innerHTML = ""; // Lösche den alten Inhalt des Elements
+            document.getElementById("Moves").innerHTML = "";
+            savedUsers.clear();
 
-            //Character:
-            character = document.createElement('img');
-            character.id = 'character';
-            character.style.width = `${blockSize}px`;
-            character.style.height = `${blockSize}px`;
-            character.style.transform = `translate(${middle * (blockSize + 2)}px, ${middle * (blockSize + 2)}px)`;
-            mapElement.appendChild(character);
-            loadCharacter(token);
 
             crosshair = document.createElement('div');
             crosshair.id = 'crosshair';
@@ -250,8 +256,6 @@
             document.addEventListener('keydown', eventListener);
 
             const layers = [];
-
-            // Find the maximum x and y values to define the map dimensions
             const maxX = Math.max(...mapData.map.map(tile => tile.x));
             const maxY = Math.max(...mapData.map.map(tile => tile.y));
 
@@ -317,10 +321,68 @@
                     mapElement.appendChild(tileContainer);
                 });
             });
+        }
 
+        async function renderUsers() {
+            const response = await fetch('https://v2202410237002289383.megasrv.de/users?x=' + originX + '&y=' + originY + '&r=4');
+            const users = await response.json();
+
+            users.users.forEach((user) => {
+                user.x = (user.x - originX + middle) * (blockSize + 2);
+                user.y = (user.y - originY + middle) * (blockSize + 2);
+
+                let previousUser = savedUsers.get(user.id);
+                let hasChanged = !previousUser || previousUser.x !== user.x || previousUser.y !== user.y || previousUser.action !== user.action;
+                if (!hasChanged) return;
+
+                var tileContainer;
+                tileContainer = setMove(user.x, user.y, user.x, user.y, user.action_time);
+                if (user.action === "left") {
+                    tileContainer = setMove(user.x, user.y, user.x - (blockSize + 2) / 2, user.y, user.action_time);
+                } else if (user.action === "right") {
+                    tileContainer = setMove(user.x, user.y, user.x + (blockSize + 2)(2), user.y, user.action_time);
+                } else if (user.action === "up") {
+                    tileContainer = setMove(user.x, user.y, user.x, user.y - (blockSize + 2) / 2, user.action_time);
+                } else if (user.action === "down") {
+                    tileContainer = setMove(user.x, user.y, user.x, user.y + (blockSize + 2)(2), user.action_time);
+                }
+
+                var imgPath = "../CMS/getAsset.php";
+                if (user.action === "build") {
+                    imgPath = "img/build.png";
+                } else if (user.action === "mine") {
+                    imgPath = "img/mine.png";
+                } else if (user.action === "attack") {
+                    imgPath = "img/attack.png";
+                }
+
+                if (user.id === userId) {
+                    if (user.action === "ready") {
+                        crosshair.style.opacity = 1;
+                        ready = true;
+                    } else {
+                        crosshair.style.opacity = 0;
+                        ready = false;
+                        startProgress(user.action, user.action_time);
+                    }
+                }
+
+
+                tileContainer.classList.add('tile', 'user-tile', user.action);
+                tileContainer.id = "user" + user.id;
+                tileContainer.style.zIndex = 1000;
+                tileContainer.innerHTML = `<div class='user-name'>${user.username}</div><img src="${imgPath}?action=getImg&type=character&id=${user.character}" style="width: ${blockSize}px; height: ${blockSize}px;" />`;
+                mapElement.appendChild(tileContainer);
+
+                savedUsers.set(user.id, { x: user.x, y: user.y, action: user.action });
+            });
         }
 
         renderMap();
+        renderUsers();
+
+        //setInterval(() => { renderMap(); }, 10000);
+        setInterval(() => { renderUsers(); }, 500);
     </script>
 </body>
 
