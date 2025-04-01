@@ -126,7 +126,7 @@ try {
                 if ($data['get'] == "legitimation") {
                     echo json_encode(['success' => true]);
                 } else if ($data['get'] == "position") {
-                    echo json_encode(['success' => true, 'x' => $userData['user_x'], 'y' => $userData['user_y']]);
+                    echo json_encode(['success' => true, 'x' => $userData['user_x'], 'y' => $userData['user_y'], 'id' => $userData['user_id']]);
                 } else if ($data['get'] == "inventory") {
                     echo json_encode(['success' => true, 'inventory' => $userData['user_inventory']]);
                 } else if ($data['get'] == "character") {

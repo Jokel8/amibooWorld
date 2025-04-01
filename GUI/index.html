@@ -15,9 +15,6 @@
 
         <div id="joystick">Joystick Lädt...</div>
         <div id="instructor" class="container">Instructor Lädt..</div>
-        <div class="progress-container">
-            <div class="progress-bar" id="progress-bar">0%</div>
-        </div>
         <div id="reinraus">
             <button onclick="reinraus()">
                 <svg xmlns="http://www.w3.org/2000/svg" id="reinrausicon" class="icon" viewBox="0 -960 960 960">
@@ -47,17 +44,21 @@
 
             <div id="agieren" class="functioncontainer active">
                 <h1 id="uberschrift">Operationen</h1>
-                <div class="buttonfunctioncontainer1" style="overflow-x: auto;">
-                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonLaufen"
-                        onclick="wait()">[1] Hier warten</button>
+                <div id="progress-container">
+                    <div id="progress-description">Aktion</div>
+                    <div id="progress-bar">0%</div>
+                </div>
+                <div class="buttonfunctioncontainer1">
                     <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonAbbauen"
-                        onclick="abbauen()">[2] Abbauen</button>
+                        onclick="abbauen()">[1] Abbauen</button>
                     <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonAngreifen"
-                        onclick="angreifen()">[3] Angreifen</button>
+                        onclick="angreifen()">[2] Angreifen</button>
                     <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonBauen"
-                        onclick="bauen()">[4] Haus bauen</button>
+                        onclick="bauen()">[3] Haus bauen</button>
                     <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonHandeln"
-                        onclick="handeln()">[5] Items handeln</button>
+                        onclick="handeln()">[4] Items handeln</button>
+                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonLaufen"
+                        onclick="wait()">[⏎] Ausführen</button>
                 </div>
             </div>
 
@@ -241,6 +242,7 @@
                 .catch(error => {
                     console.error('Fehler:', error);
                 });
+            steps = [];
         }
 
         //Actionbuttons:
@@ -255,7 +257,7 @@
             if (button.classList.contains("deactivated")) {
                 alert("Auf diesem Feld sind keine Rohstoffe mehr.");
             } else {
-                steps.push({  x: absoluteX, y: absoluteY, 'action': "mine", "time": 5000 });
+                steps.push({ x: absoluteX, y: absoluteY, 'action': "mine", "time": 5000 });
             }
         }
 
@@ -264,7 +266,7 @@
             if (button.classList.contains("deactivated")) {
                 alert("Auf diesem Feld ist kein Gegner.");
             } else {
-                steps.push({  x: absoluteX, y: absoluteY, 'action': "attack", "time": 1000 });
+                steps.push({ x: absoluteX, y: absoluteY, 'action': "attack", "time": 1000 });
             }
         }
 
@@ -309,7 +311,7 @@
         });
         window.addEventListener("resize", checkOrientation);
 
-        if(getCookie("actionlistEnabled") === "false") {
+        if (getCookie("actionlistEnabled") === "false") {
             reinraus();
         }
 
@@ -327,20 +329,33 @@
             }
         }
 
-        function startProgress(duration) {
-            let progressBar = document.getElementById("progress-bar");
+        function startProgress(action, duration) {
+            console.log("Start Progress: " + action + " for " + duration + "ms");
+            let description = document.getElementById("progress-description");
+            description.textContent = action;
+            let bar = document.getElementById("progress-bar");
             let startTime = Date.now();
-            let endTime = startTime + duration * 1000;
+            let endTime = startTime + duration;
+
+            let buttons = document.getElementsByClassName("buttonfunctioncontainer1")[0];
+            buttons.style.display = "none";
+            let container = document.getElementById("progress-container");
+            container.style.display = "block";
 
             function updateProgress() {
                 let now = Date.now();
                 let elapsed = now - startTime;
-                let progress = Math.min((elapsed / (duration * 1000)) * 100, 100);
-                progressBar.style.width = progress + "%";
-                progressBar.textContent = Math.round(progress) + "%";
+                let progress = Math.min((elapsed / (duration)) * 100, 100);
+                bar.style.width = progress + "%";
+                bar.textContent = Math.round(progress) + "%";
 
                 if (now < endTime) {
                     requestAnimationFrame(updateProgress);
+                } else {
+                    container.style.display = "none";
+                    buttons.style.display = "block";
+                    crosshair.style.opacity = 1;
+                    ready = true;
                 }
             }
             requestAnimationFrame(updateProgress);

@@ -97,7 +97,7 @@ public class Datenbank {
     public ResultSet dbGetUserFast(int x, int y, int radius) {
         //query bauen
         StringBuilder query = new StringBuilder();
-        query.append("SELECT user_x, user_y, user_action, user_action_time, user_character, user_name FROM user ");
+        query.append("SELECT user_id, user_x, user_y, user_action, user_action_time, user_character, user_name FROM user ");
         query.append("WHERE (");
 
         // X-coordinate conditions with boundary checks and wrapping logic
@@ -136,7 +136,7 @@ public class Datenbank {
         }
 
         query.append(")");
-        query.append(";");
+        query.append(" ORDER BY user_last_login DESC LIMIT 100;");
 
         //System.out.println(query.toString());
 
@@ -305,6 +305,7 @@ public class Datenbank {
                 user.put("action_time", rs.getInt("user_action_time"));
                 user.put("username", rs.getString("user_name"));
                 user.put("character", rs.getInt("user_character"));
+                user.put("id", rs.getInt("user_id"));
 
                 users.put(user);
             }
@@ -557,5 +558,16 @@ public class Datenbank {
     public void setAction(String action, int time, int id) {
         String query = "UPDATE user SET user_action = " + action + ", user_action_time = " + time + "WHERE user_id = " + id;
         this.updateMachen(query);
+    }
+    public int getHealth(int id) {
+        String query = "SELECT user_health FROM user WHERE user_id = " + id;
+        ResultSet rs = this.abfragMachen(query);
+        if (rs != null) try {
+            rs.next();
+            return rs.getInt("user_health");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
     }
 }
