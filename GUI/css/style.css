@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'Pixelschrift';
-    src: url('/GUI/fonts/PixelifySans-VariableFont_wght.ttf') format('truetype');
+    src: url('/amibooWorld/GUI/fonts/PixelifySans-VariableFont_wght.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -16,6 +16,7 @@ body {
     overflow: hidden;
     margin: 0;
     position: relative;
+    font-family: Pixelschrift;
 }
 
 #gesamtaction {
@@ -261,9 +262,7 @@ h2{
     }
 
     button {
-        min-width: fit-content;
         background-color: #37b1bc;
-        border-radius: 5px;
     }
 
     button:hover {
@@ -278,11 +277,15 @@ h2{
     }
 
     #prev {
+        min-width: fit-content;
         width: 30%;
+        border-radius: 5px;
     }
 
     #next {
+        min-width: fit-content;
         width: 30%;
+        border-radius: 5px;
     }
 
     #amiibo {
@@ -296,7 +299,22 @@ h2{
         color: #37b1bc;
         display: inline;
     }
+}
 
+#closeBut{
+    display: none;
+    width: 2vw;
+    height: 2vw;
+    margin-left: 90%;
+    position: fixed;
+    border-radius: 5px;
+    margin-top: 0%;
+    padding-left: 0;
+}
+
+#closeBut img{
+    width: 2vw;
+    height: 2vw;
 }
 
 #uberschrift {
@@ -420,6 +438,7 @@ h2{
         height: 100%;
         width: 100%;
         background-color: #37b1bc;
+        border-radius: 10px;
     }
     
     .button:hover {
