@@ -1,10 +1,6 @@
 
+<h1>Inventar</h1>
 <div id="itemArray" class="grid"></div>
-<div id="itemDescription" class="descriptionBox">
-    <h2>Dieses Item verkaufen?</h2>
-    <button onclick="itemDescription.classList.remove('visible')">Abbrechen</button>
-    <button onclick="sellItem()">Verkaufen</button>
-</div>
 
 <script>
     //CSS: Mit auto-reload:
@@ -56,7 +52,15 @@
         const response = await fetch('https://v2202410237002289383.megasrv.de/inventory?token=' + token);
         var inventoryData = await response.json();
         inventoryData = inventoryData.items;
-        console.log(inventoryData);
+        //console.log("Inventar: " + inventoryData);
+
+        if(inventoryData.length == 0) {
+            const container = document.getElementById("itemArray");
+            container.appendChild(document.createElement('h2'));
+            const emptyMessage = document.createElement('h2');
+            emptyMessage.textContent = "Inventar ist noch leer";
+            container.appendChild(emptyMessage);
+        }
 
         while (inventoryData.length > 0) {
             const item = inventoryData.pop();
@@ -66,8 +70,12 @@
 
     function sellItem(name) {
         itemDescription.classList.remove('visible')
-        console.log('Noch nicht implementiert');
-        fetch('https://v2202410237002289383.megasrv.de/trade?token=' + token + '&buyer=SERVER' + '&item=' + name + '&menge=10');
+        fetch('https://v2202410237002289383.megasrv.de/trade?token=' + token + '&buyer=SERVER&item=' + name + '&menge=10');
+    }
+
+    function eatItem(id) {
+        itemDescription.classList.remove('visible')
+        fetch('https://v2202410237002289383.megasrv.de/eat?token=' + token + '&item=' + id);
     }
 
     async function showDescription(item_id, name) {
@@ -118,6 +126,11 @@
         verkaufen.textContent = "Verkaufen";
         verkaufen.onclick = () => sellItem(name);
         itemDescription.appendChild(verkaufen);
+
+        const essen = document.createElement("button");
+        essen.textContent = "Essen";
+        essen.onclick = () => eatItem(data.name);
+        itemDescription.appendChild(essen);
 
         const abbrechen = document.createElement("button");
         abbrechen.textContent = "Abbrechen";
