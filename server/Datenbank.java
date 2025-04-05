@@ -97,7 +97,7 @@ public class Datenbank {
     public ResultSet dbGetUserFast(int x, int y, int radius) {
         //query bauen
         StringBuilder query = new StringBuilder();
-        query.append("SELECT user_id, user_x, user_y, user_action, user_action_time, user_character, user_name FROM user ");
+        query.append("SELECT user_step, user_id, user_x, user_y, user_action, user_action_time, user_character, user_name FROM user ");
         query.append("WHERE (");
 
         // X-coordinate conditions with boundary checks and wrapping logic
@@ -306,6 +306,7 @@ public class Datenbank {
                 user.put("username", rs.getString("user_name"));
                 user.put("character", rs.getInt("user_character"));
                 user.put("id", rs.getInt("user_id"));
+                user.put("step", rs.getInt("user_step"));
 
                 users.put(user);
             }
@@ -556,7 +557,7 @@ public class Datenbank {
         return null;
     }
     public void setAction(String action, int time, int id) {
-        String query = "UPDATE user SET user_action = " + action + ", user_action_time = " + time + "WHERE user_id = " + id;
+        String query = "UPDATE user SET user_action = '" + action + "', user_action_time = " + time + " WHERE user_id = " + id;
         this.updateMachen(query);
     }
     public int getHealth(int id) {
@@ -569,5 +570,9 @@ public class Datenbank {
             throw new RuntimeException(e);
         }
         return 0;
+    }
+    public void setUserStep(int step, int id) {
+        String query = "UPDATE user SET user_step = " + step + " WHERE user_id = " + id;
+        this.updateMachen(query);
     }
 }
