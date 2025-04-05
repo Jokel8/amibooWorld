@@ -108,7 +108,9 @@ public class APIServer extends HttpServer {
                     String queueS = this.datenbank.getQueue(id);
                     Queue queue = new Queue(queueS, this, id);
                     if (this.datenbank.getAction(id).equals("ready")) queue.startQueue();
-                    antwort.append("HTTP/1.1 204 No Content\n");
+                    antwort.append("HTTP/1.1 204 No Content\n" +
+                                    "Content-Type: application/json\n" +
+                                    "Access-Control-Allow-Origin: *\n\n");
                 }
                 case "characters" -> {
                     String html = this.datenbank.getCharacters();

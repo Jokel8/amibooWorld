@@ -236,10 +236,12 @@
             return null;
         }
 
-        function sendQueue(steps) {
+        async function sendQueue(steps) {
             console.log(steps);
+            total_step = steps.length;
+            console.log(total_step);
 
-            fetch('user_data.php', {
+            await fetch('user_data.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -256,12 +258,12 @@
                     console.error('Fehler:', error);
                 });
             steps = [];
+            await fetch('https://v2202410237002289383.megasrv.de/startqueue?token=' + token);
         }
 
         //Actionbuttons:
         async function wait() {
             await sendQueue(steps);
-            await fetch('https://v2202410237002289383.megasrv.de/startqueue?token=' + token);
             steps = [];
         }
 

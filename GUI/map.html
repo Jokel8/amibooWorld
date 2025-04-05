@@ -45,15 +45,20 @@
 
         let createdUsers = new Map();
         var ready = true;
+        let old_x;
+        let old_y;
+
+        let total_step;
 
         class Spieler {
-            constructor(character, action, action_time, x, y, id, username) {
+            constructor(character, action, action_time, x, y, id, username, step) {
                 this.character = character;
                 this.action_time = action_time;
                 this.x = x;
                 this.y = y;
                 this.id = id;
                 this.username = username;
+                this.step = step;
             }
         }
 
@@ -67,7 +72,7 @@
 
         function updateCrosshair() {
             crosshair.style.transform = `translate(${crosshairX * (blockSize + 2)}px, ${crosshairY * (blockSize + 2)}px)`;
-            steps.push({ x: absoluteX, y: absoluteY, time: 2000, 'action': "walk"});
+            steps.push({ x: absoluteX, y: absoluteY, time: 1000, 'action': "walk"});
             console.log(`Moved to: (${absoluteX}, ${absoluteY})`);
         }
 
@@ -323,19 +328,20 @@
 
                 var grid = document.getElementById('mapGrid');
 
-                console.log((user.x - originX + middle), (height - 1 - (user.y - originY + middle)));
-                user.x = (user.x - originX + middle) * (blockSize + 2);
-                user.y = (height - 1 - (user.y - originY + middle)) * (blockSize + 2);
+
+                pixelX = (user.x - originX + middle) * (blockSize + 2);
+                pixelY = (height - 1 - (user.y - originY + middle)) * (blockSize + 2);
 
                 if (!createdUsers.has(user.id)) {
                     const spieler = new Spieler(
                         user.character,
                         user.action,
                         user.action_time,
-                        user.x,
-                        user.y,
+                        pixelX,
+                        pixelY,
                         user.id,
-                        user.username
+                        user.username,
+                        user.step
                     );
                     //user as html
                     const userDiv = document.createElement('div');
@@ -352,15 +358,16 @@
                         imgPath = "img/attack.png";
                     }
                     userDiv.innerHTML = `<div class='user-name'>${user.username}</div><img src="${imgPath}?action=getImg&type=character&id=${user.character}" style="width: ${blockSize}px; height: ${blockSize}px;" />`;
-                    userDiv.style.transform = `translate(${user.x}px, ${user.y}px)`;
+                    userDiv.style.transform = `translate(${pixelX}px, ${pixelY}px)`;
                     grid.appendChild(userDiv);
 
                     createdUsers.set(user.id, spieler);
                     console.log("Created user:", user.id);
                 } else if (user.action !== "ready") {
                     const tmp = createdUsers.get(user.id);
-                    tmp.x = user.x;
-                    tmp.y = user.y;
+                    tmp.x = pixelX;
+                    tmp.y = pixelY;
+                    tmp.step = user.step;
                     const userDiv = document.getElementById(user.id);
 
                     if (userDiv) {
@@ -388,22 +395,32 @@
 
                         // Disable transition, set start transform instantly
                         userDiv.style.transition = 'none';
-                        userDiv.style.transform = `translate(${user.x}px, ${user.y}px)`;
+                        userDiv.style.transform = `translate(${pixelX}px, ${pixelY}px)`;
 
                         // Force layout flush
                         void userDiv.offsetWidth;
 
                         // Set transition and target transform
                         userDiv.style.transition = `transform ${duration} ${easing}`;
-                        userDiv.style.transform = `translate(${user.x + moveX}px, ${user.y + moveY}px)`;
+                        userDiv.style.transform = `translate(${pixelX + moveX}px, ${pixelY + moveY}px)`;
+                    }
+                } else if (user.action === "ready"){
+                    const userDiv = document.getElementById(user.id);
+                    userDiv.style.transition = 'none';
+                    userDiv.style.transform = `translate(${pixelX}px, ${pixelY}px)`;
 
-                        console.log(`Animated user ${user.id} with transform transition`);
+                    if (user.id == userId) {
+                        if ((originX != user.x || originY != user.y) && user.action === "ready") {
+                            console.log('rerender', originX, originY, user.x, user.y);
+                            renderMap();
+                        }
+                        old_x = pixelX;
+                        old_y = pixelY;
                     }
                 }
 
-
-                if (user.id === userId) {
-                    if (user.action === "ready") {
+                if (user.id == userId) {
+                    if (user.action == "ready") {
                         crosshair.style.opacity = 1;
                         ready = true;
                     } else {
@@ -412,8 +429,8 @@
                         startProgress(user.action, user.action_time);
                     }
                 }
-
             });
+
         }
 
         renderMap();
