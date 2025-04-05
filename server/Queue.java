@@ -62,6 +62,7 @@ public class Queue {
                     if (y_next == y && x_next == x) laufRichtung = thisAction;
                 }
                 this.server.datenbank.setAction(laufRichtung, action.getInt("time"), this.id);
+                this.server.datenbank.setUserStep(i, this.id);
             } else {
                 this.server.datenbank.setAction("ready", 0, this.id);
                 this.server.datenbank.resetQueue(this.id);
