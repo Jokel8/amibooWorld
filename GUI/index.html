@@ -78,6 +78,22 @@
         <button onclick="sellItem()">Verkaufen</button>
     </div>
 
+    <div id="changePassword">
+        <h2>Passwort ändern</h2>
+        <input type="password" id="changePass1" placeholder="Neues Passwort" required><br>
+        <input type="password" id="changePass2" placeholder="Neues Passwort bestätigen" required><br>
+        <button id="changePwBut" onclick="">Ändern</button>
+        <button id="changePwabbruch" onclick="getElementById('changePassword').style.display = 'none'">Abbrechen</button>
+    </div>
+
+    <div id="Raketenabschuss">
+        <h2>ICBM Start</h2>
+        <input type="number" id="raketeX" placeholder="X-Koordinate" required><br>
+        <input type="number" id="raketeY" placeholder="Y-Koordinate" required><br>
+        <button id="abschussBut" onclick="">Abschießen</button>
+        <button id="abschussAbbruchBut" onclick="getElementById('Raketenabschuss').style.display = 'none'">Abbrechen</button>
+    </div>
+
     <script>
         function getQueryParam(name) {
             const urlParams = new URLSearchParams(window.location.search);

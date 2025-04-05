@@ -60,7 +60,7 @@
 
     <div class="settings-group">
         <div class="settings-header">Sicherheit</div>
-        <button class="btn btn-primary">Passwort ändern</button>
+        <button class="btn btn-primary" onclick="changePW()">Passwort ändern</button>
         <button class="btn btn-primary" onclick="window.location.href = '?'">Logout</button>
         <button class="btn btn-danger" onclick="performDelete()">Account löschen</button>
     </div>
@@ -211,6 +211,9 @@
                         console.error('Fehler:', error);
                     });
             }
+        }
+        function changePW(){
+            document.getElementById("changePassword").style.display = "inline";
         }
     </script>
 </body>

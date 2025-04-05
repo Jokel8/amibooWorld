@@ -100,6 +100,113 @@
     
 }
 
+#changePassword{
+    display: none;
+    position: absolute;
+    width: 25%;
+    height: fit-content;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    background-color: #d8f1f3;
+    color: black;
+    border-radius: 10px;
+    padding: 10px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+
+    #changePass1{
+        width: 65%;
+        font-size: x-large;
+    }
+    #changePass2{
+        width: 65%;
+        font-size: x-large;
+        margin-top: 2%;
+    }
+
+    #changePwBut{
+        margin-top: 2%;
+        width: 35%;
+        min-width: fit-content;
+        font-size: x-large;
+        background-color: #37b1bc;
+        border-radius: 5px;
+    }
+
+    #changePwBut:hover {
+        background-color: #ff4444;
+    }
+    #changePwabbruch{
+        margin-top: 2%;
+        width: 35%;
+        min-width: fit-content;
+        font-size: x-large;
+        background-color: #37b1bc;
+        border-radius: 5px;
+    }
+    #changePwabbruch:hover {
+        background-color: #ff4444;
+    }
+
+}
+
+#Raketenabschuss{
+    display: none;
+    position: absolute;
+    width: 25%;
+    height: fit-content;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    background-color: #d8f1f3;
+    color: black;
+    border-radius: 10px;
+    padding: 10px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+
+    #raketeX{
+        width: 65%;
+        font-size: x-large;
+    }
+
+    #raketeY{
+        width: 65%;
+        font-size: x-large;
+        margin-top: 2%;
+    }
+
+    #abschussBut{
+        margin-top: 2%;
+        width: 35%;
+        min-width: fit-content;
+        font-size: x-large;
+        background-color: #37b1bc;
+        border-radius: 5px;
+    }
+
+    #abschussBut:hover {
+        background-color: #ff4444;
+    }
+    #abschussAbbruchBut{
+        margin-top: 2%;
+        width: 35%;
+        min-width: fit-content;
+        font-size: x-large;
+        background-color: #37b1bc;
+        border-radius: 5px;
+    }
+    #abschussAbbruchBut:hover {
+        background-color: #ff4444;
+    }
+
+}
+
 .visible{
     display: block;
 }
