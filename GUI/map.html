@@ -323,8 +323,9 @@
 
                 var grid = document.getElementById('mapGrid');
 
+                console.log((user.x - originX + middle), (height - 1 - (user.y - originY + middle)));
                 user.x = (user.x - originX + middle) * (blockSize + 2);
-                user.y = (user.y - originY + middle) * (blockSize + 2);
+                user.y = (height - 1 - (user.y - originY + middle)) * (blockSize + 2);
 
                 if (!createdUsers.has(user.id)) {
                     const spieler = new Spieler(
@@ -358,6 +359,8 @@
                     console.log("Created user:", user.id);
                 } else if (user.action !== "ready") {
                     const tmp = createdUsers.get(user.id);
+                    tmp.x = user.x;
+                    tmp.y = user.y;
                     const userDiv = document.getElementById(user.id);
 
                     if (userDiv) {
@@ -376,10 +379,10 @@
                                 moveX = blockSize;
                                 break;
                             case 'up':
-                                moveY = blockSize;
+                                moveY = -blockSize;
                                 break;
                             case 'down':
-                                moveY = -blockSize;
+                                moveY = blockSize;
                                 break;
                         }
 
