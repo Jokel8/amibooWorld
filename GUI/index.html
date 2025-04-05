@@ -252,9 +252,6 @@
                 })
             })
                 .then(response => response.json())
-                .then(data => {
-                    renderMap();
-                })
                 .catch(error => {
                     console.error('Fehler:', error);
                 });

@@ -43,8 +43,19 @@
         let absoluteX;
         let absoluteY;
 
-        let savedUsers = new Map();
-        var ready;
+        let createdUsers = new Map();
+        var ready = true;
+
+        class Spieler {
+            constructor(character, action, action_time, x, y, id, username) {
+                this.character = character;
+                this.action_time = action_time;
+                this.x = x;
+                this.y = y;
+                this.id = id;
+                this.username = username;
+            }
+        }
 
         function darkenTile(x, y) {
             const tiles = mapElement.children;
@@ -56,7 +67,7 @@
 
         function updateCrosshair() {
             crosshair.style.transform = `translate(${crosshairX * (blockSize + 2)}px, ${crosshairY * (blockSize + 2)}px)`;
-            steps.push({ x: absoluteX, y: absoluteY, time: 500, 'action': "walk"});
+            steps.push({ x: absoluteX, y: absoluteY, time: 2000, 'action': "walk"});
             console.log(`Moved to: (${absoluteX}, ${absoluteY})`);
         }
 
@@ -166,25 +177,6 @@
             }
         }
 
-        function setMove(x1, y1, x2, y2, time,) {
-            tileContainer = document.createElement('div');
-            const styleSheet = document.getElementById("Moves");
-            const animationName = `move_${x1}_${y1}_${x2}_${y2}`;
-            styleSheet.innerHTML += `
-                @keyframes ${animationName} {
-                    0% { transform: translate(${x1}px, ${y1}px); }
-                    100% { transform: translate(${x2}px, ${y2}px); }
-                }
-            `;
-
-            document.head.appendChild(styleSheet);
-            tileContainer.style.animation = `${animationName} ${time}ms linear forwards`;
-            tileContainer.style.transform = "transform: translate(${x2}px, ${y2}px)";
-            return tileContainer;
-        }
-
-
-
         async function renderMap() {
             await fetch('user_data.php', {
                 method: 'POST',
@@ -237,7 +229,7 @@
             mapElement = document.getElementById('mapGrid');
             mapElement.innerHTML = ""; // Lösche den alten Inhalt des Elements
             document.getElementById("Moves").innerHTML = "";
-            savedUsers.clear();
+            createdUsers.clear();
 
 
             crosshair = document.createElement('div');
@@ -328,33 +320,84 @@
             const users = await response.json();
 
             users.users.forEach((user) => {
+
+                var grid = document.getElementById('mapGrid');
+
                 user.x = (user.x - originX + middle) * (blockSize + 2);
                 user.y = (user.y - originY + middle) * (blockSize + 2);
 
-                let previousUser = savedUsers.get(user.id);
-                let hasChanged = !previousUser || previousUser.x !== user.x || previousUser.y !== user.y || previousUser.action !== user.action;
-                if (!hasChanged) return;
+                if (!createdUsers.has(user.id)) {
+                    const spieler = new Spieler(
+                        user.character,
+                        user.action,
+                        user.action_time,
+                        user.x,
+                        user.y,
+                        user.id,
+                        user.username
+                    );
+                    //user as html
+                    const userDiv = document.createElement('div');
+                    userDiv.classList.add('user');
+                    userDiv.classList.add('user-tile');
+                    userDiv.id = user.id;
+                    userDiv.style.zIndex = 1000;
+                    var imgPath = "../CMS/getAsset.php";
+                    if (user.action === "build") {
+                        imgPath = "img/build.png";
+                    } else if (user.action === "mine") {
+                        imgPath = "img/mine.png";
+                    } else if (user.action === "attack") {
+                        imgPath = "img/attack.png";
+                    }
+                    userDiv.innerHTML = `<div class='user-name'>${user.username}</div><img src="${imgPath}?action=getImg&type=character&id=${user.character}" style="width: ${blockSize}px; height: ${blockSize}px;" />`;
+                    userDiv.style.transform = `translate(${user.x}px, ${user.y}px)`;
+                    grid.appendChild(userDiv);
 
-                var tileContainer;
-                tileContainer = setMove(user.x, user.y, user.x, user.y, user.action_time);
-                if (user.action === "left") {
-                    tileContainer = setMove(user.x, user.y, user.x - (blockSize + 2) / 2, user.y, user.action_time);
-                } else if (user.action === "right") {
-                    tileContainer = setMove(user.x, user.y, user.x + (blockSize + 2)(2), user.y, user.action_time);
-                } else if (user.action === "up") {
-                    tileContainer = setMove(user.x, user.y, user.x, user.y - (blockSize + 2) / 2, user.action_time);
-                } else if (user.action === "down") {
-                    tileContainer = setMove(user.x, user.y, user.x, user.y + (blockSize + 2)(2), user.action_time);
+                    createdUsers.set(user.id, spieler);
+                    console.log("Created user:", user.id);
+                } else if (user.action !== "ready") {
+                    const tmp = createdUsers.get(user.id);
+                    const userDiv = document.getElementById(user.id);
+
+                    if (userDiv) {
+                        const duration = `${user.action_time}ms`;
+                        const easing = 'linear';
+
+                        // Calculate directional offset
+                        let moveX = 0;
+                        let moveY = 0;
+
+                        switch (user.action) {
+                            case 'left':
+                                moveX = -blockSize;
+                                break;
+                            case 'right':
+                                moveX = blockSize;
+                                break;
+                            case 'up':
+                                moveY = blockSize;
+                                break;
+                            case 'down':
+                                moveY = -blockSize;
+                                break;
+                        }
+
+                        // Disable transition, set start transform instantly
+                        userDiv.style.transition = 'none';
+                        userDiv.style.transform = `translate(${user.x}px, ${user.y}px)`;
+
+                        // Force layout flush
+                        void userDiv.offsetWidth;
+
+                        // Set transition and target transform
+                        userDiv.style.transition = `transform ${duration} ${easing}`;
+                        userDiv.style.transform = `translate(${user.x + moveX}px, ${user.y + moveY}px)`;
+
+                        console.log(`Animated user ${user.id} with transform transition`);
+                    }
                 }
 
-                var imgPath = "../CMS/getAsset.php";
-                if (user.action === "build") {
-                    imgPath = "img/build.png";
-                } else if (user.action === "mine") {
-                    imgPath = "img/mine.png";
-                } else if (user.action === "attack") {
-                    imgPath = "img/attack.png";
-                }
 
                 if (user.id === userId) {
                     if (user.action === "ready") {
@@ -367,14 +410,6 @@
                     }
                 }
 
-
-                tileContainer.classList.add('tile', 'user-tile', user.action);
-                tileContainer.id = "user" + user.id;
-                tileContainer.style.zIndex = 1000;
-                tileContainer.innerHTML = `<div class='user-name'>${user.username}</div><img src="${imgPath}?action=getImg&type=character&id=${user.character}" style="width: ${blockSize}px; height: ${blockSize}px;" />`;
-                mapElement.appendChild(tileContainer);
-
-                savedUsers.set(user.id, { x: user.x, y: user.y, action: user.action });
             });
         }
 
@@ -382,7 +417,7 @@
         renderUsers();
 
         //setInterval(() => { renderMap(); }, 10000);
-        setInterval(() => { renderUsers(); }, 500);
+        setInterval(() => { renderUsers(); }, 1000);
     </script>
 </body>
 
