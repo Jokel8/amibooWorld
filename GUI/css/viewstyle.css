@@ -1,0 +1,525 @@
+@font-face {
+    font-family: 'Pixelschrift';
+    src: url('/GUI/fonts/PixelifySans-VariableFont_wght.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    font-family: Pixelschrift;
+}
+
+body {
+    height: 100vh;
+    width: 100vw;
+    margin: 0%;
+    overflow: hidden;
+    margin: 0;
+    position: relative;
+    font-family: Pixelschrift;
+}
+
+#gesamtaction {
+    float: right;
+}
+
+#buttoncontainer {
+    width: 100%;
+    height: 8%;
+    display: flex;
+}
+
+.button {
+    width: 100%;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    background-color: #37b1bc;
+}
+
+.button.active {
+    background-color: #fc5658;
+}
+
+.icon {
+    height: 80%;
+    aspect-ratio: 1/1;
+    fill: black;
+    transition: 1s;
+}
+
+h1 {
+    color: #FF4444;
+}
+
+h2 {
+    color: #37b1bc;
+}
+
+
+.functioncontainer {
+    display: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 93%;
+    color: white;
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 100px;
+}
+
+.functioncontainer {
+    animation: slide 0.5s ease-in-out;
+}
+
+@keyframes slide {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+.active {
+    display: block;
+}
+
+.tableb {
+    margin-left: 10%;
+    margin-right: 10%;
+    width: 80%;
+}
+
+.buttonfunctioncontainer1buttons {
+    font-size: 20px;
+    width: 100%;
+    margin-top: 10%;
+    padding-top: 5%;
+    padding-bottom: 5%;
+    height: 5%;
+    border-radius: 15px;
+    background-color: #37b1bc;
+}
+
+.buttonfunctioncontainer1buttons:hover {
+    background-color: #2e7980;
+}
+
+.deactivated,
+.deactivated:hover {
+    background-color: #333;
+    cursor: not-allowed;
+}
+
+.info-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 10px;
+}
+
+.container {
+    border-radius: 10px;
+}
+
+#map {
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#mapInformation {
+    margin: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+#mapGrid {
+    display: grid;
+    background-color: #333;
+    padding: 10px;
+    gap: 2px;
+    border-radius: 5px;
+}
+
+.tile {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: default;
+}
+
+.tile-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+}
+
+.tile:hover .resources {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    display: flex;
+    gap: 5px;
+    transition: 1s;
+
+    i {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        background-size: cover;
+    }
+
+    .gold {
+        background-image: url(../img/stone.jfif);
+    }
+
+    .tree {
+        background-image: url(../img/wood.jfif);
+    }
+}
+
+.user-tile {
+    z-index: 9999;
+    position: absolute;
+    height: 100px;
+    width: 100px;
+    transition: left 0ms ease, top 0ms ease;
+
+    img {
+        border-radius: 50%;
+        outline-style: solid;
+        outline-color: red;
+        outline-width: 5px;
+        outline-offset: 10px;
+        animation: growOutline 0.5s;
+    }
+}
+
+.user-name {
+    display: none;
+    position: absolute;
+    top: 30px;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    font-size: 20px;
+    color: white;
+    text-shadow: 0 0 5px red, 0 0 10px red, 0 0 15px red, 0 0 20px red;
+}
+
+.user-tile:hover {
+
+
+    .user-name {
+        display: block;
+    }
+}
+
+.left {
+    padding-right: 50px;
+}
+
+@keyframes growOutline {
+    0% {
+        outline-width: 0px;
+        outline-offset: 20px;
+    }
+
+    100% {
+        outline-width: 5px;
+        outline-offset: 10px;
+    }
+}
+
+.walkable {
+    cursor: pointer;
+}
+
+.walkable:hover {
+    z-index: 9998;
+    outline: 2px solid yellow;
+    transform: scale(1.1);
+}
+
+.not-walkable {
+    cursor: not-allowed;
+}
+
+.not-walkable::before {
+    content: '✖';
+    color: red;
+    font-size: 30px;
+    position: absolute;
+}
+
+#crosshair {
+    z-index: 9999;
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    pointer-events: none;
+    background-image: url(../img/crosshair.svg);
+}
+
+#character {
+    z-index: 9999;
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    pointer-events: none;
+}
+
+
+#actionlist {
+    width: 30%;
+    height: 100%;
+    position: fixed;
+    right: 0px;
+    top: 0px;
+}
+
+#joystick {
+    position: fixed;
+    left: 5px;
+    bottom: 5px;
+    background: none;
+}
+
+#instructor {
+    width: 34%;
+    height: fit-content;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    color: white;
+
+    h1 {
+        text-align: center;
+    }
+
+    p {
+        text-align: center;
+        font-size: large;
+    }
+
+    button {
+        background-color: #37b1bc;
+    }
+
+    button:hover {
+        background-color: #ff4444;
+    }
+
+    #manualButtons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    #prev {
+        min-width: fit-content;
+        width: 30%;
+        border-radius: 5px;
+    }
+
+    #next {
+        min-width: fit-content;
+        width: 30%;
+        border-radius: 5px;
+    }
+
+    #amiibo {
+        font-size: 40px;
+        color: #ff4444;
+        display: inline;
+    }
+
+    #world {
+        font-size: 40px;
+        color: #37b1bc;
+        display: inline;
+    }
+}
+
+#closeBut{
+    display: none;
+    width: 2vw;
+    height: 2vw;
+    margin-left: 90%;
+    position: fixed;
+    border-radius: 5px;
+    margin-top: 0%;
+    padding-left: 0;
+}
+
+#closeBut img{
+    width: 2vw;
+    height: 2vw;
+}
+
+.uberschrift {
+    color: #ff4444;
+}
+
+.square-box {
+    width: 20vw;
+    height: 20vw;
+    background-color: oppasity;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0;
+    border: 2px solid oppasity;
+    border-radius: 10px;
+}
+
+.inner-box {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+}
+
+.inner-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    /* Bild anpassen, ohne Verzerrung */
+}
+
+.inner-box.transparent {
+    background-color: transparent;
+}
+
+.inner-box.solid {
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    background-color: #37b1bc;
+    border: none;
+    color: white;
+}
+
+.inner-box.solid:hover {
+    transition: 0.2s;
+    background-color: #ff4444;
+    color: white;
+}
+
+#svgjoy {
+    width: 7vh;
+    height: 7vh;
+}
+
+#top {
+    transform: rotate(90deg)
+}
+
+#links {
+    transform: rotate(90deg)
+}
+
+#middle {
+    border-radius: 0px;
+    background-color: #37b1bc;
+}
+
+#bottom {
+    transform: rotate(270deg)
+}
+
+#right {
+    transform: rotate(180deg)
+}
+
+@media (max-width: 1100px) {
+    h1 {
+        margin-top: 0%;
+        font-size: x-large;
+    }
+
+    .tableb {
+        margin-top: 0%;
+    }
+}
+
+#warning {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: fit-content;
+    height: 100%;
+    overflow: hidden;
+    background-color: #ff4444;
+    color: white;
+    font-size: 7vw;
+    text-align: center;
+    font-weight: bold;
+    flex-direction: column;
+    padding: 10px;
+    padding-top: 100px;
+}
+
+#content {
+    display: block;
+    padding: 20px;
+}
+
+#reinraus {
+    position: absolute;
+    margin-left: calc(70% - 10vh);
+    height: 10vh;
+    aspect-ratio: 1/1;
+
+    button {
+        height: 100%;
+        width: 100%;
+        background-color: #37b1bc;
+        border-radius: 10px;
+    }
+
+    .button:hover {
+        background-color: #ff4444;
+    }
+}
+
+#progress-container {
+    display: none;
+    width: 100%;
+    background-color: #37b1bc;
+    border-radius: 10px;
+    overflow: hidden;
+    position: absolute;
+    margin-top: 3%;
+    margin-left: 1%;
+}
+
+#progress-bar {
+    height: 30px;
+    width: 0%;
+    background-color: #ff4444;
+    text-align: center;
+    line-height: 30px;
+    color: white;
+    font-weight: bold;
+}
