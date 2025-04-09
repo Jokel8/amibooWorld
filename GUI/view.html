@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Map Renderer</title>
+    <link rel="stylesheet" href="css/style.css?v=1">
+    <style id="Moves">
+        @keyframes move {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(0, 0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <p style="display: none;">Wenn die Map nicht reagiert, drücke Sie ein Mal an</p>
+
+    <div id="mapGrid">
+    </div>
+
+    <script>
+
+        var width;
+        var height;
+        var blockSize;
+        var middle;
+        let steps = [];
+
+        var originX;
+        var originY;
+        var userId;
+
+        var crosshair;
+        var mapElement;
+        let crosshairX;
+        let crosshairY;
+
+        let absoluteX;
+        let absoluteY;
+
+        let createdUsers = new Map();
+        var ready = true;
+        let old_x;
+        let old_y;
+
+        let total_step;
+
+        class Spieler {
+            constructor(character, action, action_time, x, y, id, username, step) {
+                this.character = character;
+                this.action_time = action_time;
+                this.x = x;
+                this.y = y;
+                this.id = id;
+                this.username = username;
+                this.step = step;
+            }
+        }
+
+        function darkenTile(x, y) {
+            const tiles = mapElement.children;
+            const index = y * width + x;
+            if (tiles[index]) {
+                tiles[index].style.filter = 'brightness(50%)';
+            }
+        }
+
+        function updateCrosshair() {
+            crosshair.style.transform = `translate(${crosshairX * (blockSize + 2)}px, ${crosshairY * (blockSize + 2)}px)`;
+            steps.push({ x: absoluteX, y: absoluteY, time: 1000, 'action': "walk"});
+            console.log(`Moved to: (${absoluteX}, ${absoluteY})`);
+        }
+
+        async function updateActions() {
+            await fetch('user_data.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'get',
+                    token: token,
+                    get: "thingsAtPosition",
+                    x: absoluteX,
+                    y: absoluteY
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.users) {
+                            document.getElementById('buttonAngreifen').classList.remove('deactivated');
+                        } else {
+                            document.getElementById('buttonAngreifen').classList.add('deactivated');
+                        }
+
+                        var onBuilding = false;
+                        for (let field of data.fields) {
+                            if (field.field_type > 99) {
+                                onBuilding = field.field_type;
+                            }
+                        }
+
+                        const buttonBauen = document.getElementById('buttonBauen');
+                        if (!onBuilding) {
+                            buttonBauen.classList.remove('deactivated');
+                            buttonBauen.innerHTML = "[4] Haus bauen";
+                        } else {
+                            if (onBuilding === 104) {
+                                buttonBauen.classList.add('deactivated');
+                            }
+                            buttonBauen.innerHTML = "[4] Haus erweitern";
+                        }
+                    } else {
+                        console.log('Abfrage fehlgeschlagen. ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fehler:', error);
+                });
+        }
+
+        function eventListener(event) {
+            if (ready) {
+                const prevX = crosshairX;
+                const prevY = crosshairY;
+
+                if (event.key === 'w' && crosshairY > 0) {
+                    const targetTile = mapElement.children[(crosshairY - 1) * width + crosshairX + 1];
+                    if (targetTile && targetTile.classList.contains('walkable')) {
+                        crosshairY--; // Nach oben bewegen
+                        absoluteY++;
+                    }
+                } else if (event.key === 's' && crosshairY < height - 1) {
+                    const targetTile = mapElement.children[(crosshairY + 1) * width + crosshairX + 1];
+                    if (targetTile && targetTile.classList.contains('walkable')) {
+                        crosshairY++; // Nach unten bewegen
+                        absoluteY--;
+                    }
+                } else if (event.key === 'a' && crosshairX > 0) {
+                    const targetTile = mapElement.children[crosshairY * width + (crosshairX - 1) + 1];
+                    if (targetTile && targetTile.classList.contains('walkable')) {
+                        crosshairX--; // Nach links bewegen
+                        absoluteX--;
+                    }
+                } else if (event.key === 'd' && crosshairX < width - 1) {
+                    const targetTile = mapElement.children[crosshairY * width + (crosshairX + 1) + 1];
+                    if (targetTile && targetTile.classList.contains('walkable')) {
+                        crosshairX++; // Nach rechts bewegen
+                        absoluteX++;
+                    }
+                } else if (event.key === 'o') {
+                    changeAktionen('agieren');
+                } else if (event.key === 'p') {
+                    changeAktionen('profil');
+                } else if (event.key === 'i') {
+                    changeAktionen('inventar');
+                } else if (event.key === 'Enter') {
+                    wait();
+                } else if (event.key === '1') {
+                    abbauen();
+                } else if (event.key === '2') {
+                    angreifen();
+                } else if (event.key === '3') {
+                    bauen();
+                } else if (event.key === '4') {
+                    changeAktionen('agieren');
+                }
+
+                if (prevX !== crosshairX || prevY !== crosshairY) {
+                    darkenTile(prevX + 1, prevY);
+                    updateCrosshair();
+                    updateActions();
+                }
+            } else {
+                alert("Bitte warten Sie, bis alle Aktionen ausgeführt worden sind.");
+            }
+        }
+
+        async function renderMap() {
+            await fetch('user_data.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'get',
+                    token: token,
+                    get: "position"
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        originX = data.x;
+                        originY = data.y;
+                        userId = data.id;
+                        absoluteX = originX;
+                        absoluteY = originY;
+                        //console.log(data.x, "-", data.y);
+                    } else {
+                        console.log('Abfrage fehlgeschlagen. ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fehler:', error);
+                });
+
+            const response = await fetch('https://v2202410237002289383.megasrv.de/map?x=' + originX + '&y=' + originY + '&r=20');
+            const mapData = await response.json();
+            console.log(mapData);
+
+            height = mapData.height;
+            width = mapData.width;
+            middle = (width - 1) / 2;
+
+            if (window.innerWidth < 750) {
+                blockSize = 25;
+            } else if (window.innerWidth < 865) {
+                blockSize = 38;
+            } else if (window.innerWidth < 1100) {
+                blockSize = 55;
+            } else if (window.innerWidth < 1375) {
+                blockSize = 65;
+            } else {
+                blockSize = 40;
+            }
+
+            mapElement = document.getElementById('mapGrid');
+            mapElement.innerHTML = ""; // Lösche den alten Inhalt des Elements
+            document.getElementById("Moves").innerHTML = "";
+            createdUsers.clear();
+
+
+            crosshair = document.createElement('div');
+            crosshair.id = 'crosshair';
+            crosshair.style.width = `${blockSize}px`;
+            crosshair.style.height = `${blockSize}px`;
+            mapElement.appendChild(crosshair);
+            crosshairX = middle;
+            crosshairY = middle;
+            updateCrosshair();
+
+            mapElement.style.gridTemplateColumns = `repeat(${width}, ${blockSize}px)`;
+            mapElement.style.gridTemplateRows = `repeat(${height}, ${blockSize}px)`;
+
+            document.removeEventListener('keydown', eventListener)
+            document.addEventListener('keydown', eventListener);
+
+            const layers = [];
+            const maxX = Math.max(...mapData.map.map(tile => tile.x));
+            const maxY = Math.max(...mapData.map.map(tile => tile.y));
+
+            // Initialize the layers as a 2D array (with y axis flipped)
+            for (let i = 0; i <= maxY; i++) {
+                layers[i] = [];
+                for (let j = 0; j <= maxX; j++) {
+                    layers[i][j] = [];
+                }
+            }
+
+            // Fill the 2D array with tiles from the mapData
+            mapData.map.forEach((tile) => {
+                const invertedY = maxY - tile.y;
+                layers[invertedY][tile.x].push(tile);
+            });
+
+            layers.forEach((row, y) => {
+                row.forEach((tileLayers, x) => {
+                    if (tileLayers.length === 0) return;
+
+                    const tileContainer = document.createElement('div');
+                    tileContainer.classList.add('tile');
+
+                    tileLayers.forEach((tileData, index) => {
+                        const tileLayer = document.createElement('div');
+                        tileLayer.classList.add('tile-layer');
+
+                        tileLayer.style.backgroundImage = 'url(../CMS/getAsset.php?action=getImg&type=field_type&id=' + tileData.properties.value + ')';
+                        tileLayer.style.zIndex = index;
+                        //tileLayer.textContent = tileData.properties.value;
+
+                        // Cursor und Interaktivität basierend auf Begehbarkeit
+                        if (tileData.properties.is_walkable) {
+                            tileContainer.classList.add('walkable');
+                        } else {
+                            tileContainer.classList.add('not-walkable');
+                        }
+
+                        tileContainer.appendChild(tileLayer);
+
+                        // Ressourcen-Icons
+                        const resourcesDiv = document.createElement('div');
+                        resourcesDiv.classList.add('resources');
+
+                        if (tileData.resources.holz > 0) {
+                            const woodIcon = document.createElement('i');
+                            woodIcon.classList.add('tree', 'text-green-500');
+                            woodIcon.title = `Holz: ${tileData.resources.holz}`;
+                            resourcesDiv.appendChild(woodIcon);
+                        }
+
+                        if (tileData.resources.gold > 0) {
+                            const goldIcon = document.createElement('i');
+                            goldIcon.classList.add('gold', 'text-yellow-500');
+                            goldIcon.title = `Gold: ${tileData.resources.gold}`;
+                            resourcesDiv.appendChild(goldIcon);
+                        }
+
+                        tileContainer.appendChild(resourcesDiv);
+                    });
+
+                    mapElement.appendChild(tileContainer);
+                });
+            });
+        }
+
+        async function renderUsers() {
+            const response = await fetch('https://v2202410237002289383.megasrv.de/users?x=' + originX + '&y=' + originY + '&r=20');
+            const users = await response.json();
+
+            users.users.forEach((user) => {
+
+                var grid = document.getElementById('mapGrid');
+
+
+                pixelX = (user.x - originX + middle) * (blockSize + 2);
+                pixelY = (height - 1 - (user.y - originY + middle)) * (blockSize + 2);
+
+                if (!createdUsers.has(user.id)) {
+                    const spieler = new Spieler(
+                        user.character,
+                        user.action,
+                        user.action_time,
+                        pixelX,
+                        pixelY,
+                        user.id,
+                        user.username,
+                        user.step
+                    );
+                    //user as html
+                    const userDiv = document.createElement('div');
+                    userDiv.classList.add('user');
+                    userDiv.classList.add('user-tile');
+                    userDiv.id = user.id;
+                    userDiv.style.zIndex = 1000;
+                    var imgPath = "../CMS/getAsset.php";
+                    if (user.action === "build") {
+                        imgPath = "img/build.png";
+                    } else if (user.action === "mine") {
+                        imgPath = "img/mine.png";
+                    } else if (user.action === "attack") {
+                        imgPath = "img/attack.png";
+                    }
+                    userDiv.innerHTML = `<div class='user-name'>${user.username}</div><img src="${imgPath}?action=getImg&type=character&id=${user.character}" style="width: ${blockSize}px; height: ${blockSize}px;" />`;
+                    userDiv.style.transform = `translate(${pixelX}px, ${pixelY}px)`;
+                    grid.appendChild(userDiv);
+
+                    createdUsers.set(user.id, spieler);
+                    console.log("Created user:", user.id);
+                } else if (user.action !== "ready") {
+                    const tmp = createdUsers.get(user.id);
+                    tmp.x = pixelX;
+                    tmp.y = pixelY;
+                    tmp.step = user.step;
+                    const userDiv = document.getElementById(user.id);
+
+                    if (userDiv) {
+                        const duration = `${user.action_time}ms`;
+                        const easing = 'linear';
+
+                        // Calculate directional offset
+                        let moveX = 0;
+                        let moveY = 0;
+
+                        switch (user.action) {
+                            case 'left':
+                                moveX = -blockSize;
+                                break;
+                            case 'right':
+                                moveX = blockSize;
+                                break;
+                            case 'up':
+                                moveY = -blockSize;
+                                break;
+                            case 'down':
+                                moveY = blockSize;
+                                break;
+                        }
+
+                        // Disable transition, set start transform instantly
+                        userDiv.style.transition = 'none';
+                        userDiv.style.transform = `translate(${pixelX}px, ${pixelY}px)`;
+
+                        // Force layout flush
+                        void userDiv.offsetWidth;
+
+                        // Set transition and target transform
+                        userDiv.style.transition = `transform ${duration} ${easing}`;
+                        userDiv.style.transform = `translate(${pixelX + moveX}px, ${pixelY + moveY}px)`;
+                    }
+                } else if (user.action === "ready"){
+                    const userDiv = document.getElementById(user.id);
+                    userDiv.style.transition = 'none';
+                    userDiv.style.transform = `translate(${pixelX}px, ${pixelY}px)`;
+
+                    if (user.id == userId) {
+                        if ((originX != user.x || originY != user.y) && user.action === "ready") {
+                            console.log('rerender', originX, originY, user.x, user.y);
+                            renderMap();
+                        }
+                        old_x = pixelX;
+                        old_y = pixelY;
+                    }
+                }
+
+                if (user.id == userId) {
+                    if (user.action == "ready") {
+                        crosshair.style.opacity = 1;
+                        ready = true;
+                    } else {
+                        crosshair.style.opacity = 0;
+                        ready = false;
+                        startProgress(user.action, user.action_time);
+                    }
+                }
+            });
+
+        }
+
+        renderMap();
+        renderUsers();
+
+        //setInterval(() => { renderMap(); }, 10000);
+        setInterval(() => { renderUsers(); }, 1000);
+    </script>
+</body>
+
+</html>

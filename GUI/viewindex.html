@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css?">
+    <link rel="icon" href="img/favicon.ico">
+</head>
+
+<body>
+    <div class="content">
+        <div id="map" class="container">Karte Lädt...</div>
+
+        <div id="joystick">Joystick Lädt...</div>
+        <div id="instructor" class="container">Instructor Lädt..</div>
+        <div id="reinraus">
+            <button onclick="reinraus()">
+                <svg xmlns="http://www.w3.org/2000/svg" id="reinrausicon" class="icon" viewBox="0 -960 960 960">
+                    <path d="m321-80-71-71 329-329-329-329 71-71 400 400L321-80Z" />
+                </svg>
+            </button>
+        </div>
+        <div id="actionlist" class="container">
+            <div id="buttoncontainer">
+                <button class="button active" name="navbutton" id="agierenNavButton"
+                    onclick="changeAktionen('agieren')">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 -960 960 960">
+                        <path
+                            d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z" />
+                    </svg></button>
+                <button class="button" name="navbutton" id="profilNavButton" onclick="changeAktionen('profil')">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 -960 960 960">
+                        <path
+                            d="M218-381q-24 13-51 5.5T126-406q-17-29-6-60t43-42l337-112 36 71-318 168Zm22 261v-227l349-184-17-35 228-114 36 72-276 208v280H240Zm60-440q-58 0-99-41t-41-99q0-58 41-99t99-41q58 0 99 41t41 99q0 58-41 99t-99 41Z" />
+                    </svg></button>
+                <button class="button" name="navbutton" id="inventarNavButton" onclick="changeAktionen('inventar')">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 -960 960 960">
+                        <path
+                            d="M200-80q-33 0-56.5-23.5T120-160v-451q-18-11-29-28.5T80-680v-120q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v120q0 23-11 40.5T840-611v451q0 33-23.5 56.5T760-80H200Zm0-520v440h560v-440H200Zm-40-80h640v-120H160v120Zm200 280h240v-80H360v80Zm120 20Z" />
+                    </svg></button>
+            </div>
+
+            <div id="agieren" class="functioncontainer active">
+                <h1 id="uberschrift">Operationen</h1>
+                <div id="progress-container">
+                    <div id="progress-description">Aktion</div>
+                    <div id="progress-bar">0%</div>
+                </div>
+                <div class="buttonfunctioncontainer1">
+                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonAbbauen"
+                        onclick="abbauen()">[1] Abbauen</button>
+                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonAngreifen"
+                        onclick="angreifen()">[2] Angreifen</button>
+                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonBauen"
+                        onclick="bauen()">[3] Haus bauen</button>
+                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonHandeln"
+                        onclick="handeln()">[4] Items handeln</button>
+                    <button class="buttonfunctioncontainer1buttons" class="buttondesign" id="buttonLaufen"
+                        onclick="wait()">[⏎] Ausführen</button>
+                </div>
+            </div>
+
+            <div id="profil" class="functioncontainer">Profil lädt...</div>
+
+            <div id="inventar" class="functioncontainer">Inventar lädt...</div>
+        </div>
+    </div>
+
+    <div id="warning">
+        <p><img width="100%" src="img/orientation.png"><br> Bitte drehen Sie Ihr Handy zum Spielen ins Querformat.</p>
+    </div>
+
+    <div id="itemDescription" class="descriptionBox">
+        <h2>Dieses Item verkaufen?</h2>
+        <button onclick="itemDescription.classList.remove('visible')">Abbrechen</button>
+        <button onclick="sellItem()">Verkaufen</button>
+    </div>
+
+    <div id="changePassword">
+        <h2>Passwort ändern</h2>
+        <input type="password" id="changePass1" placeholder="Neues Passwort" required><br>
+        <input type="password" id="changePass2" placeholder="Neues Passwort bestätigen" required><br>
+        <button id="changePwBut" onclick="">Ändern</button>
+        <button id="changePwabbruch" onclick="getElementById('changePassword').style.display = 'none'">Abbrechen</button>
+    </div>
+
+    <div id="Raketenabschuss">
+        <h2>ICBM Start</h2>
+        <input type="number" id="raketeX" placeholder="X-Koordinate" required><br>
+        <input type="number" id="raketeY" placeholder="Y-Koordinate" required><br>
+        <button id="abschussBut" onclick="">Abschießen</button>
+        <button id="abschussAbbruchBut" onclick="getElementById('Raketenabschuss').style.display = 'none'">Abbrechen</button>
+    </div>
+
+    <script>
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Überprüfen, ob "token" gesetzt ist
+        const token = '5e286739d121b0b3e8c061de5b43dec9738ca2b2';
+
+        if (!token) {
+            window.location.href = 'login.html';
+            document.body.innerHTML = '<h1>Zugriff verweigert: Melde dich zuerst an!</h1><a href="login.html">Zur Anmeldung</a>';
+        } else {
+            fetch('user_data.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'get',
+                    token: token,
+                    get: "legitimation"
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log("Token gültig");
+                    } else {
+                        console.log('Automatisch abgemeldet: ' + data.message);
+                        window.location.href = 'login.html?m=2';
+                    }
+                })
+                .catch(error => {
+                    console.error('Fehler:', error);
+                });
+
+            function changeAktionen(name) {
+                document.getElementById('agieren').classList.remove('active');
+                document.getElementById('profil').classList.remove('active');
+                document.getElementById('inventar').classList.remove('active');
+                document.getElementById(name).classList.add('active');
+                document.getElementsByName('navbutton').forEach(element => {
+                    element.classList.remove('active');
+                });
+                document.getElementById(name + "NavButton").classList.add('active');
+            }
+
+
+
+            const darkTheme = 'css/darkTheme.css';
+            const brightTheme = 'css/brightTheme.css';
+
+            const themeStylesheet = document.getElementById('themeStylesheet');
+            const themeToggleButton = document.getElementById('themeToggleButton');
+
+            function toggleTheme() {
+                if (themeStylesheet.getAttribute('href') === brightTheme) {
+                    themeStylesheet.setAttribute('href', darkTheme);
+                    themeToggleButton.textContent = 'Bright Mode aktivieren';
+                } else {
+                    themeStylesheet.setAttribute('href', brightTheme);
+                    themeToggleButton.textContent = 'Dark Mode aktivieren';
+                }
+            }
+
+            let timestamp = Date.now();
+            loadHTML(`view.html?t=${timestamp}`, 'map');
+            loadHTML(`account.html?t=${timestamp}`, 'profil');
+            loadHTML(`inventory.html?t=${timestamp}`, 'inventar');
+        }
+
+        async function loadHTML(url, targetElementId) {
+            try {
+                // Lade die Datei mit fetch
+                const response = await fetch(url);
+
+                // Prüfe, ob die Anfrage erfolgreich war
+                if (!response.ok) {
+                    throw new Error(`Fehler beim Laden der Datei: ${response.statusText}`);
+                }
+
+                // Lese den Textinhalt der HTML-Datei
+                const htmlContent = await response.text();
+
+                // Wähle das Ziel-Element
+                const targetElement = document.getElementById(targetElementId);
+                console.log(targetElement.innerHTML);
+
+                // Temporäre DOM-Elemente zum Verarbeiten der Inhalte erstellen
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = htmlContent;
+
+                // Füge alle Inhalte außer Skripte ein
+                targetElement.innerHTML = tempDiv.innerHTML;
+
+                // Extrahiere und führe Skripte separat aus
+                const scripts = tempDiv.querySelectorAll('script');
+                scripts.forEach((script) => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        // Falls das Skript eine src-URL hat
+                        newScript.src = script.src;
+                        newScript.async = false; // Synchron ausführen
+                    } else {
+                        // Falls das Skript Inline-Code enthält
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript); // Skript in das Dokument einfügen und ausführen
+                });
+            } catch (error) {
+                console.error(error);
+                document.getElementById(targetElementId).innerHTML =
+                    `<p style="color:red;">Fehler beim Laden des Inhalts.</p>`;
+            }
+        }
+    </script>
+
+    <script>
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                let date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + value + "; path=/" + expires;
+        }
+
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        async function sendQueue(steps) {
+            console.log(steps);
+            total_step = steps.length;
+            console.log(total_step);
+
+            await fetch('user_data.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'update',
+                    token: token,
+                    update: "queue",
+                    queue: steps
+                })
+            })
+                .then(response => response.json())
+                .catch(error => {
+                    console.error('Fehler:', error);
+                });
+            steps = [];
+            await fetch('https://v2202410237002289383.megasrv.de/startqueue?token=' + token);
+        }
+
+        //Actionbuttons:
+        async function wait() {
+            await sendQueue(steps);
+            steps = [];
+        }
+
+        function abbauen() {
+            const button = document.getElementById("buttonAbbauen");
+            if (button.classList.contains("deactivated")) {
+                alert("Auf diesem Feld sind keine Rohstoffe mehr.");
+            } else {
+                steps.push({ x: absoluteX, y: absoluteY, 'action': "mine", "time": 5000 });
+            }
+        }
+
+        function angreifen() {
+            const button = document.getElementById("buttonAngreifen");
+            if (button.classList.contains("deactivated")) {
+                alert("Auf diesem Feld ist kein Gegner.");
+            } else {
+                steps.push({ x: absoluteX, y: absoluteY, 'action': "attack", "time": 1000 });
+            }
+        }
+
+        function bauen() {
+            const button = document.getElementById("buttonBauen");
+            if (button.classList.contains("deactivated")) {
+                alert("Dieses Haus ist bereits auf dem maximalen Level.");
+            } else {
+                steps.push({ x: absoluteX, y: absoluteY, 'action': "build", "time": 30000 });
+            }
+        }
+
+        function handeln() {
+            changeAktionen('inventar');
+        }
+    </script>
+    <script>
+        async function lockOrientation() {
+            try {
+                if (screen.orientation && screen.orientation.lock) {
+                    await screen.orientation.lock("landscape");
+                    console.log("Querformat gesperrt!");
+                }
+            } catch (error) {
+            }
+        }
+
+        // Prüfen, ob das Gerät bereits im Querformat ist
+        function checkOrientation() {
+            if (window.innerHeight > window.innerWidth) {
+                document.getElementsByClassName("content")[0].style.display = "none";
+                document.getElementById("warning").style.display = "flex";
+            } else {
+                document.getElementsByClassName("content")[0].style.display = "block";
+                document.getElementById("warning").style.display = "none";
+            }
+        }
+
+        window.addEventListener("load", () => {
+            lockOrientation();
+            checkOrientation();
+        });
+        window.addEventListener("resize", checkOrientation);
+
+        if (getCookie("actionlistEnabled") === "false") {
+            reinraus();
+        }
+
+        function reinraus() {
+            if (document.getElementById("actionlist").style.display == "none") {
+                document.getElementById("actionlist").style.display = "inline";
+                document.getElementById("reinraus").style.marginLeft = "calc(70% - 10vh)"
+                document.getElementById("reinrausicon").style = "transform: rotate(0deg);"
+                setCookie("actionlistEnabled", "true", 30);
+            } else {
+                document.getElementById("actionlist").style.display = "none";
+                document.getElementById("reinraus").style.marginLeft = "calc(100% - 10vh)";
+                document.getElementById("reinrausicon").style = "transform: rotate(180deg);"
+                setCookie("actionlistEnabled", "false", 30);
+            }
+        }
+
+        function startProgress(action, duration) {
+            console.log("Start Progress: " + action + " for " + duration + "ms");
+            let description = document.getElementById("progress-description");
+            description.textContent = action;
+            let bar = document.getElementById("progress-bar");
+            let startTime = Date.now();
+            let endTime = startTime + duration;
+
+            let buttons = document.getElementsByClassName("buttonfunctioncontainer1")[0];
+            buttons.style.display = "none";
+            let container = document.getElementById("progress-container");
+            container.style.display = "block";
+
+            function updateProgress() {
+                let now = Date.now();
+                let elapsed = now - startTime;
+                let progress = Math.min((elapsed / (duration)) * 100, 100);
+                bar.style.width = progress + "%";
+                bar.textContent = Math.round(progress) + "%";
+
+                if (now < endTime) {
+                    requestAnimationFrame(updateProgress);
+                } else {
+                    container.style.display = "none";
+                    buttons.style.display = "block";
+                    crosshair.style.opacity = 1;
+                    ready = true;
+                }
+            }
+            requestAnimationFrame(updateProgress);
+        }
+    </script>
+</body>
+
+</html>
