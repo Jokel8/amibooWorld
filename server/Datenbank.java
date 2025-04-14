@@ -54,7 +54,7 @@ public class Datenbank {
         }
 
         try {
-            this.con = DriverManager.getConnection("jdbc:mysql://v073086.kasserver.com/d0421573?allowMultiQueries=true","d0421573", "pZuw7TVdwLCqWUjMUD8o");
+            this.con = DriverManager.getConnection("jdbc:mysql://url?allowMultiQueries=true","us", "pass");
         } catch (SQLException e) {
             verbunden = false;
             System.out.println("Verbundung zur Datenbank konnte nicht hergestellt werden");

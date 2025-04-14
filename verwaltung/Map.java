@@ -17,7 +17,7 @@ public class Map {
                 }
             }
             String driver = "com.mysql.cj.jdbc.Driver";
-            String url = "jdbc:mysql://v073086.kasserver.com:3306/d0421573";
+            String url = "jdbc:mysql://url:3306/user";
 
             //Connection conn = DriverManager.getConnection(url,user,password);
 

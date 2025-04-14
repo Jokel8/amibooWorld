@@ -2,10 +2,10 @@
 header('Content-Type: application/json');
 
 // Datenbank-Verbindungseinstellungen
-$host = 'v073086.kasserver.com';
-$db   = 'd0421573';
-$user = 'd0421573';
-$pass = 'pZuw7TVdwLCqWUjMUD8o';
+$host = 'url';
+$db   = 'db';
+$user = 'user';
+$pass = 'pass';
 
 // Sicherheits- und Validierungsfunktionen
 function validateInput($input)

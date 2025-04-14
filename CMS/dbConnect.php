@@ -1,9 +1,9 @@
 <?php
 function getDBConnection() {
-    $host = 'v073086.kasserver.com';
-    $db   = 'd0421573';
-    $user = 'd0421573';
-    $pass = 'pZuw7TVdwLCqWUjMUD8o';
+    $host = 'url';
+    $db   = 'db';
+    $user = 'user';
+    $pass = 'pass';
     $charset = 'utf8mb4';
 
     $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
